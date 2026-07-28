@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/features.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -63,6 +64,15 @@ class _RequestsViewState extends ConsumerState<RequestsView>
       title: PageLabel.requests.label,
       searchState: AppBarSearchState(onSearch: _listController.search),
       onKeywordsUpdate: _listController.updateKeywords,
+      iconActions: [
+        IconButtonData(
+          glyph: AppGlyphs.clearAll,
+          tooltip: appLocalizations.clearRequests,
+          onPressed: () {
+            ref.read(requestsProvider.notifier).clear();
+          },
+        ),
+      ],
       body: ValueListenableBuilder<TrackerInfosState>(
         valueListenable: _listController,
         builder: (context, state, _) {
