@@ -88,6 +88,14 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
       title: appLocalizations.requests,
       searchState: AppBarSearchState(onSearch: _onSearch),
       onKeywordsUpdate: _onKeywordsUpdate,
+      actions: [
+        IconButton(
+          onPressed: () {
+            ref.read(requestsProvider.notifier).clear();
+          },
+          icon: const Icon(Icons.delete_sweep_outlined),
+        ),
+      ],
       floatingActionButton: ValueListenableBuilder(
         valueListenable: _requestsStateNotifier,
         builder: (_, state, _) {
