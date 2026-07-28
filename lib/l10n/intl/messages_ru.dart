@@ -274,6 +274,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "У вас уже последняя версия",
     ),
     "clearData": MessageLookupByLibrary.simpleMessage("Очистить данные"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("Очистить запросы"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Очистить поиск"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage(
       "Экспорт в буфер обмена",

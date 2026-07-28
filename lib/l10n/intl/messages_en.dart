@@ -266,6 +266,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "The app is already up to date",
     ),
     "clearData": MessageLookupByLibrary.simpleMessage("Clear data"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("Clear requests"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Clear search"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage(
       "Export to clipboard",
