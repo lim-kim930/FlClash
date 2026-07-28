@@ -347,6 +347,7 @@
   "launchInterrupted": "启动未完成",
   "launchInterruptedTip": "应用上次在启动过程中意外退出。已跳过本次自动配置，你可以手动启动重试。",
   "clearData": "清除数据",
+  "clearRequests": "清除请求",
   "textScale": "文本缩放",
   "internet": "互联网",
   "systemApp": "系统应用",

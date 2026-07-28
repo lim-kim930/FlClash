@@ -2710,6 +2710,16 @@ class AppLocalizations {
     return Intl.message('Clear data', name: 'clearData', desc: '', args: []);
   }
 
+  /// `Clear requests`
+  String get clearRequests {
+    return Intl.message(
+      'Clear requests',
+      name: 'clearRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Text scaling`
   String get textScale {
     return Intl.message('Text scaling', name: 'textScale', desc: '', args: []);
