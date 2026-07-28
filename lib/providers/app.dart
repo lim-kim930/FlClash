@@ -57,6 +57,10 @@ class Requests extends _$Requests with AutoDisposeNotifierMixin {
   void addRequest(TrackerInfo value) {
     this.value = state.copyWith()..add(value);
   }
+
+  void clear() {
+    value = state.copyWith()..clear();
+  }
 }
 
 @Riverpod(keepAlive: true)
