@@ -120,6 +120,7 @@ void main() {
         closeConnections: false,
         testUrl: 'https://custom.test',
         customUserAgent: 'CustomUA/1.0',
+        geoSilentUpdate: true,
       );
       final restored = roundTrip(
         () => props.toJson(),
@@ -131,6 +132,7 @@ void main() {
       expect(restored.closeConnections, false);
       expect(restored.testUrl, 'https://custom.test');
       expect(restored.customUserAgent, 'CustomUA/1.0');
+      expect(restored.geoSilentUpdate, true);
     });
 
     test('safeFromJson returns default on null', () {

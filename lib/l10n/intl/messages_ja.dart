@@ -335,6 +335,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geoオプション"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geoリソース"),
+    "geoSilentUpdate": MessageLookupByLibrary.simpleMessage("サイレント更新"),
+    "geoSilentUpdateDesc": MessageLookupByLibrary.simpleMessage(
+      "Geoリソースの更新中に通知を表示しません。エラーは引き続き表示されます",
+    ),
     "geoSkipped": m7,
     "geoUpdated": m8,
     "geoUpdating": m9,
