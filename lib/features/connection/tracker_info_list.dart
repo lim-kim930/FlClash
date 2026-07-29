@@ -44,6 +44,7 @@ class TrackerInfoListController extends ValueNotifier<TrackerInfosState> {
 class TrackerInfoList extends StatelessWidget {
   final List<TrackerInfo> trackerInfos;
   final String detailTitle;
+  final ValueNotifier<TrackerInfosState>? stateNotifier;
   final ScrollController? controller;
   final bool reverse;
   final bool shrinkWrap;
@@ -55,6 +56,7 @@ class TrackerInfoList extends StatelessWidget {
     super.key,
     required this.trackerInfos,
     required this.detailTitle,
+    this.stateNotifier,
     this.controller,
     this.reverse = false,
     this.shrinkWrap = false,
@@ -77,6 +79,7 @@ class TrackerInfoList extends StatelessWidget {
         context,
         trackerInfos[index],
         detailTitle: detailTitle,
+        stateNotifier: stateNotifier,
         trailingBuilder: trailingBuilder,
       ),
     );
@@ -88,6 +91,7 @@ class TrackerInfoList extends StatelessWidget {
 class TrackerInfoAnimatedList extends StatelessWidget {
   final List<TrackerInfo> trackerInfos;
   final String detailTitle;
+  final ValueNotifier<TrackerInfosState>? stateNotifier;
   final ScrollController? controller;
   final EdgeInsetsGeometry? padding;
   final Widget? Function(TrackerInfo trackerInfo)? trailingBuilder;
@@ -96,6 +100,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
     super.key,
     required this.trackerInfos,
     required this.detailTitle,
+    this.stateNotifier,
     this.controller,
     this.padding,
     this.trailingBuilder,
@@ -113,6 +118,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
         context,
         trackerInfo,
         detailTitle: detailTitle,
+        stateNotifier: stateNotifier,
         trailingBuilder: trailingBuilder,
       ),
     );
@@ -123,6 +129,7 @@ Widget _buildTrackerInfoItem(
   BuildContext context,
   TrackerInfo trackerInfo, {
   required String detailTitle,
+  ValueNotifier<TrackerInfosState>? stateNotifier,
   required Widget? Function(TrackerInfo trackerInfo)? trailingBuilder,
 }) {
   return TrackerInfoItem(
@@ -133,5 +140,6 @@ Widget _buildTrackerInfoItem(
     },
     trailing: trailingBuilder?.call(trackerInfo),
     detailTitle: detailTitle,
+    stateNotifier: stateNotifier,
   );
 }

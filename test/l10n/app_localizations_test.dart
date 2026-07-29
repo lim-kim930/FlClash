@@ -9,6 +9,11 @@ void main() {
 
       expect(AppLocalizations.current, same(appLocalizations));
       expect(appLocalizations.dashboard, isNotEmpty);
+      expect(appLocalizations.sortAsc, isNotEmpty);
+      expect(appLocalizations.sortDesc, isNotEmpty);
+      expect(appLocalizations.downloadSpeed, isNotEmpty);
+      expect(appLocalizations.uploadSpeed, isNotEmpty);
+
       expect(appLocalizations.proxies, isNotEmpty);
       expect(appLocalizations.settings, isNotEmpty);
       expect(appLocalizations.hoursCount(2), contains('2'));

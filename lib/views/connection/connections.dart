@@ -10,6 +10,8 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'setting.dart';
+
 class ConnectionsView extends ConsumerStatefulWidget {
   final Future<List<TrackerInfo>> Function()? connectionsReader;
 
@@ -38,6 +40,20 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
           await _refreshConnections();
         },
         icon: const Icon(Icons.delete_sweep_outlined),
+      ),
+      IconButton(
+        tooltip: context.appLocalizations.settings,
+        onPressed: () {
+          showSheet(
+            context: context,
+            props: const SheetProps(isScrollControlled: true),
+            builder: (_) => AdaptiveSheetScaffold(
+              title: context.appLocalizations.settings,
+              body: ConnectionsSetting(stateNotifier: _listController),
+            ),
+          );
+        },
+        icon: const Icon(Icons.tune),
       ),
     ];
   }
@@ -75,8 +91,16 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
   }
 
   void _applyConnections(List<TrackerInfo> trackerInfos) {
-    // The core snapshot iterates a Go map, so its order is random per poll;
-    // sort by total traffic to keep the list stable between refreshes.
+    final previous = {
+      for (final info in _listController.value.trackerInfos) info.id: info,
+    };
+    trackerInfos = trackerInfos.map((info) {
+      final prev = previous[info.id];
+      return info.copyWith(
+        downloadSpeed: prev == null ? 0 : info.download - prev.download,
+        uploadSpeed: prev == null ? 0 : info.upload - prev.upload,
+      );
+    }).toList();
     final sorted = List.of(trackerInfos)
       ..sort((a, b) {
         final traffic = (b.upload + b.download).compareTo(
@@ -122,6 +146,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
               illustration: NullStatusIllustration.connections,
             ),
             child: TrackerInfoAnimatedList(
+              stateNotifier: _listController,
               controller: _scrollController,
               trackerInfos: connections,
               detailTitle: appLocalizations.details(
