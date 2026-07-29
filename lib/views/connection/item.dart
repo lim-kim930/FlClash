@@ -13,6 +13,7 @@ class TrackerInfoItem extends ConsumerWidget {
   final Function(String)? onClickKeyword;
   final Widget? trailing;
   final String detailTitle;
+  final ValueNotifier<TrackerInfosState> stateNotifier;
 
   const TrackerInfoItem({
     super.key,
@@ -20,6 +21,7 @@ class TrackerInfoItem extends ConsumerWidget {
     this.onClickKeyword,
     this.trailing,
     required this.detailTitle,
+    required this.stateNotifier,
   });
 
   static double get subTitleHeight {
@@ -146,7 +148,16 @@ class TrackerInfoItem extends ConsumerWidget {
           context,
           builder: (_) {
             return AdaptiveSheetScaffold(
-              body: TrackerInfoDetailView(trackerInfo: trackerInfo),
+              body: ValueListenableBuilder<TrackerInfosState>(
+                valueListenable: stateNotifier,
+                builder: (context, state, _) {
+                  final info = state.trackerInfos.firstWhere(
+                    (e) => e.id == trackerInfo.id,
+                    orElse: () => trackerInfo,
+                  );
+                  return TrackerInfoDetailView(trackerInfo: info);
+                },
+              ),
               title: detailTitle,
             );
           },
@@ -307,10 +318,20 @@ class TrackerInfoDetailView extends StatelessWidget {
         title: appLocalizations.upload,
         desc: trackerInfo.upload.traffic.show,
       ),
+      if (trackerInfo.uploadSpeed != null)
+        _buildItem(
+          title: appLocalizations.uploadSpeed,
+          desc: '${trackerInfo.uploadSpeed!.traffic.show}/s',
+        ),
       _buildItem(
         title: appLocalizations.download,
         desc: trackerInfo.download.traffic.show,
       ),
+      if (trackerInfo.downloadSpeed != null)
+        _buildItem(
+          title: appLocalizations.downloadSpeed,
+          desc: '${trackerInfo.downloadSpeed!.traffic.show}/s',
+        ),
       if (trackerInfo.metadata.destinationGeoIP.isNotEmpty)
         _buildItem(
           title: appLocalizations.destinationGeoIP,

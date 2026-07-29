@@ -552,5 +552,9 @@
   "geoSkipped": "Для {name} уже установлена последняя версия",
   "geoUpdated": "{name} обновлено",
   "secondsCount": "{count} секунд",
-  "entriesCount": "{count} записей"
+  "entriesCount": "{count} записей",
+  "sortAsc": "По возрастанию",
+  "sortDesc": "По убыванию",
+  "downloadSpeed": "Скорость скачивания",
+  "uploadSpeed": "Скорость загрузки"
 }
