@@ -23,7 +23,42 @@ if not exist "%BUILD_TOOL_TEMP_DIR%" (
 )
 cd /D "%BUILD_TOOL_TEMP_DIR%"
 
-SET DART=%FLUTTER_ROOT%\bin\cache\dart-sdk\bin\dart
+REM Prefer Flutter's bundled Dart over anything on PATH, so we never silently
+REM build against an unrelated standalone SDK. Every invocation below uses CALL:
+REM dart.bat is a batch file, and invoking one from a .cmd without CALL transfers
+REM control permanently, which would make this script exit after the first call.
+if not defined DART (
+    if defined FLUTTER_ROOT (
+        if exist "%FLUTTER_ROOT%\bin\cache\dart-sdk\bin\dart.exe" (
+            set "DART=%FLUTTER_ROOT%\bin\cache\dart-sdk\bin\dart.exe"
+        )
+    )
+)
+
+if not defined DART (
+    if defined FLUTTER_ROOT (
+        if exist "%FLUTTER_ROOT%\bin\dart.bat" (
+            set "DART=%FLUTTER_ROOT%\bin\dart.bat"
+        )
+    )
+)
+
+if not defined DART (
+    for /f "delims=" %%i in ('where dart.exe 2^>nul') do (
+        if not defined DART set "DART=%%i"
+    )
+)
+
+if not defined DART (
+    for /f "delims=" %%i in ('where dart.bat 2^>nul') do (
+        if not defined DART set "DART=%%i"
+    )
+)
+
+if not defined DART (
+    echo Error: Could not find a Dart SDK. Set FLUTTER_ROOT or put dart on PATH.
+    exit /b 1
+)
 
 set BUILD_TOOL_PKG_DIR_POSIX=%BUILD_TOOL_PKG_DIR:\=/%
 
@@ -93,16 +128,16 @@ REM There is no CUR_PACKAGE_INFO it was renamed in previous step to %PREV_PACKAG
 REM which means we need to do pub get and precompile
 if not exist "%PRECOMPILED%" (
     echo Running pub get in "%cd%"
-    "%DART%" pub get --no-precompile
-    "%DART%" compile kernel bin/build_tool_runner.dart
+    call "%DART%" pub get --no-precompile
+    call "%DART%" compile kernel bin\build_tool_runner.dart
 )
 
-"%DART%" "%PRECOMPILED%" %* --root-dir "%PROJECT_DIR%"
+call "%DART%" "%PRECOMPILED%" %* --root-dir "%PROJECT_DIR%"
 
 REM 253 means invalid snapshot version.
 If %ERRORLEVEL% equ 253 (
-    "%DART%" pub get --no-precompile
-    "%DART%" compile kernel bin/build_tool_runner.dart
-    "%DART%" "%PRECOMPILED%" %* --root-dir "%PROJECT_DIR%"
+    call "%DART%" pub get --no-precompile
+    call "%DART%" compile kernel bin\build_tool_runner.dart
+    call "%DART%" "%PRECOMPILED%" %* --root-dir "%PROJECT_DIR%"
 )
 exit /b %ERRORLEVEL%
