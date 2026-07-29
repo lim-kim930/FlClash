@@ -78,12 +78,16 @@ class GeoResourceAction extends _$GeoResourceAction {
     }
   }
 
-  void updateGeoResourceUrl(GeoResource geoResource, String newUrl) {
+  Future<void> updateGeoResourceUrl(
+    GeoResource geoResource,
+    String newUrl,
+  ) async {
     if (!newUrl.isUrl) {
       throw ArgumentError.value(newUrl, 'newUrl', 'Not a valid URL');
     }
     ref.read(patchClashConfigProvider.notifier).update((state) {
       return state.copyWith(geoXUrl: {...state.geoXUrl, geoResource: newUrl});
     });
+    await ref.read(setupActionProvider.notifier).applyProfile(silence: true);
   }
 }
