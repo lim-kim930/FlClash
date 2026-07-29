@@ -104,6 +104,8 @@ void main() {
             allowLan: true,
             ipv6: true,
             hosts: {'router.local': '192.168.1.1,192.168.1.2'},
+            geoAutoUpdate: true,
+            geoUpdateInterval: 12,
           ),
           overrideDns: false,
           appendSystemDns: true,
@@ -125,6 +127,8 @@ void main() {
       expect(config['mixed-port'], 7893);
       expect(config['allow-lan'], true);
       expect(config['global-ua'], 'FlClash-Test');
+      expect(config['geo-auto-update'], true);
+      expect(config['geo-update-interval'], 12);
       expect(config['profile']['store-selected'], false);
       expect(
         config['dns']['nameserver'],
@@ -147,6 +151,30 @@ void main() {
       ]);
     },
   );
+
+  test('makeRealProfileTask overrides profile geo update settings', () async {
+    final result = await makeRealProfileTask(
+      const MakeRealProfileState(
+        profilesPath: '/profiles',
+        profileId: 11,
+        rawConfig: {'geo-auto-update': true, 'geo-update-interval': 6},
+        realPatchConfig: PatchClashConfig(
+          geoAutoUpdate: false,
+          geoUpdateInterval: 48,
+        ),
+        overrideDns: false,
+        appendSystemDns: false,
+        proxyGroups: [],
+        rules: [],
+        addedRules: [],
+        defaultUA: 'FlClash-Test',
+      ),
+    );
+    final config = loadYaml(result.a) as YamlMap;
+
+    expect(config['geo-auto-update'], false);
+    expect(config['geo-update-interval'], 48);
+  });
 
   test('makeRealProfileTask replaces DNS and explicit custom data', () async {
     final result = await makeRealProfileTask(
