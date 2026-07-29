@@ -126,7 +126,15 @@ enum AccessControlMode { acceptSelected, rejectSelected }
 
 enum AccessSortType { none, name, time }
 
-enum ConnectionsSortType { none, host, download, downloadSpeed, upload, uploadSpeed, connectTime }
+enum ConnectionsSortType {
+  none,
+  host,
+  download,
+  downloadSpeed,
+  upload,
+  uploadSpeed,
+  connectTime,
+}
 
 enum SortDirection { asc, desc }
 
