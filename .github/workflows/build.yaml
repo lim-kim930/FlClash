@@ -392,17 +392,12 @@ jobs:
 
       - name: Generate release notes
         shell: bash
-        env:
-          IS_STABLE: ${{ env.IS_STABLE }}
-          TAG: ${{ github.ref_name }}
         run: |
-          target=()
-          if [[ "$IS_STABLE" == 'true' ]]; then
-            target=(--tag "$TAG")
-          else
-            dart run tool/changelog.dart build --unreleased
-          fi
-          dart run tool/changelog.dart render release "${target[@]}" --out release.md
+          pre_tag=$(
+            curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest" |
+              sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p'
+          )
+          bash .github/scripts/generate_release_notes.sh "$pre_tag" release.md
 
       - name: Patch release.md
         run: |
