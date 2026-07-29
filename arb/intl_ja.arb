@@ -778,5 +778,9 @@
   "large": "大",
   "extraLarge": "特大",
   "switchProfile": "プロファイルを切り替え",
-  "lastUpdated": "最終更新"
+  "lastUpdated": "最終更新",
+  "sortAsc": "昇順",
+  "sortDesc": "降順",
+  "downloadSpeed": "ダウンロード速度",
+  "uploadSpeed": "アップロード速度"
 }

@@ -1794,7 +1794,7 @@ as bool,
 /// @nodoc
 mixin _$TrackerInfosState {
 
- List<TrackerInfo> get trackerInfos; List<String> get keywords; String get query; bool get autoScrollToEnd;
+ List<TrackerInfo> get trackerInfos; List<String> get keywords; String get query; bool get autoScrollToEnd; ConnectionsSortType get sortType; SortDirection get sortDirection;
 /// Create a copy of TrackerInfosState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1806,20 +1806,20 @@ $TrackerInfosStateCopyWith<TrackerInfosState> get copyWith => _$TrackerInfosStat
 @override
 bool operator ==(Object other) {
   final _this = this as TrackerInfosState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrackerInfosState&&const DeepCollectionEquality().equals(other.trackerInfos, _this.trackerInfos)&&const DeepCollectionEquality().equals(other.keywords, _this.keywords)&&(identical(other.query, _this.query) || other.query == _this.query)&&(identical(other.autoScrollToEnd, _this.autoScrollToEnd) || other.autoScrollToEnd == _this.autoScrollToEnd));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrackerInfosState&&const DeepCollectionEquality().equals(other.trackerInfos, _this.trackerInfos)&&const DeepCollectionEquality().equals(other.keywords, _this.keywords)&&(identical(other.query, _this.query) || other.query == _this.query)&&(identical(other.autoScrollToEnd, _this.autoScrollToEnd) || other.autoScrollToEnd == _this.autoScrollToEnd)&&(identical(other.sortType, _this.sortType) || other.sortType == _this.sortType)&&(identical(other.sortDirection, _this.sortDirection) || other.sortDirection == _this.sortDirection));
 }
 
 
 @override
 int get hashCode {
   final _this = this as TrackerInfosState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.trackerInfos),const DeepCollectionEquality().hash(_this.keywords),_this.query,_this.autoScrollToEnd);
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.trackerInfos),const DeepCollectionEquality().hash(_this.keywords),_this.query,_this.autoScrollToEnd,_this.sortType,_this.sortDirection);
 }
 
 @override
 String toString() {
   final _this = this as TrackerInfosState;
-  return 'TrackerInfosState(trackerInfos: ${_this.trackerInfos}, keywords: ${_this.keywords}, query: ${_this.query}, autoScrollToEnd: ${_this.autoScrollToEnd})';
+  return 'TrackerInfosState(trackerInfos: ${_this.trackerInfos}, keywords: ${_this.keywords}, query: ${_this.query}, autoScrollToEnd: ${_this.autoScrollToEnd}, sortType: ${_this.sortType}, sortDirection: ${_this.sortDirection})';
 }
 
 
@@ -1830,7 +1830,7 @@ abstract mixin class $TrackerInfosStateCopyWith<$Res>  {
   factory $TrackerInfosStateCopyWith(TrackerInfosState value, $Res Function(TrackerInfosState) _then) = _$TrackerInfosStateCopyWithImpl;
 @useResult
 $Res call({
- List<TrackerInfo> trackerInfos, List<String> keywords, String query, bool autoScrollToEnd
+ List<TrackerInfo> trackerInfos, List<String> keywords, String query, bool autoScrollToEnd, ConnectionsSortType sortType, SortDirection sortDirection
 });
 
 
@@ -1847,13 +1847,15 @@ class _$TrackerInfosStateCopyWithImpl<$Res>
 
 /// Create a copy of TrackerInfosState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? trackerInfos = null,Object? keywords = null,Object? query = null,Object? autoScrollToEnd = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? trackerInfos = null,Object? keywords = null,Object? query = null,Object? autoScrollToEnd = null,Object? sortType = null,Object? sortDirection = null,}) {
   return _then(TrackerInfosState(
 trackerInfos: null == trackerInfos ? _self.trackerInfos : trackerInfos // ignore: cast_nullable_to_non_nullable
 as List<TrackerInfo>,keywords: null == keywords ? _self.keywords : keywords // ignore: cast_nullable_to_non_nullable
 as List<String>,query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
 as String,autoScrollToEnd: null == autoScrollToEnd ? _self.autoScrollToEnd : autoScrollToEnd // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,sortType: null == sortType ? _self.sortType : sortType // ignore: cast_nullable_to_non_nullable
+as ConnectionsSortType,sortDirection: null == sortDirection ? _self.sortDirection : sortDirection // ignore: cast_nullable_to_non_nullable
+as SortDirection,
   ));
 }
 
@@ -1938,10 +1940,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TrackerInfo> trackerInfos,  List<String> keywords,  String query,  bool autoScrollToEnd)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TrackerInfo> trackerInfos,  List<String> keywords,  String query,  bool autoScrollToEnd,  ConnectionsSortType sortType,  SortDirection sortDirection)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TrackerInfosState() when $default != null:
-return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollToEnd);case _:
+return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollToEnd,_that.sortType,_that.sortDirection);case _:
   return orElse();
 
 }
@@ -1959,10 +1961,10 @@ return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollTo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TrackerInfo> trackerInfos,  List<String> keywords,  String query,  bool autoScrollToEnd)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TrackerInfo> trackerInfos,  List<String> keywords,  String query,  bool autoScrollToEnd,  ConnectionsSortType sortType,  SortDirection sortDirection)  $default,) {final _that = this;
 switch (_that) {
 case _TrackerInfosState():
-return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollToEnd);case _:
+return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollToEnd,_that.sortType,_that.sortDirection);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1979,10 +1981,10 @@ return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollTo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TrackerInfo> trackerInfos,  List<String> keywords,  String query,  bool autoScrollToEnd)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TrackerInfo> trackerInfos,  List<String> keywords,  String query,  bool autoScrollToEnd,  ConnectionsSortType sortType,  SortDirection sortDirection)?  $default,) {final _that = this;
 switch (_that) {
 case _TrackerInfosState() when $default != null:
-return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollToEnd);case _:
+return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollToEnd,_that.sortType,_that.sortDirection);case _:
   return null;
 
 }
@@ -1994,7 +1996,7 @@ return $default(_that.trackerInfos,_that.keywords,_that.query,_that.autoScrollTo
 
 
 class _TrackerInfosState implements TrackerInfosState {
-  const _TrackerInfosState({ List<TrackerInfo> trackerInfos = const [],  List<String> keywords = const [], this.query = '', this.autoScrollToEnd = true}): _trackerInfos = trackerInfos,_keywords = keywords;
+  const _TrackerInfosState({ List<TrackerInfo> trackerInfos = const [],  List<String> keywords = const [], this.query = '', this.autoScrollToEnd = true, this.sortType = ConnectionsSortType.none, this.sortDirection = SortDirection.desc}): _trackerInfos = trackerInfos,_keywords = keywords;
   
 
  final  List<TrackerInfo> _trackerInfos;
@@ -2013,6 +2015,8 @@ class _TrackerInfosState implements TrackerInfosState {
 
 @override@JsonKey() final  String query;
 @override@JsonKey() final  bool autoScrollToEnd;
+@override@JsonKey() final  ConnectionsSortType sortType;
+@override@JsonKey() final  SortDirection sortDirection;
 
 /// Create a copy of TrackerInfosState
 /// with the given fields replaced by the non-null parameter values.
@@ -2024,18 +2028,18 @@ _$TrackerInfosStateCopyWith<_TrackerInfosState> get copyWith => __$TrackerInfosS
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrackerInfosState&&const DeepCollectionEquality().equals(other.trackerInfos, _trackerInfos)&&const DeepCollectionEquality().equals(other.keywords, _keywords)&&(identical(other.query, query) || other.query == query)&&(identical(other.autoScrollToEnd, autoScrollToEnd) || other.autoScrollToEnd == autoScrollToEnd));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrackerInfosState&&const DeepCollectionEquality().equals(other.trackerInfos, _trackerInfos)&&const DeepCollectionEquality().equals(other.keywords, _keywords)&&(identical(other.query, query) || other.query == query)&&(identical(other.autoScrollToEnd, autoScrollToEnd) || other.autoScrollToEnd == autoScrollToEnd)&&(identical(other.sortType, sortType) || other.sortType == sortType)&&(identical(other.sortDirection, sortDirection) || other.sortDirection == sortDirection));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_trackerInfos),const DeepCollectionEquality().hash(_keywords),query,autoScrollToEnd);
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_trackerInfos),const DeepCollectionEquality().hash(_keywords),query,autoScrollToEnd,sortType,sortDirection);
 }
 
 @override
 String toString() {
-    return 'TrackerInfosState(trackerInfos: $trackerInfos, keywords: $keywords, query: $query, autoScrollToEnd: $autoScrollToEnd)';
+    return 'TrackerInfosState(trackerInfos: $trackerInfos, keywords: $keywords, query: $query, autoScrollToEnd: $autoScrollToEnd, sortType: $sortType, sortDirection: $sortDirection)';
 }
 
 
@@ -2046,7 +2050,7 @@ abstract mixin class _$TrackerInfosStateCopyWith<$Res> implements $TrackerInfosS
   factory _$TrackerInfosStateCopyWith(_TrackerInfosState value, $Res Function(_TrackerInfosState) _then) = __$TrackerInfosStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<TrackerInfo> trackerInfos, List<String> keywords, String query, bool autoScrollToEnd
+ List<TrackerInfo> trackerInfos, List<String> keywords, String query, bool autoScrollToEnd, ConnectionsSortType sortType, SortDirection sortDirection
 });
 
 
@@ -2063,13 +2067,15 @@ class __$TrackerInfosStateCopyWithImpl<$Res>
 
 /// Create a copy of TrackerInfosState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? trackerInfos = null,Object? keywords = null,Object? query = null,Object? autoScrollToEnd = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? trackerInfos = null,Object? keywords = null,Object? query = null,Object? autoScrollToEnd = null,Object? sortType = null,Object? sortDirection = null,}) {
   return _then(_TrackerInfosState(
 trackerInfos: null == trackerInfos ? _self._trackerInfos : trackerInfos // ignore: cast_nullable_to_non_nullable
 as List<TrackerInfo>,keywords: null == keywords ? _self._keywords : keywords // ignore: cast_nullable_to_non_nullable
 as List<String>,query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
 as String,autoScrollToEnd: null == autoScrollToEnd ? _self.autoScrollToEnd : autoScrollToEnd // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,sortType: null == sortType ? _self.sortType : sortType // ignore: cast_nullable_to_non_nullable
+as ConnectionsSortType,sortDirection: null == sortDirection ? _self.sortDirection : sortDirection // ignore: cast_nullable_to_non_nullable
+as SortDirection,
   ));
 }
 

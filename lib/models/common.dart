@@ -222,6 +222,8 @@ abstract class TrackerInfosState with _$TrackerInfosState {
     @Default([]) List<String> keywords,
     @Default('') String query,
     @Default(true) bool autoScrollToEnd,
+    @Default(ConnectionsSortType.none) ConnectionsSortType sortType,
+    @Default(SortDirection.desc) SortDirection sortDirection,
   }) = _TrackerInfosState;
 }
 
@@ -232,10 +234,10 @@ extension TrackerInfosStateExt on TrackerInfosState {
 
   List<TrackerInfo> get list {
     final searchQuery = SearchQuery(query);
-    if (keywords.isEmpty && searchQuery.isEmpty) {
+    if (sortType == ConnectionsSortType.none && keywords.isEmpty && searchQuery.isEmpty) {
       return trackerInfos;
     }
-    return trackerInfos
+    final result = trackerInfos
         .where(
           (trackerInfo) => keywords.every(
             (keyword) =>
@@ -249,6 +251,39 @@ extension TrackerInfosStateExt on TrackerInfosState {
           texts: _trackerInfoSearchTexts,
         )
         .toList();
+
+    if (sortType != ConnectionsSortType.none) {
+      result.sort((a, b) {
+        int cmp = 0;
+        switch (sortType) {
+          case ConnectionsSortType.host:
+            cmp = a.metadata.host.compareTo(b.metadata.host);
+            break;
+          case ConnectionsSortType.download:
+            cmp = a.download.compareTo(b.download);
+            break;
+          case ConnectionsSortType.downloadSpeed:
+            cmp = (a.downloadSpeed ?? 0).compareTo(b.downloadSpeed ?? 0);
+            break;
+          case ConnectionsSortType.upload:
+            cmp = a.upload.compareTo(b.upload);
+            break;
+          case ConnectionsSortType.uploadSpeed:
+            cmp = (a.uploadSpeed ?? 0).compareTo(b.uploadSpeed ?? 0);
+            break;
+          case ConnectionsSortType.connectTime:
+            cmp = a.start.compareTo(b.start);
+            break;
+          case ConnectionsSortType.none:
+            break;
+        }
+        if (cmp != 0) {
+          return sortDirection == SortDirection.asc ? cmp : -cmp;
+        }
+        return a.id.compareTo(b.id);
+      });
+    }
+    return result;
   }
 }
 

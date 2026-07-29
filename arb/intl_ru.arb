@@ -778,5 +778,9 @@
   "large": "Крупный",
   "extraLarge": "Очень крупный",
   "switchProfile": "Сменить профиль",
-  "lastUpdated": "Последнее обновление"
+  "lastUpdated": "Последнее обновление",
+  "sortAsc": "По возрастанию",
+  "sortDesc": "По убыванию",
+  "downloadSpeed": "Скорость скачивания",
+  "uploadSpeed": "Скорость загрузки"
 }

@@ -778,5 +778,9 @@
   "large": "Large",
   "extraLarge": "Extra large",
   "switchProfile": "Switch profile",
-  "lastUpdated": "Last updated"
+  "lastUpdated": "Last updated",
+  "sortAsc": "Ascending",
+  "sortDesc": "Descending",
+  "downloadSpeed": "Download speed",
+  "uploadSpeed": "Upload speed"
 }

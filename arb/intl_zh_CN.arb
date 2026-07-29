@@ -778,5 +778,9 @@
   "large": "大",
   "extraLarge": "超大",
   "switchProfile": "切换配置",
-  "lastUpdated": "上次更新"
+  "lastUpdated": "上次更新",
+  "sortAsc": "升序",
+  "sortDesc": "降序",
+  "downloadSpeed": "下载速度",
+  "uploadSpeed": "上传速度"
 }

@@ -32,6 +32,7 @@ class TrackerInfoItem extends ConsumerWidget {
   final Function(String)? onClickKeyword;
   final Widget? action;
   final String detailTitle;
+  final ValueNotifier<TrackerInfosState>? stateNotifier;
 
   const TrackerInfoItem({
     super.key,
@@ -40,6 +41,7 @@ class TrackerInfoItem extends ConsumerWidget {
     this.onClickKeyword,
     this.action,
     required this.detailTitle,
+    this.stateNotifier,
   });
 
   @override
@@ -56,7 +58,17 @@ class TrackerInfoItem extends ConsumerWidget {
           context,
           builder: (_) {
             return CommonScaffold(
-              body: TrackerInfoDetailView(trackerInfo: trackerInfo),
+              body: stateNotifier == null
+                  ? TrackerInfoDetailView(trackerInfo: trackerInfo)
+                  : ValueListenableBuilder<TrackerInfosState>(
+                      valueListenable: stateNotifier!,
+                      builder: (_, state, _) => TrackerInfoDetailView(
+                        trackerInfo: state.trackerInfos.firstWhere(
+                          (info) => info.id == trackerInfo.id,
+                          orElse: () => trackerInfo,
+                        ),
+                      ),
+                    ),
               title: detailTitle,
             );
           },
@@ -256,6 +268,16 @@ class TrackerInfoDetailView extends StatelessWidget {
             (appLocalizations.rule, _ruleText(trackerInfo)),
             (appLocalizations.upload, trackerInfo.upload.traffic.show),
             (appLocalizations.download, trackerInfo.download.traffic.show),
+            if (trackerInfo.uploadSpeed != null)
+              (
+                appLocalizations.uploadSpeed,
+                '${trackerInfo.uploadSpeed!.traffic.show}/s',
+              ),
+            if (trackerInfo.downloadSpeed != null)
+              (
+                appLocalizations.downloadSpeed,
+                '${trackerInfo.downloadSpeed!.traffic.show}/s',
+              ),
           ]),
         ),
         generateSectionV3(
