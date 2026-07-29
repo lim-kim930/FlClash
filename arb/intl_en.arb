@@ -545,6 +545,8 @@
   "geoAutoUpdate": "Auto Update",
   "geoAutoUpdateInterval": "Auto Update Interval",
   "geoAutoUpdateIntervalTip": "Auto update interval must be greater than 0",
+  "geoSilentUpdate": "Silent Update",
+  "geoSilentUpdateDesc": "Don't show notifications while updating Geo resources; errors are still shown",
   "hours": "hours",
   "hoursCount": "{count} hours",
   "geoResources": "Geo Resources",

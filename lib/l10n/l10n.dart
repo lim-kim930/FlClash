@@ -4439,6 +4439,26 @@ class AppLocalizations {
     );
   }
 
+  /// `Silent Update`
+  String get geoSilentUpdate {
+    return Intl.message(
+      'Silent Update',
+      name: 'geoSilentUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Don't show notifications while updating Geo resources; errors are still shown`
+  String get geoSilentUpdateDesc {
+    return Intl.message(
+      'Don\'t show notifications while updating Geo resources; errors are still shown',
+      name: 'geoSilentUpdateDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `hours`
   String get hours {
     return Intl.message('hours', name: 'hours', desc: '', args: []);

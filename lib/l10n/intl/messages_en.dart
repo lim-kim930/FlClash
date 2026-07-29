@@ -421,6 +421,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo Options"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo Resources"),
+    "geoSilentUpdate": MessageLookupByLibrary.simpleMessage("Silent Update"),
+    "geoSilentUpdateDesc": MessageLookupByLibrary.simpleMessage(
+      "Don\'t show notifications while updating Geo resources; errors are still shown",
+    ),
     "geoSkipped": m7,
     "geoUpdated": m8,
     "geoUpdating": m9,

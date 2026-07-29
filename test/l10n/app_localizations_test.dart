@@ -577,6 +577,8 @@ List<String> _allMessages(AppLocalizations appLocalizations) {
     appLocalizations.geoAutoUpdate,
     appLocalizations.geoAutoUpdateInterval,
     appLocalizations.geoAutoUpdateIntervalTip,
+    appLocalizations.geoSilentUpdate,
+    appLocalizations.geoSilentUpdateDesc,
     appLocalizations.hours,
     appLocalizations.hoursCount('value'),
     appLocalizations.geoResources,

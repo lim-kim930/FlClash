@@ -28,6 +28,9 @@ class ResourcesView extends StatelessWidget {
               (state) => VM2(state.geoAutoUpdate, state.geoUpdateInterval),
             ),
           );
+          final geoSilentUpdate = ref.watch(
+            appSettingProvider.select((state) => state.geoSilentUpdate),
+          );
           return generateListView([
             ...generateSection(
               title: appLocalizations.geoOptions,
@@ -83,6 +86,18 @@ class ResourcesView extends StatelessWidget {
                         );
                   },
                 ),
+                ListItem.toggle(
+                  title: Text(appLocalizations.geoSilentUpdate),
+                  subtitle: Text(appLocalizations.geoSilentUpdateDesc),
+                  value: geoSilentUpdate,
+                  onChanged: (value) {
+                    ref
+                        .read(appSettingProvider.notifier)
+                        .update(
+                          (state) => state.copyWith(geoSilentUpdate: value),
+                        );
+                  },
+                ),
               ],
             ),
             ...generateSection(
@@ -129,7 +144,7 @@ class _GeoResourceListItemState extends ConsumerState<_GeoResourceListItem> {
     );
     if (newUrl != null && newUrl != url && mounted) {
       try {
-        ref
+        await ref
             .read(geoResourceActionProvider.notifier)
             .updateGeoResourceUrl(widget.type, newUrl);
       } catch (e) {

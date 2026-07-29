@@ -545,6 +545,8 @@
   "geoAutoUpdate": "Автообновление",
   "geoAutoUpdateInterval": "Интервал автообновления",
   "geoAutoUpdateIntervalTip": "Интервал автообновления должен быть больше 0",
+  "geoSilentUpdate": "Тихое обновление",
+  "geoSilentUpdateDesc": "Не показывать уведомления при обновлении ресурсов Geo; ошибки по-прежнему отображаются",
   "hours": "часов",
   "hoursCount": "{count} часов",
   "geoResources": "Ресурсы Geo",

@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/providers/state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -176,6 +178,91 @@ void main() {
       );
 
       expect(setupAction.applyProfileCount, 1);
+    });
+
+    test('notifies geo update status when silent update is off', () async {
+      final container = ProviderContainer(
+        overrides: [
+          geoResourceActionProvider.overrideWith(_TestGeoResourceAction.new),
+        ],
+      );
+      addTearDown(container.dispose);
+      final action =
+          container.read(geoResourceActionProvider.notifier)
+              as _TestGeoResourceAction;
+      final key = GeoResource.MMDB.updatingKey;
+      final l10n = await AppLocalizations.load(const Locale('en'));
+
+      action.handleGeoUpdateStatus('MMDB', true, false, null);
+      expect(action.messages, [l10n.geoUpdating('MMDB')]);
+      expect(container.read(isUpdatingProvider(key)), true);
+
+      action.handleGeoUpdateStatus('MMDB', false, true, null);
+      expect(action.messages.last, l10n.geoSkipped('MMDB'));
+      expect(container.read(isUpdatingProvider(key)), false);
+
+      action.handleGeoUpdateStatus('MMDB', false, false, null);
+      expect(action.messages.last, l10n.geoUpdated('MMDB'));
+    });
+
+    test('reports only the error when an update fails', () async {
+      final container = ProviderContainer(
+        overrides: [
+          geoResourceActionProvider.overrideWith(_TestGeoResourceAction.new),
+        ],
+      );
+      addTearDown(container.dispose);
+      final action =
+          container.read(geoResourceActionProvider.notifier)
+              as _TestGeoResourceAction;
+      await AppLocalizations.load(const Locale('en'));
+
+      action.handleGeoUpdateStatus('GEOSITE', false, false, 'boom');
+
+      expect(action.messages, ['boom']);
+    });
+
+    test('silent update swallows status notifiers but keeps spinner', () async {
+      final container = ProviderContainer(
+        overrides: [
+          geoResourceActionProvider.overrideWith(_TestGeoResourceAction.new),
+        ],
+      );
+      addTearDown(container.dispose);
+      container
+          .read(appSettingProvider.notifier)
+          .update((state) => state.copyWith(geoSilentUpdate: true));
+      final action =
+          container.read(geoResourceActionProvider.notifier)
+              as _TestGeoResourceAction;
+      final key = GeoResource.MMDB.updatingKey;
+
+      action.handleGeoUpdateStatus('MMDB', true, false, null);
+      expect(container.read(isUpdatingProvider(key)), true);
+
+      action.handleGeoUpdateStatus('MMDB', false, true, null);
+      expect(container.read(isUpdatingProvider(key)), false);
+
+      expect(action.messages, isEmpty);
+    });
+
+    test('silent update still reports errors', () async {
+      final container = ProviderContainer(
+        overrides: [
+          geoResourceActionProvider.overrideWith(_TestGeoResourceAction.new),
+        ],
+      );
+      addTearDown(container.dispose);
+      container
+          .read(appSettingProvider.notifier)
+          .update((state) => state.copyWith(geoSilentUpdate: true));
+      final action =
+          container.read(geoResourceActionProvider.notifier)
+              as _TestGeoResourceAction;
+
+      action.handleGeoUpdateStatus('GEOSITE', false, false, 'boom');
+
+      expect(action.messages, ['boom']);
     });
   });
 
@@ -607,4 +694,11 @@ class _RaceCommonAction extends CommonAction {
   Future<void> updateTraffic() async {
     updateTrafficCount++;
   }
+}
+
+class _TestGeoResourceAction extends GeoResourceAction {
+  final List<String> messages = [];
+
+  @override
+  void showNotifier(String text) => messages.add(text);
 }
