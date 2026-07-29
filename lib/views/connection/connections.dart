@@ -104,7 +104,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
   Future<void> _updateConnections() async {
     final newInfos = await coreController.getConnections();
     final prevInfos = _connectionsStateNotifier.value.trackerInfos;
-    final prevMap = { for (final info in prevInfos) info.id: info };
+    final prevMap = {for (final info in prevInfos) info.id: info};
     final updatedInfos = newInfos.map((info) {
       final prev = prevMap[info.id];
       if (prev != null) {
@@ -113,10 +113,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
           uploadSpeed: info.upload - prev.upload,
         );
       } else {
-        return info.copyWith(
-          downloadSpeed: 0,
-          uploadSpeed: 0,
-        );
+        return info.copyWith(downloadSpeed: 0, uploadSpeed: 0);
       }
     }).toList();
 
@@ -187,7 +184,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
             itemBuilder: (context, index) {
               return items[index];
             },
-            itemCount: connections.length,
+            itemCount: items.length,
           );
         },
       ),
