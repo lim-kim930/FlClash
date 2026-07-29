@@ -131,6 +131,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 (trackerInfo) => TrackerInfoItem(
                   key: Key(trackerInfo.id),
                   trackerInfo: trackerInfo,
+                  stateNotifier: _requestsStateNotifier,
                   onClickKeyword: (value) {
                     context.commonScaffoldState?.addKeyword(value);
                   },

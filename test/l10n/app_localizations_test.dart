@@ -585,5 +585,9 @@ List<String> _allMessages(AppLocalizations appLocalizations) {
     appLocalizations.geoUpdated('value'),
     appLocalizations.secondsCount('value'),
     appLocalizations.entriesCount('value'),
+    appLocalizations.sortAsc,
+    appLocalizations.sortDesc,
+    appLocalizations.downloadSpeed,
+    appLocalizations.uploadSpeed,
   ];
 }

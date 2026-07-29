@@ -553,5 +553,9 @@
   "geoSkipped": "{name} はすでに最新です",
   "geoUpdated": "{name} 更新済み",
   "secondsCount": "{count} 秒",
-  "entriesCount": "{count} エントリ"
+  "entriesCount": "{count} エントリ",
+  "sortAsc": "昇順",
+  "sortDesc": "降順",
+  "downloadSpeed": "ダウンロード速度",
+  "uploadSpeed": "アップロード速度"
 }

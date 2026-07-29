@@ -553,5 +553,9 @@
   "geoSkipped": "{name} is already up to date",
   "geoUpdated": "{name} updated",
   "secondsCount": "{count} seconds",
-  "entriesCount": "{count} entries"
+  "entriesCount": "{count} entries",
+  "sortAsc": "Ascending",
+  "sortDesc": "Descending",
+  "downloadSpeed": "Download speed",
+  "uploadSpeed": "Upload speed"
 }
