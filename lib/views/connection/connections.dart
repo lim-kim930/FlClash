@@ -2,12 +2,14 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/method.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 import 'item.dart';
+import 'setting.dart';
 
 class ConnectionsView extends ConsumerStatefulWidget {
   final Future<List<TrackerInfo>> Function()? connectionsReader;
@@ -36,6 +38,39 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
           await _refreshConnections();
         },
         icon: const Icon(Icons.delete_sweep_outlined),
+      ),
+      CommonPopupBox(
+        targetBuilder: (open) {
+          return IconButton(
+            onPressed: () {
+              final isMobile = ref.read(isMobileViewProvider);
+              open(offset: Offset(0, isMobile ? 0 : 20));
+            },
+            icon: const Icon(Icons.more_vert),
+          );
+        },
+        popup: CommonPopupMenu(
+          items: [
+            PopupMenuItemData(
+              icon: Icons.tune,
+              label: context.appLocalizations.settings,
+              onPressed: () {
+                showSheet(
+                  context: context,
+                  props: const SheetProps(isScrollControlled: true),
+                  builder: (_) {
+                    return AdaptiveSheetScaffold(
+                      body: ConnectionsSetting(
+                        stateNotifier: _connectionsStateNotifier,
+                      ),
+                      title: context.appLocalizations.settings,
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
     ];
   }
@@ -85,8 +120,21 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
   }
 
   void _applyConnections(List<TrackerInfo> trackerInfos) {
+    final prevInfos = _connectionsStateNotifier.value.trackerInfos;
+    final prevMap = {for (final info in prevInfos) info.id: info};
+    final updatedInfos = trackerInfos.map((info) {
+      final prev = prevMap[info.id];
+      if (prev != null) {
+        return info.copyWith(
+          downloadSpeed: info.download - prev.download,
+          uploadSpeed: info.upload - prev.upload,
+        );
+      } else {
+        return info.copyWith(downloadSpeed: 0, uploadSpeed: 0);
+      }
+    }).toList();
     _connectionsStateNotifier.value = _connectionsStateNotifier.value.copyWith(
-      trackerInfos: trackerInfos,
+      trackerInfos: updatedInfos,
     );
   }
 
@@ -129,6 +177,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
               return TrackerInfoItem(
                 key: Key(trackerInfo.id),
                 trackerInfo: trackerInfo,
+                stateNotifier: _connectionsStateNotifier,
                 onClickKeyword: (value) {
                   context.commonScaffoldState?.addKeyword(value);
                 },
