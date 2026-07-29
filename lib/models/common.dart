@@ -244,7 +244,10 @@ extension TrackerInfosStateExt on TrackerInfosState {
           case ConnectionsSortType.none:
             break;
         }
-        return sortDirection == SortDirection.asc ? cmp : -cmp;
+        if (cmp != 0) {
+          return sortDirection == SortDirection.asc ? cmp : -cmp;
+        }
+        return a.id.compareTo(b.id);
       });
     }
     return result;

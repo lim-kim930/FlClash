@@ -190,7 +190,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
             itemBuilder: (context, index) {
               return items[index];
             },
-            itemCount: connections.length,
+            itemCount: items.length,
           );
         },
       ),
