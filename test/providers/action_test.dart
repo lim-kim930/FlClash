@@ -141,22 +141,41 @@ void main() {
       expect(container.read(isUpdatingProvider(key)), false);
     });
 
-    test('updates valid resource URLs and rejects malformed URLs', () {
-      final container = ProviderContainer();
+    test('updates valid resource URLs and rejects malformed URLs', () async {
+      final container = ProviderContainer(
+        overrides: [setupActionProvider.overrideWith(_TestSetupAction.new)],
+      );
       addTearDown(container.dispose);
       final action = container.read(geoResourceActionProvider.notifier);
 
-      expect(
-        () => action.updateGeoResourceUrl(GeoResource.MMDB, 'not-a-url'),
+      await expectLater(
+        action.updateGeoResourceUrl(GeoResource.MMDB, 'not-a-url'),
         throwsA('Invalid url'),
       );
 
       const url = 'https://example.com/Country.mmdb';
-      action.updateGeoResourceUrl(GeoResource.MMDB, url);
+      await action.updateGeoResourceUrl(GeoResource.MMDB, url);
       expect(
         container.read(patchClashConfigProvider).geoXUrl[GeoResource.MMDB],
         url,
       );
+    });
+
+    test('reapplies the profile after a URL change', () async {
+      final container = ProviderContainer(
+        overrides: [setupActionProvider.overrideWith(_TestSetupAction.new)],
+      );
+      addTearDown(container.dispose);
+      final action = container.read(geoResourceActionProvider.notifier);
+      final setupAction =
+          container.read(setupActionProvider.notifier) as _TestSetupAction;
+
+      await action.updateGeoResourceUrl(
+        GeoResource.GEOSITE,
+        'https://example.com/geosite.dat',
+      );
+
+      expect(setupAction.applyProfileCount, 1);
     });
   });
 

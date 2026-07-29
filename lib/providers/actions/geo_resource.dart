@@ -9,12 +9,16 @@ class GeoResourceAction extends _$GeoResourceAction {
     await coreController.updateGeoData(geoResource.name);
   }
 
-  void updateGeoResourceUrl(GeoResource geoResource, String newUrl) {
+  Future<void> updateGeoResourceUrl(
+    GeoResource geoResource,
+    String newUrl,
+  ) async {
     if (!newUrl.isUrl) {
       throw 'Invalid url';
     }
     ref.read(patchClashConfigProvider.notifier).update((state) {
       return state.copyWith(geoXUrl: {...state.geoXUrl, geoResource: newUrl});
     });
+    await ref.read(setupActionProvider.notifier).applyProfile(silence: true);
   }
 }
