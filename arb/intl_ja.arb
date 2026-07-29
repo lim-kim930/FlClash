@@ -546,6 +546,8 @@
   "geoAutoUpdate": "自動更新",
   "geoAutoUpdateInterval": "自動更新間隔",
   "geoAutoUpdateIntervalTip": "自動更新間隔は0より大きくなければなりません",
+  "geoSilentUpdate": "サイレント更新",
+  "geoSilentUpdateDesc": "Geoリソースの更新中に通知を表示しません。エラーは引き続き表示されます",
   "hours": "時間",
   "hoursCount": "{count} 時間",
   "geoResources": "Geoリソース",

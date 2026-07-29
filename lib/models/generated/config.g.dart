@@ -36,6 +36,7 @@ _AppSettingProps _$AppSettingPropsFromJson(Map<String, dynamic> json) =>
           RestoreStrategy.compatible,
       showTrayTitle: json['showTrayTitle'] as bool? ?? true,
       customUserAgent: json['customUserAgent'] as String? ?? '',
+      geoSilentUpdate: json['geoSilentUpdate'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
@@ -63,6 +64,7 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'restoreStrategy': _$RestoreStrategyEnumMap[instance.restoreStrategy]!,
       'showTrayTitle': instance.showTrayTitle,
       'customUserAgent': instance.customUserAgent,
+      'geoSilentUpdate': instance.geoSilentUpdate,
     };
 
 const _$RestoreStrategyEnumMap = {

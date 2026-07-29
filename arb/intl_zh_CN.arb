@@ -546,6 +546,8 @@
   "geoAutoUpdate": "自动更新",
   "geoAutoUpdateInterval": "自动更新间隔",
   "geoAutoUpdateIntervalTip": "自动更新间隔必须大于0",
+  "geoSilentUpdate": "静默更新",
+  "geoSilentUpdateDesc": "更新 Geo 资源时不弹出提示，失败时仍会提示",
   "hours": "小时",
   "hoursCount": "{count} 小时",
   "geoResources": "Geo 资源",
