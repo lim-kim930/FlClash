@@ -12,6 +12,8 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'setting.dart';
+
 class ConnectionsView extends ConsumerStatefulWidget {
   final ScrollController? scrollController;
   final Future<List<TrackerInfo>> Function()? connectionsReader;
@@ -56,6 +58,20 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
         onPressed: () async {
           unawaited(_core.closeConnections());
           await _refreshConnections();
+        },
+      ),
+      IconButtonData(
+        glyph: AppGlyphs.settings,
+        tooltip: context.appLocalizations.settings,
+        onPressed: () {
+          showSheet(
+            context: context,
+            props: const SheetProps(isScrollControlled: true),
+            builder: (_) => AdaptiveSheetScaffold(
+              title: context.appLocalizations.settings,
+              body: ConnectionsSetting(stateNotifier: _listController),
+            ),
+          );
         },
       ),
     ];

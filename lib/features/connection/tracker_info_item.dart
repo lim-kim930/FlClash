@@ -48,6 +48,7 @@ class TrackerInfoItem extends ConsumerWidget {
   final Function(String)? onClickKeyword;
   final Widget? action;
   final String detailTitle;
+  final ValueNotifier<TrackerInfosState>? stateNotifier;
 
   const TrackerInfoItem({
     super.key,
@@ -56,6 +57,7 @@ class TrackerInfoItem extends ConsumerWidget {
     this.onClickKeyword,
     this.action,
     required this.detailTitle,
+    this.stateNotifier,
   });
 
   @override
@@ -267,6 +269,16 @@ class TrackerInfoDetailView extends StatelessWidget {
             (appLocalizations.rule, _ruleText(trackerInfo)),
             (appLocalizations.upload, trackerInfo.upload.traffic.show),
             (appLocalizations.download, trackerInfo.download.traffic.show),
+            if (trackerInfo.uploadSpeed != null)
+              (
+                appLocalizations.uploadSpeed,
+                '${trackerInfo.uploadSpeed!.traffic.show}/s',
+              ),
+            if (trackerInfo.downloadSpeed != null)
+              (
+                appLocalizations.downloadSpeed,
+                '${trackerInfo.downloadSpeed!.traffic.show}/s',
+              ),
           ]),
         ),
         generateSection(

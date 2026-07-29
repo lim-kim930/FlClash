@@ -47,6 +47,7 @@ class TrackerInfoList extends StatelessWidget {
   final List<TrackerInfo> trackerInfos;
   final String detailTitle;
   final RecordTable<TrackerInfo>? table;
+  final ValueNotifier<TrackerInfosState>? stateNotifier;
   final ScrollController? controller;
   final bool reverse;
   final bool shrinkWrap;
@@ -59,6 +60,7 @@ class TrackerInfoList extends StatelessWidget {
     required this.trackerInfos,
     required this.detailTitle,
     this.table,
+    this.stateNotifier,
     this.controller,
     this.reverse = false,
     this.shrinkWrap = false,
@@ -87,6 +89,7 @@ class TrackerInfoList extends StatelessWidget {
         detailTitle: detailTitle,
         table: table,
         striped: index.isOdd,
+        stateNotifier: stateNotifier,
         actionBuilder: actionBuilder,
       ),
     );
@@ -99,6 +102,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
   final List<TrackerInfo> trackerInfos;
   final String detailTitle;
   final RecordTable<TrackerInfo>? table;
+  final ValueNotifier<TrackerInfosState>? stateNotifier;
   final ScrollController? controller;
   final EdgeInsetsGeometry? padding;
   final Widget? Function(TrackerInfo trackerInfo)? actionBuilder;
@@ -108,6 +112,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
     required this.trackerInfos,
     required this.detailTitle,
     this.table,
+    this.stateNotifier,
     this.controller,
     this.padding,
     this.actionBuilder,
@@ -135,6 +140,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
         detailTitle: detailTitle,
         table: table,
         striped: positions[trackerInfo.id]?.isOdd ?? false,
+        stateNotifier: stateNotifier,
         actionBuilder: actionBuilder,
       ),
     );
@@ -144,6 +150,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
 Widget _buildTrackerInfoItem(
   BuildContext context,
   TrackerInfo trackerInfo, {
+  ValueNotifier<TrackerInfosState>? stateNotifier,
   required bool isLive,
   required String detailTitle,
   required RecordTable<TrackerInfo>? table,
@@ -168,5 +175,6 @@ Widget _buildTrackerInfoItem(
     },
     action: actionBuilder?.call(trackerInfo),
     detailTitle: detailTitle,
+    stateNotifier: stateNotifier,
   );
 }
