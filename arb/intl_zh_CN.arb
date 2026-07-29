@@ -618,5 +618,9 @@
   "authorize": "授权",
   "installedAppsPermissionRequired": "需要读取应用列表权限",
   "installedAppsPermissionDesc": "当前系统在授权前不会提供已安装的应用列表，授权后即可配置分应用代理。",
-  "installedAppsPermissionDeniedMessage": "读取应用列表权限已被拒绝，无法获取已安装的应用。请前往系统设置手动开启。"
+  "installedAppsPermissionDeniedMessage": "读取应用列表权限已被拒绝，无法获取已安装的应用。请前往系统设置手动开启。",
+  "sortAsc": "升序",
+  "sortDesc": "降序",
+  "downloadSpeed": "下载速度",
+  "uploadSpeed": "上传速度"
 }
