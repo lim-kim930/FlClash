@@ -114,3 +114,51 @@ grep -q -- "- Initial release" "$actual"
     bash "$generator" v1.0.0 "$actual"
 )
 grep -qF -- "- **geo:** add a silent update toggle ([$feat_geo](https://github.com/owner/name/commit/" "$actual"
+
+# Syncing with upstream rebases the fork's patches, so the previous release tag
+# stops being an ancestor of HEAD.
+rebase_repo="$temp_dir/rebase"
+git init --quiet --initial-branch=main "$rebase_repo"
+git -C "$rebase_repo" config user.email "release-notes-test@example.com"
+git -C "$rebase_repo" config user.name "Release notes test"
+git -C "$rebase_repo" config core.autocrlf false
+
+rebase_commit() {
+  local file="$1"
+  local content="$2"
+  local message="$3"
+  local date="$4"
+
+  printf '%s\n' "$content" > "$rebase_repo/$file"
+  git -C "$rebase_repo" add "$file"
+  GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" \
+    git -C "$rebase_repo" commit --quiet --message "$message"
+}
+
+rebase_commit upstream.txt "0.8.95" "Update changelog" "2025-02-01T00:00:00Z"
+upstream_base="$(git -C "$rebase_repo" rev-parse HEAD)"
+rebase_commit geo.txt "toggle" "feat(geo): add a silent update toggle" "2025-02-02T00:00:00Z"
+rebase_commit sort.txt "stable" "fix(connection): stabilize sort order" "2025-02-03T00:00:00Z"
+git -C "$rebase_repo" tag v100.0.1
+
+git -C "$rebase_repo" checkout --quiet -b upstream "$upstream_base"
+rebase_commit upstream.txt "0.8.96" "Optimize commented policy" "2025-02-04T00:00:00Z"
+git -C "$rebase_repo" checkout --quiet main
+git -C "$rebase_repo" rebase --quiet --onto upstream "$upstream_base" main
+
+# One patch comes through the rebase unchanged; the other stands in for a patch
+# reworked while resolving a conflict.
+printf '%s\n' "stable, reworked against upstream" > "$rebase_repo/sort.txt"
+git -C "$rebase_repo" add sort.txt
+git -C "$rebase_repo" commit --quiet --amend --no-edit
+
+! git -C "$rebase_repo" merge-base --is-ancestor v100.0.1 main
+
+(
+  cd "$rebase_repo"
+  bash "$generator" v100.0.1 "$actual"
+)
+# Same patch id as the shipped commit despite the new hash: already released.
+! grep -q "add a silent update toggle" "$actual"
+grep -qF -- "- **connection:** stabilize sort order (" "$actual"
+grep -qF -- "- Optimize commented policy (" "$actual"
