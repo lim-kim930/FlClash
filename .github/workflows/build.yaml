@@ -126,7 +126,6 @@ jobs:
         env:
           ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
         run: |
-          # Nothing else compiles the `android && cgo` files before a `v*` tag.
           CC="$(echo "$ANDROID_NDK_HOME"/toolchains/llvm/prebuilt/*/bin/aarch64-linux-android21-clang)"
           test -x "$CC" || { echo "NDK clang not found at $CC" >&2; exit 1; }
           tags="$(sed -n 's/^tags: *//p' ../build_config.yaml)"
@@ -179,8 +178,6 @@ jobs:
           test -d "$wrapper" || flutter precache
           cp -R "$wrapper/." .
           chmod +x gradlew
-          # `:core` only calls System.loadLibrary; the excluded Flutter tasks would run
-          # the native build hooks for every debug ABI, which no JVM unit test consumes.
           ./gradlew :common:testDebugUnitTest :service:testDebugUnitTest :app:testDebugUnitTest \
             -x :app:compileFlutterBuildDebug -x :app:copyFlutterAssetsDebug
 
@@ -276,7 +273,6 @@ jobs:
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
           echo "${{ secrets.SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
 
-          # Fail fast with a readable message instead of dying inside gradle 10 minutes later.
           python3 -c "import json; json.load(open('android/app/google-services.json'))" || {
             echo "::error::google-services.json is not valid JSON after decoding \
           ($(wc -c < android/app/google-services.json) bytes). The SERVICE_JSON secret is \
@@ -317,8 +313,6 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: git config --global core.longpaths true
 
-      # Stable publishes no Windows or Linux arm64 archive; master makes the action
-      # clone the SDK at the pinned tag and let it fetch the host's own Dart SDK.
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -397,6 +391,13 @@ jobs:
             curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest" |
               sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p'
           )
+          if [ -z "$pre_tag" ]; then
+            pre_tag=$(
+              git tag --list 'v100.*' --sort=-creatordate |
+                grep -vFx "${{ github.ref_name }}" | head -n1 || true
+            )
+            echo "::warning::No published release found; falling back to previous tag '$pre_tag'."
+          fi
           bash .github/scripts/generate_release_notes.sh "$pre_tag" release.md
 
       - name: Patch release.md
