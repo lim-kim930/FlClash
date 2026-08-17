@@ -11,38 +11,24 @@ if [[ -n "${GITHUB_SERVER_URL:-}" && -n "${GITHUB_REPOSITORY:-}" ]]; then
   repo_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
 fi
 
-commits="$(mktemp)"
-trap 'rm -f "$commits"' EXIT
+# Syncing with upstream rebases this fork's patches, which detaches the previous
+# release tag from HEAD - an ancestry range would then walk straight past it and
+# dump the whole history. The symmetric difference with --cherry-pick compares
+# patch ids rather than hashes, so already shipped patches drop out even after a
+# rewrite. An empty previous_tag means the caller could not bound the range.
+range="${previous_tag:+$previous_tag...}HEAD"
 
-append_range() {
-  local range="$1"
-
-  # %s, not %B: a commit body would otherwise land in the notes one line per
-  # bullet, trailers included. US (\x1f) separates the fields because a subject
-  # can contain anything else.
-  git log --no-merges --pretty=format:'%H%x1f%s' "$range" >> "$commits"
-  # format: omits the trailing newline, so consecutive ranges would otherwise
-  # splice the last commit of one onto the first of the next.
-  printf '\n' >> "$commits"
-}
-
-current_tag=""
-while IFS= read -r next_tag; do
-  if [[ -n "$current_tag" ]]; then
-    [[ "$current_tag" == "$previous_tag" ]] && break
-    append_range "$next_tag..$current_tag"
-  fi
-  current_tag="$next_tag"
-done < <(git tag --merged HEAD --sort=-creatordate)
-
-if [[ -n "$current_tag" && "$current_tag" != "$previous_tag" ]]; then
-  append_range "$current_tag"
-fi
-
+# %s, not %B: a commit body would otherwise land in the notes one line per
+# bullet, trailers included. US (\x1f) separates the fields because a subject
+# can contain anything else. tformat: terminates the last record, which format:
+# would hand to awk without a newline.
+#
 # Conventional Commits: "type(scope)!: subject". Anything that does not parse
 # keeps its subject verbatim and lands in Other Changes, which is what upstream
 # commits do - they predate the convention.
-awk -F'\037' -v repo="$repo_url" '
+git log --no-merges --cherry-pick --right-only \
+  --pretty=tformat:'%H%x1f%s' "$range" |
+  awk -F'\037' -v repo="$repo_url" '
   NF < 2 || $2 ~ /Update changelog/ { next }
   {
     short = substr($1, 1, 7)
@@ -72,7 +58,7 @@ awk -F'\037' -v repo="$repo_url" '
     # collect at the end of their section instead of leading it.
     printf "%d\t%s\t%d\037%s\037%s\t%s\n", ord, section, (scope == "" ? 1 : 0), scope, text, bullet
   }
-' "$commits" |
+' |
   sort -t"$(printf '\t')" -k1,1n -k3,3 |
   awk -F'\t' '
     $2 != previous { if (NR > 1) print ""; print "### " $2; print ""; previous = $2 }
