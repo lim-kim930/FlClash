@@ -48,3 +48,59 @@ Read these only when the task touches their area:
 
 Use repo skills from `.agents/skills/` when a task matches their descriptions. Current skills cover localization,
 provider tests, UI work, and core/platform changes.
+
+## Fork Workflow
+
+This is a fork of `chen08209/FlClash`. Everything below is fork-specific and has
+no upstream counterpart. `AGENTS.md` and `.agents/*` are upstream-maintained;
+keep fork-only rules in this file so re-syncs have a single conflict site.
+
+### Track `upstream/main`, never `upstream/dev`
+
+Upstream keeps one unreleased commit at the tip of `dev` and amends it
+continuously for weeks to months, freezing it only when an `Update changelog`
+commit lands and `main` advances. `upstream/dev` is therefore always `main` plus
+one commit whose hash changes without warning. Basing the fork on that tip
+orphans its base on every amend.
+
+Re-sync only when upstream cuts a release:
+
+```bash
+git fetch upstream --tags
+git rebase --onto upstream/main <old-base> dev
+```
+
+`<old-base>` is the upstream commit the fork commits currently sit on. Never use
+a plain `git rebase upstream/main dev` — the merge-base is usually an older
+commit, so git would replay upstream's own abandoned WIP commits on top of a
+`main` that already contains their finalized equivalents.
+
+### Expect the `pubspec.yaml` conflict
+
+Upstream bumps the `+YYYYMMDDNN` build stamp on the same line the fork's
+`chore(release)` commit rewrites to `100.x`. Resolve as
+`100.x.y+<upstream's newer stamp>`; the build number feeds Android versionCode
+and must increase. Release tags must match the pubspec version, because
+artifacts are named from it.
+
+### rerere is enabled — auto-resolved conflicts are not pre-approved
+
+`rerere.enabled` is set on this repository, so git silently replays past
+conflict resolutions. It applies them without prompting, and a wrong resolution
+gets memorized the moment it is staged. Before every `git rebase --continue`,
+inspect what it filled in:
+
+```bash
+git rerere diff      # what rerere applied this time
+git diff --cached    # the staged result
+```
+
+Never stage a rerere-filled file unread. Use `git rerere forget <path>` to drop
+a bad recorded resolution.
+
+### Known upstream breakage
+
+`test/common/task_test.dart` asserts `startsWith('/profiles/providers/7/...')`
+and fails on Windows because `join()` yields backslashes. It passes on the
+Linux CI runner. Verified failing on pure `upstream/main`, so do not treat it as
+a fork regression.
