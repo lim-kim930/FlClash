@@ -341,6 +341,14 @@ Future<AuthorizeCode> registerHelperService(
       break;
   }
 
+  if (await _waitForHelperService(
+    timeout: const Duration(seconds: 5),
+    interval: const Duration(milliseconds: 500),
+  )) {
+    commonPrint.log('helper service became ready while still starting');
+    return AuthorizeCode.none;
+  }
+
   commonPrint.log(
     'helper service is unavailable, requesting elevated installation',
     logLevel: LogLevel.warning,
@@ -363,12 +371,12 @@ Future<AuthorizeCode> registerHelperService(
   return isRunning ? AuthorizeCode.success : AuthorizeCode.error;
 }
 
-Future<bool> _waitForHelperService() async {
-  const timeout = Duration(seconds: 6);
-  const interval = Duration(seconds: 1);
-  const maxAttempts = 6;
+Future<bool> _waitForHelperService({
+  Duration timeout = const Duration(seconds: 15),
+  Duration interval = const Duration(seconds: 1),
+}) async {
   final stopwatch = Stopwatch()..start();
-  for (var attempt = 0; attempt < maxAttempts; attempt++) {
+  while (true) {
     final remaining = timeout - stopwatch.elapsed;
     if (remaining <= Duration.zero) return false;
     final isRunning =
@@ -376,10 +384,9 @@ Future<bool> _waitForHelperService() async {
         HelperReadiness.ready;
     if (isRunning) return true;
     final delay = timeout - stopwatch.elapsed;
-    if (delay <= Duration.zero || attempt == maxAttempts - 1) return false;
+    if (delay <= Duration.zero) return false;
     await Future.delayed(delay < interval ? delay : interval);
   }
-  return false;
 }
 
 final windows = system.isWindows ? Windows() : null;
