@@ -98,6 +98,7 @@ class Permissions {
     }
     _hadExcludeSSIDs = needRequestPermission;
     if (res == WifiSsidPermission.denied &&
+        current != WifiSsidPermission.permanentlyDenied &&
         needRequestPermission &&
         !_autoRequestedLocation &&
         !_isRequestingLocation) {
