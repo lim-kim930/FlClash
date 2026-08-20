@@ -151,4 +151,24 @@ void main() {
 
     expect(requestPermissionCalls, 2);
   });
+  test('never requests again once permanently denied', () async {
+    final calls = <String>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          calls.add(call.method);
+          return 1;
+        });
+    container.read(locationPermissionsProvider.notifier).value =
+        WifiSsidPermission.permanentlyDenied;
+
+    await Permissions.test(
+      supportsLocationPermissions: true,
+    ).checkLocationPermissions(container.read);
+
+    expect(calls, ['checkPermission']);
+    expect(
+      container.read(locationPermissionsProvider),
+      WifiSsidPermission.permanentlyDenied,
+    );
+  });
 }

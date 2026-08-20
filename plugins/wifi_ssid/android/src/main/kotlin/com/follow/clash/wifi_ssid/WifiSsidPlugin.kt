@@ -81,6 +81,8 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         private const val REQUEST_CODE_LOCATION = 1001
         private const val REQUEST_CODE_BACKGROUND_LOCATION = 1002
         private const val SSID_TIMEOUT_MILLIS = 3_000L
+        private const val PREFERENCES_NAME = "wifi_ssid"
+        private const val KEY_LOCATION_REQUESTED = "location_permission_requested"
 
         // Values must match WifiSsidPermission enum index in Dart
         private const val PERMISSION_GRANTED = 0
@@ -197,6 +199,8 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 Manifest.permission.ACCESS_COARSE_LOCATION,
             )
         }
+        ctx.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+            .edit().putBoolean(KEY_LOCATION_REQUESTED, true).apply()
         ActivityCompat.requestPermissions(act, permissions, REQUEST_CODE_LOCATION)
     }
 
@@ -226,7 +230,10 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             !hasBackgroundLocation(context) -> Manifest.permission.ACCESS_BACKGROUND_LOCATION
             else -> return PERMISSION_GRANTED
         }
-        if (!afterRequest) return PERMISSION_DENIED
+        val hasRequested = missing == Manifest.permission.ACCESS_FINE_LOCATION &&
+            context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+                .getBoolean(KEY_LOCATION_REQUESTED, false)
+        if (!afterRequest && !hasRequested) return PERMISSION_DENIED
         val activity = activity ?: return PERMISSION_DENIED
         return if (ActivityCompat.shouldShowRequestPermissionRationale(activity, missing)) {
             PERMISSION_DENIED
