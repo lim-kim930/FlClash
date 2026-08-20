@@ -233,6 +233,14 @@ class Windows {
         break;
     }
 
+    if (await _waitForHelperService(
+      timeout: _helperStartupTimeout,
+      interval: _helperStartupInterval,
+    )) {
+      commonPrint.log('helper service became ready while still starting');
+      return AuthorizeCode.none;
+    }
+
     commonPrint.log(
       'helper service is unavailable, requesting elevated installation',
       logLevel: LogLevel.warning,
@@ -245,7 +253,9 @@ class Windows {
       return AuthorizeCode.error;
     }
 
-    final isRunning = await _waitForHelperService();
+    final isRunning = await _waitForHelperService(
+      timeout: _helperInstallTimeout,
+    );
     commonPrint.log(
       isRunning
           ? 'helper service installation completed'
@@ -255,12 +265,16 @@ class Windows {
     return isRunning ? AuthorizeCode.success : AuthorizeCode.error;
   }
 
-  Future<bool> _waitForHelperService() async {
-    const timeout = Duration(seconds: 6);
-    const interval = Duration(seconds: 1);
-    const maxAttempts = 6;
+  static const _helperStartupTimeout = Duration(seconds: 5);
+  static const _helperStartupInterval = Duration(milliseconds: 500);
+  static const _helperInstallTimeout = Duration(seconds: 15);
+
+  Future<bool> _waitForHelperService({
+    required Duration timeout,
+    Duration interval = const Duration(seconds: 1),
+  }) async {
     final stopwatch = Stopwatch()..start();
-    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+    while (true) {
       final remaining = timeout - stopwatch.elapsed;
       if (remaining <= Duration.zero) return false;
       final isRunning =
@@ -271,10 +285,9 @@ class Windows {
           WindowsHelperReadiness.ready;
       if (isRunning) return true;
       final delay = timeout - stopwatch.elapsed;
-      if (delay <= Duration.zero || attempt == maxAttempts - 1) return false;
+      if (delay <= Duration.zero) return false;
       await Future.delayed(delay < interval ? delay : interval);
     }
-    return false;
   }
 
   Future<bool> registerTask(String appName) async {

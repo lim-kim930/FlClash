@@ -699,6 +699,59 @@ void main() {
 
       expect(container.read(autoSetSystemDnsStateProvider).a, isFalse);
     });
+
+    test('recovers from a failed authorization without prompting', () async {
+      late _AuthorizationSetupAction setupAction;
+      final container = ProviderContainer(
+        overrides: [
+          setupActionProvider.overrideWith(() {
+            setupAction = _AuthorizationSetupAction([AuthorizeCode.error]);
+            return setupAction;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update((state) => state.copyWith.tun(enable: true));
+      container.read(setupActionProvider);
+
+      expect(await setupAction.requestAdmin(true), isTrue);
+      expect(
+        container.read(authorizedTunEnableProvider),
+        TunAuthorizationState.unauthorized,
+      );
+      expect(container.read(autoSetSystemDnsStateProvider).a, isFalse);
+
+      setupAction.privilege = true;
+
+      expect(await setupAction.requestAdmin(true), isFalse);
+      expect(setupAction.authorizationRequestCount, 1);
+      expect(
+        container.read(authorizedTunEnableProvider),
+        TunAuthorizationState.authorized,
+      );
+    });
+
+    test('skips the privilege probe once authorized', () async {
+      late _AuthorizationSetupAction setupAction;
+      final container = ProviderContainer(
+        overrides: [
+          setupActionProvider.overrideWith(() {
+            setupAction = _AuthorizationSetupAction([AuthorizeCode.none]);
+            return setupAction;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(setupActionProvider);
+
+      expect(await setupAction.requestAdmin(true), isTrue);
+      expect(await setupAction.requestAdmin(true), isTrue);
+
+      expect(setupAction.authorizationRequestCount, 1);
+      expect(setupAction.privilegeCheckCount, 0);
+    });
   });
 }
 
@@ -797,13 +850,21 @@ final _restartFailure = Exception('restart failed');
 
 class _AuthorizationSetupAction extends SetupAction {
   final List<AuthorizeCode> authorizationResults;
+  bool privilege = false;
   int authorizationRequestCount = 0;
+  int privilegeCheckCount = 0;
 
   _AuthorizationSetupAction(this.authorizationResults);
 
   @override
   Future<AuthorizeCode> authorizeCore() async {
     return authorizationResults[authorizationRequestCount++];
+  }
+
+  @override
+  Future<bool> hasCorePrivilege() async {
+    privilegeCheckCount++;
+    return privilege;
   }
 }
 

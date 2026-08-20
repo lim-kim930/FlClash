@@ -344,19 +344,31 @@ class SetupAction extends _$SetupAction {
     return system.authorizeCore();
   }
 
+  @protected
+  Future<bool> hasCorePrivilege() {
+    return system.checkIsAdmin();
+  }
+
   @visibleForTesting
   Future<bool> requestAdmin(bool enableTun) async {
     if (!enableTun) {
       return true;
     }
     final authorizationState = ref.read(authorizedTunEnableProvider);
-    if (authorizationState != TunAuthorizationState.none) {
-      return true;
-    }
-
     final authorizationNotifier = ref.read(
       authorizedTunEnableProvider.notifier,
     );
+    if (authorizationState == TunAuthorizationState.authorized) {
+      return true;
+    }
+    if (authorizationState == TunAuthorizationState.unauthorized) {
+      if (!await hasCorePrivilege()) {
+        return true;
+      }
+      authorizationNotifier.value = TunAuthorizationState.authorized;
+      return false;
+    }
+
     authorizationNotifier.value = TunAuthorizationState.unauthorized;
 
     final code = await authorizeCore();
