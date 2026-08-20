@@ -15,6 +15,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -70,6 +71,8 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         private const val ERROR_IN_PROGRESS = "IN_PROGRESS"
         private const val REQUEST_CODE_LOCATION = 1001
         private const val SSID_TIMEOUT_MILLIS = 3_000L
+        private const val PREFERENCES_NAME = "wifi_ssid"
+        private const val KEY_LOCATION_REQUESTED = "location_permission_requested"
 
         // Values must match WifiSsidPermission enum index in Dart
         private const val PERMISSION_GRANTED = 0
@@ -163,6 +166,7 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             return
         }
         pendingPermissionResult = result
+        markLocationPermissionRequested(ctx)
         ActivityCompat.requestPermissions(
             act,
             arrayOf(
@@ -171,6 +175,15 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             ),
             REQUEST_CODE_LOCATION,
         )
+    }
+
+    private fun hasRequestedLocationPermission(context: Context): Boolean =
+        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_LOCATION_REQUESTED, false)
+
+    private fun markLocationPermissionRequested(context: Context) {
+        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+            .edit { putBoolean(KEY_LOCATION_REQUESTED, true) }
     }
 
     private fun permissionState(context: Context, afterRequest: Boolean = false): Int {
@@ -182,8 +195,10 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         ) {
             return PERMISSION_GRANTED
         }
-        if (!afterRequest) return PERMISSION_DENIED
         val activity = activity ?: return PERMISSION_DENIED
+        if (!afterRequest && !hasRequestedLocationPermission(context)) {
+            return PERMISSION_DENIED
+        }
         return if (
             ActivityCompat.shouldShowRequestPermissionRationale(
                 activity,

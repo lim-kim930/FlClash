@@ -90,4 +90,46 @@ void main() {
     );
     expect(container.read(currentSSIDProvider), isNull);
   });
+
+  test('requests the location permission at most once per session', () async {
+    final calls = <String>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          calls.add(call.method);
+          return 1;
+        });
+
+    final permissions = Permissions.test(supportsLocationPermissions: true);
+    await permissions.checkLocationPermissions();
+    await permissions.checkLocationPermissions();
+    await permissions.checkLocationPermissions();
+
+    expect(calls, [
+      'checkPermission',
+      'requestPermission',
+      'checkPermission',
+      'checkPermission',
+    ]);
+  });
+
+  test('never requests again once permanently denied', () async {
+    final calls = <String>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          calls.add(call.method);
+          return 1;
+        });
+    container.read(locationPermissionsProvider.notifier).value =
+        WifiSsidPermission.permanentlyDenied;
+
+    await Permissions.test(
+      supportsLocationPermissions: true,
+    ).checkLocationPermissions();
+
+    expect(calls, ['checkPermission']);
+    expect(
+      container.read(locationPermissionsProvider),
+      WifiSsidPermission.permanentlyDenied,
+    );
+  });
 }

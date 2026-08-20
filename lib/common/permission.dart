@@ -45,6 +45,7 @@ class Permissions {
   final bool Function() _supportsLocationPermissions;
 
   bool _isRequestingLocation = false;
+  bool _hasAutoRequestedLocation = false;
   bool needWaitingBatteryOptimizationSettings = false;
 
   void check() {
@@ -89,25 +90,38 @@ class Permissions {
       globalState.container.read(locationPermissionsProvider.notifier).value =
           res;
     }
-    final needRequestPermission = globalState.container.read(
+    if (!_canAutoRequestLocation(res)) {
+      return;
+    }
+    try {
+      _isRequestingLocation = true;
+      _hasAutoRequestedLocation = true;
+      final res = await WifiSsidManager.instance.requestPermission();
+      globalState.container.read(locationPermissionsProvider.notifier).value =
+          res;
+      if (res == WifiSsidPermission.granted) {
+        final ssid = await WifiSsidManager.instance.getSsid();
+        globalState.container.read(currentSSIDProvider.notifier).value = ssid;
+      }
+    } finally {
+      _isRequestingLocation = false;
+    }
+  }
+
+  bool _canAutoRequestLocation(WifiSsidPermission checked) {
+    if (checked != WifiSsidPermission.denied) {
+      return false;
+    }
+    if (_isRequestingLocation || _hasAutoRequestedLocation) {
+      return false;
+    }
+    if (globalState.container.read(locationPermissionsProvider) ==
+        WifiSsidPermission.permanentlyDenied) {
+      return false;
+    }
+    return globalState.container.read(
       excludeSSIDsProvider.select((state) => state.isNotEmpty),
     );
-    if (res == WifiSsidPermission.denied &&
-        needRequestPermission &&
-        !_isRequestingLocation) {
-      try {
-        _isRequestingLocation = true;
-        final res = await WifiSsidManager.instance.requestPermission();
-        globalState.container.read(locationPermissionsProvider.notifier).value =
-            res;
-        if (res == WifiSsidPermission.granted) {
-          final ssid = await WifiSsidManager.instance.getSsid();
-          globalState.container.read(currentSSIDProvider.notifier).value = ssid;
-        }
-      } finally {
-        _isRequestingLocation = false;
-      }
-    }
   }
 }
 
