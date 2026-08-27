@@ -104,12 +104,13 @@ increment the `NN` portion of `+YYYYMMDDNN` for every pushed beta attempt,
 because successful matrix jobs retain installable artifacts even when the
 final release upload is skipped, and Android versionCode must keep increasing.
 
-The generated Inno Setup script lives under `dist/`. Resource paths in
-`windows/packaging/exe/make_config.yaml` must therefore be anchored with Inno's
-`{# AddBackslash(SourcePath) + "..\\path"}` expression rather than relying on
-the compiler's working directory or appending text after `{#SourcePath}`. Inno
-Setup 6.7.1 otherwise fails at `SetupIconFile` with a missing path or invalid
-path syntax error.
+The generated Inno Setup script lives under `dist/`, so resource paths in
+`windows/packaging/exe/make_config.yaml` are relative to that directory. Inno
+Setup 6.7.1 failed while applying the previous single-layer PNG-compressed
+`SetupIconFile`, reporting a misleading path error at line 15. Keep
+`setup_icon_file` unset so the installer uses Inno's built-in icon. The branded
+`windows/runner/resources/app_icon.ico` remains the application and shortcut
+icon and must contain 16, 32, 48, 64, and 256-pixel DIB layers.
 
 ### rerere is enabled — auto-resolved conflicts are not pre-approved
 

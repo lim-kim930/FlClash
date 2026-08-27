@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:test/test.dart';
 
@@ -49,23 +50,38 @@ void main() {
       ]);
     });
 
-    test('Windows Inno resources resolve from the generated script', () {
-      final config = File(
-        'windows/packaging/exe/make_config.yaml',
-      ).readAsStringSync();
+    test(
+      'Windows packaging uses the built-in setup icon and app icon layers',
+      () {
+        final config = File(
+          'windows/packaging/exe/make_config.yaml',
+        ).readAsStringSync();
 
-      expect(
-        config,
-        contains(
-          'setup_icon_file: \'{# AddBackslash(SourcePath) + "..\\windows\\runner\\resources\\app_icon.ico"}\'',
-        ),
-      );
-      expect(
-        config,
-        contains(
-          'file: \'{# AddBackslash(SourcePath) + "..\\windows\\packaging\\exe\\ChineseSimplified.isl"}\'',
-        ),
-      );
-    });
+        expect(config, isNot(contains('setup_icon_file:')));
+        expect(
+          config,
+          contains(r'file: ..\windows\packaging\exe\ChineseSimplified.isl'),
+        );
+
+        final iconBytes = File(
+          'windows/runner/resources/app_icon.ico',
+        ).readAsBytesSync();
+        final iconData = ByteData.sublistView(iconBytes);
+        final iconCount = iconData.getUint16(4, Endian.little);
+        final iconSizes = <int>{};
+        for (var index = 0; index < iconCount; index++) {
+          final entryOffset = 6 + index * 16;
+          final width = iconBytes[entryOffset];
+          iconSizes.add(width == 0 ? 256 : width);
+          final imageOffset = iconData.getUint32(
+            entryOffset + 12,
+            Endian.little,
+          );
+          expect(iconData.getUint32(imageOffset, Endian.little), 40);
+        }
+
+        expect(iconSizes, containsAll(<int>{16, 32, 48, 64, 256}));
+      },
+    );
   });
 }
