@@ -332,8 +332,12 @@ jobs:
 
       - name: Patch release.md
         run: |
-          version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
-          sed "s|VERSION|$version|g" ./.github/release_template.md >> release.md
+          tag_version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
+          package_version=$(sed -nE 's/^version: ([^+]+).*/\1/p' pubspec.yaml)
+          sed \
+            -e "s|/vVERSION/|/v$tag_version/|g" \
+            -e "s|VERSION|$package_version|g" \
+            ./.github/release_template.md >> release.md
 
       - name: Generate sha256
         if: ${{ env.IS_STABLE == 'true' }}
