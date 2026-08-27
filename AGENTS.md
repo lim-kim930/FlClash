@@ -80,8 +80,35 @@ commit, so git would replay upstream's own abandoned WIP commits on top of a
 Upstream bumps the `+YYYYMMDDNN` build stamp on the same line the fork's
 `chore(release)` commit rewrites to `100.x`. Resolve as
 `100.x.y+<upstream's newer stamp>`; the build number feeds Android versionCode
-and must increase. Release tags must match the pubspec version, because
-artifacts are named from it.
+and must increase. Stable release tags must match the pubspec base version,
+because artifacts are named from it.
+
+### Keep beta package versions numeric
+
+For a beta release, keep `pubspec.yaml` on the numeric base version and put the
+prerelease suffix only in the tag. For example:
+
+```text
+pubspec: 100.0.4+2026082701
+tag:     v100.0.4-beta.2
+files:   FlClash-100.0.4-...
+```
+
+Do not write `100.0.4-beta.2+...` into `pubspec.yaml`; native package formats do
+not share one prerelease-version syntax. In release notes, use the tag version
+for the `releases/download/v.../` path and the pubspec base version for artifact
+file names. The tag workflow must create a GitHub prerelease for non-stable
+tags; Actions artifacts alone are not a published beta. Never move or reuse a
+pushed failed beta tag: fix forward and increment the beta sequence. Also
+increment the `NN` portion of `+YYYYMMDDNN` for every pushed beta attempt,
+because successful matrix jobs retain installable artifacts even when the
+final release upload is skipped, and Android versionCode must keep increasing.
+
+The generated Inno Setup script lives under `dist/`. Resource paths in
+`windows/packaging/exe/make_config.yaml` must therefore be anchored with Inno's
+`{#SourcePath}` rather than relying on the compiler's working directory. Inno
+Setup 6.7.1 otherwise fails at `SetupIconFile` with "The system cannot find the
+path specified."
 
 ### rerere is enabled — auto-resolved conflicts are not pre-approved
 

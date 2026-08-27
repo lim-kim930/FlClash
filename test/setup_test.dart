@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:test/test.dart';
 
 import '../setup.dart' as setup;
@@ -45,6 +47,25 @@ void main() {
         'dart-define-from-file=env.json',
         'split-per-abi',
       ]);
+    });
+
+    test('Windows Inno resources resolve from the generated script', () {
+      final config = File(
+        'windows/packaging/exe/make_config.yaml',
+      ).readAsStringSync();
+
+      expect(
+        config,
+        contains(
+          'setup_icon_file: \'{#SourcePath}\\..\\windows\\runner\\resources\\app_icon.ico\'',
+        ),
+      );
+      expect(
+        config,
+        contains(
+          'file: \'{#SourcePath}\\..\\windows\\packaging\\exe\\ChineseSimplified.isl\'',
+        ),
+      );
     });
   });
 }
