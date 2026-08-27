@@ -201,7 +201,6 @@ List<String> _allMessages(AppLocalizations appLocalizations) {
     appLocalizations.proxyGroup,
     appLocalizations.go,
     appLocalizations.externalLink,
-    appLocalizations.otherContributors,
     appLocalizations.autoCloseConnections,
     appLocalizations.autoCloseConnectionsDesc,
     appLocalizations.onlyStatisticsProxy,
