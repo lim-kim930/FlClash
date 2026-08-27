@@ -191,8 +191,6 @@
   "proxyGroup": "Группа прокси",
   "go": "Перейти",
   "externalLink": "Внешняя ссылка",
-  "otherContributors": "Другие участники",
-  "appIconDesign": "Дизайн значка приложения",
   "autoCloseConnections": "Автозакрытие соединений",
   "autoCloseConnectionsDesc": "Автоматически закрывать соединения после смены узла",
   "onlyStatisticsProxy": "Учитывать только трафик прокси",
