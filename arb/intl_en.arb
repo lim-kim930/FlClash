@@ -192,8 +192,6 @@
   "proxyGroup": "Proxy group",
   "go": "Go",
   "externalLink": "External link",
-  "otherContributors": "Other contributors",
-  "appIconDesign": "App icon design",
   "autoCloseConnections": "Auto close connections",
   "autoCloseConnectionsDesc": "Auto close connections drops open connections when you switch proxies.",
   "onlyStatisticsProxy": "Only count proxy traffic",
