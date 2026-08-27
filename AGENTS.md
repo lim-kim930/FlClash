@@ -106,9 +106,10 @@ final release upload is skipped, and Android versionCode must keep increasing.
 
 The generated Inno Setup script lives under `dist/`. Resource paths in
 `windows/packaging/exe/make_config.yaml` must therefore be anchored with Inno's
-`{#SourcePath}` rather than relying on the compiler's working directory. Inno
-Setup 6.7.1 otherwise fails at `SetupIconFile` with "The system cannot find the
-path specified."
+`{# AddBackslash(SourcePath) + "..\\path"}` expression rather than relying on
+the compiler's working directory or appending text after `{#SourcePath}`. Inno
+Setup 6.7.1 otherwise fails at `SetupIconFile` with a missing path or invalid
+path syntax error.
 
 ### rerere is enabled — auto-resolved conflicts are not pre-approved
 

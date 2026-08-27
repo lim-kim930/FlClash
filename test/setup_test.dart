@@ -57,13 +57,13 @@ void main() {
       expect(
         config,
         contains(
-          'setup_icon_file: \'{#SourcePath}\\..\\windows\\runner\\resources\\app_icon.ico\'',
+          'setup_icon_file: \'{# AddBackslash(SourcePath) + "..\\windows\\runner\\resources\\app_icon.ico"}\'',
         ),
       );
       expect(
         config,
         contains(
-          'file: \'{#SourcePath}\\..\\windows\\packaging\\exe\\ChineseSimplified.isl\'',
+          'file: \'{# AddBackslash(SourcePath) + "..\\windows\\packaging\\exe\\ChineseSimplified.isl"}\'',
         ),
       );
     });
