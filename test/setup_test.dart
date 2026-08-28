@@ -5,6 +5,28 @@ import 'package:test/test.dart';
 
 import '../setup.dart' as setup;
 
+void expectWindowsIconLayers(String path) {
+  final iconBytes = File(path).readAsBytesSync();
+  final iconData = ByteData.sublistView(iconBytes);
+  final iconCount = iconData.getUint16(4, Endian.little);
+  expect(iconCount, 5);
+  final iconSizes = <int>{};
+  for (var index = 0; index < iconCount; index++) {
+    final entryOffset = 6 + index * 16;
+    final width = iconBytes[entryOffset];
+    final height = iconBytes[entryOffset + 1];
+    final normalizedWidth = width == 0 ? 256 : width;
+    final normalizedHeight = height == 0 ? 256 : height;
+    iconSizes.add(normalizedWidth);
+    expect(normalizedHeight, normalizedWidth);
+    expect(iconData.getUint16(entryOffset + 6, Endian.little), 32);
+    final imageOffset = iconData.getUint32(entryOffset + 12, Endian.little);
+    expect(iconData.getUint32(imageOffset, Endian.little), 40);
+  }
+
+  expect(iconSizes, <int>{16, 32, 48, 64, 256});
+}
+
 void main() {
   group('setup.dart', () {
     test('parses -v as verbose mode', () {
@@ -50,38 +72,22 @@ void main() {
       ]);
     });
 
-    test(
-      'Windows packaging uses the built-in setup icon and app icon layers',
-      () {
-        final config = File(
-          'windows/packaging/exe/make_config.yaml',
-        ).readAsStringSync();
+    test('Windows packaging uses dedicated setup and app icon layers', () {
+      final config = File(
+        'windows/packaging/exe/make_config.yaml',
+      ).readAsStringSync();
 
-        expect(config, isNot(contains('setup_icon_file:')));
-        expect(
-          config,
-          contains(r'file: ..\windows\packaging\exe\ChineseSimplified.isl'),
-        );
+      expect(
+        config,
+        contains(r'setup_icon_file: ..\windows\packaging\exe\setup_icon.ico'),
+      );
+      expect(
+        config,
+        contains(r'file: ..\windows\packaging\exe\ChineseSimplified.isl'),
+      );
 
-        final iconBytes = File(
-          'windows/runner/resources/app_icon.ico',
-        ).readAsBytesSync();
-        final iconData = ByteData.sublistView(iconBytes);
-        final iconCount = iconData.getUint16(4, Endian.little);
-        final iconSizes = <int>{};
-        for (var index = 0; index < iconCount; index++) {
-          final entryOffset = 6 + index * 16;
-          final width = iconBytes[entryOffset];
-          iconSizes.add(width == 0 ? 256 : width);
-          final imageOffset = iconData.getUint32(
-            entryOffset + 12,
-            Endian.little,
-          );
-          expect(iconData.getUint32(imageOffset, Endian.little), 40);
-        }
-
-        expect(iconSizes, containsAll(<int>{16, 32, 48, 64, 256}));
-      },
-    );
+      expectWindowsIconLayers('windows/runner/resources/app_icon.ico');
+      expectWindowsIconLayers('windows/packaging/exe/setup_icon.ico');
+    });
   });
 }

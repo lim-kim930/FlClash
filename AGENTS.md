@@ -107,10 +107,10 @@ final release upload is skipped, and Android versionCode must keep increasing.
 The generated Inno Setup script lives under `dist/`, so resource paths in
 `windows/packaging/exe/make_config.yaml` are relative to that directory. Inno
 Setup 6.7.1 failed while applying the previous single-layer PNG-compressed
-`SetupIconFile`, reporting a misleading path error at line 15. Keep
-`setup_icon_file` unset so the installer uses Inno's built-in icon. The branded
-`windows/runner/resources/app_icon.ico` remains the application and shortcut
-icon and must contain 16, 32, 48, 64, and 256-pixel DIB layers.
+`SetupIconFile`, reporting a misleading path error at line 15. Use the dedicated
+`windows/packaging/exe/setup_icon.ico` for the installer and uninstaller, and
+keep `windows/runner/resources/app_icon.ico` for the application and shortcuts.
+Both icons must contain 16, 32, 48, 64, and 256-pixel DIB layers.
 
 ### rerere is enabled — auto-resolved conflicts are not pre-approved
 
