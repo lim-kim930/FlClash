@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:fl_clash/enum/enum.dart';
-
 import 'launcher.dart';
 import 'model.dart';
 import 'transport.dart';
@@ -27,16 +25,6 @@ abstract interface class DesktopCoreLifecycleController {
 enum _LifecycleTarget { running, restarted, stopped, closed }
 
 enum _LifecycleAchievement { runningExisting, runningFresh, idle, closed }
-
-String _diagnosticError(Object error) {
-  if (error is! DesktopCoreFailure) {
-    return error.toString();
-  }
-  return 'DesktopCoreFailure(code=${error.code}, phase=${error.phase.name}, '
-      'revision=${error.revision}, owner=${error.owner?.name}, '
-      'pid=${error.pid}, generation=${error.connectionGeneration}, '
-      'cause=${error.cause})';
-}
 
 final class _LifecycleIntent {
   final int revision;
@@ -141,7 +129,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
   final DesktopCoreTimeouts timeouts;
   final String Function() sessionIdFactory;
   final bool verifyPeerPid;
-  final CoreDiagnosticLogger _diagnosticLog;
   final DesktopCoreTransportBinding _transport;
 
   final StreamController<DesktopCoreState> _stateController =
@@ -172,7 +159,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
     DesktopCoreTimeouts timeouts = const DesktopCoreTimeouts(),
     String Function()? sessionIdFactory,
     bool verifyPeerPid = false,
-    CoreDiagnosticLogger? diagnosticLog,
   }) {
     return DesktopCoreLifecycle._(
       transportFactory: transportFactory,
@@ -180,7 +166,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
       timeouts: timeouts,
       sessionIdFactory: sessionIdFactory ?? createCoreSessionId,
       verifyPeerPid: verifyPeerPid,
-      diagnosticLog: diagnosticLog ?? coreDiagnosticLog,
       transport: DesktopCoreTransportBinding(transportFactory()),
     );
   }
@@ -191,10 +176,8 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
     required this.timeouts,
     required this.sessionIdFactory,
     required this.verifyPeerPid,
-    required CoreDiagnosticLogger diagnosticLog,
     required DesktopCoreTransportBinding transport,
-  }) : _diagnosticLog = diagnosticLog,
-       _transport = transport {
+  }) : _transport = transport {
     _transportSubscription = _transport.events.listen(_handleTransportEvent);
   }
 
@@ -243,11 +226,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
       _terminalRequested = true;
     }
     final intent = _LifecycleIntent(++_revision, target);
-    _diagnosticLog(
-      'desktop Core intent submitted revision=${intent.revision} '
-      'target=${target.name} phase=${_state.phase.name}',
-      LogLevel.info,
-    );
     final command = _PendingLifecycleCommand(intent);
     _pending.add(command);
     _desired = intent;
@@ -302,24 +280,11 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
               );
         final desired = _desired;
         if (desired.revision != intent.revision) {
-          _diagnosticLog(
-            'desktop Core lifecycle failure superseded '
-            'revision=${intent.revision} code=${failure.code} '
-            'newRevision=${desired.revision}',
-            LogLevel.warning,
-          );
           if (desired.target != _LifecycleTarget.closed) {
             _failCommands(intent.revision, failure);
           }
           continue;
         }
-        _diagnosticLog(
-          'desktop Core lifecycle failed revision=${intent.revision} '
-          'code=${failure.code} phase=${failure.phase.name} '
-          'owner=${failure.owner?.name} pid=${failure.pid} '
-          'cause=${failure.cause}',
-          LogLevel.error,
-        );
         _publish(DesktopCoreFailed(failure));
         _failCommands(intent.revision, failure);
       }
@@ -424,11 +389,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
 
   Future<bool> _startSession(int revision) async {
     final sessionId = sessionIdFactory();
-    _diagnosticLog(
-      'desktop Core start began revision=$revision '
-      'transportState=${_transport.state.name}',
-      LogLevel.info,
-    );
     _publish(DesktopCoreStarting(revision: revision, sessionId: sessionId));
     CoreProcessLease? lease;
     var leaseReleased = false;
@@ -445,25 +405,10 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
 
     try {
       if (!await _ensureTransportReady()) {
-        _diagnosticLog(
-          'desktop Core start abandoned before transport ready '
-          'revision=$revision desired=${_desired.target.name}',
-          LogLevel.info,
-        );
         return false;
       }
-      _diagnosticLog(
-        'desktop Core transport ready revision=$revision '
-        'state=${_transport.state.name}',
-        LogLevel.info,
-      );
       final launcher = await launcherResolver.resolve();
       if (!_wantsRunning) {
-        _diagnosticLog(
-          'desktop Core start abandoned after launcher resolution '
-          'revision=$revision desired=${_desired.target.name}',
-          LogLevel.info,
-        );
         return false;
       }
       connectionWaiter = _TransportConnectionWaiter(
@@ -473,13 +418,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
       lease = await launcher.start(
         sessionId: sessionId,
         address: _transport.address,
-      );
-      _diagnosticLog(
-        'desktop Core lease acquired revision=$revision '
-        'owner=${lease.owner.name} pid=${lease.pid}',
-        lease.owner == CoreProcessOwner.direct
-            ? LogLevel.warning
-            : LogLevel.info,
       );
       if (lease.sessionId != sessionId) {
         await releaseLease();
@@ -498,20 +436,9 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
         connectionWaiter.future,
       );
       if (connected == null || !_wantsRunning) {
-        _diagnosticLog(
-          'desktop Core start abandoned while waiting for IPC '
-          'revision=$revision owner=${lease.owner.name} pid=${lease.pid}',
-          LogLevel.info,
-        );
         await releaseLease();
         return false;
       }
-      _diagnosticLog(
-        'desktop Core IPC connected revision=$revision '
-        'owner=${lease.owner.name} pid=${lease.pid} '
-        'peerPid=${connected.pid} generation=${connected.generation}',
-        LogLevel.info,
-      );
       if (verifyPeerPid && connected.pid != lease.pid) {
         await releaseLease();
         throw _failure(
@@ -534,22 +461,8 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
       _sessionDisconnect = _SessionDisconnect(session);
       leaseReleased = true;
       _publish(DesktopCoreRunning(session));
-      _diagnosticLog(
-        'desktop Core running revision=$revision '
-        'owner=${session.owner.name} pid=${session.pid} '
-        'generation=${session.connectionGeneration}',
-        session.owner == CoreProcessOwner.direct
-            ? LogLevel.warning
-            : LogLevel.info,
-      );
       return true;
     } catch (error, stackTrace) {
-      _diagnosticLog(
-        'desktop Core start failed revision=$revision '
-        'owner=${lease?.owner.name} pid=${lease?.pid}: '
-        '${_diagnosticError(error)}',
-        LogLevel.error,
-      );
       try {
         await releaseLease();
       } on DesktopCoreFailure catch (cleanupFailure) {
@@ -630,21 +543,11 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
       );
     }
     if (result.exitConfirmed) {
-      _diagnosticLog(
-        'desktop Core obsolete lease exit confirmed revision=$revision '
-        'owner=${lease.owner.name} pid=${lease.pid} stopped=${result.stopped}',
-        LogLevel.info,
-      );
       if (identical(_unconfirmedLease, lease)) {
         _unconfirmedLease = null;
       }
       return;
     }
-    _diagnosticLog(
-      'desktop Core obsolete lease exit unconfirmed revision=$revision '
-      'owner=${lease.owner.name} pid=${lease.pid} stopped=${result.stopped}',
-      LogLevel.warning,
-    );
     _unconfirmedLease = lease;
     throw _failure(
       code: 'process_exit_unconfirmed',
@@ -686,23 +589,10 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
     int revision, {
     required bool allowUnconfirmedExit,
   }) async {
-    _diagnosticLog(
-      'desktop Core stop began revision=$revision '
-      'owner=${session.owner.name} pid=${session.pid} '
-      'generation=${session.connectionGeneration}',
-      LogLevel.info,
-    );
     _publish(DesktopCoreStopping(revision: revision, session: session));
     final disconnected = _disconnectFor(session);
     try {
       final stopResult = await session.lease.stop(timeouts.disconnection);
-      _diagnosticLog(
-        'desktop Core process stop result revision=$revision '
-        'owner=${session.owner.name} pid=${session.pid} '
-        'stopped=${stopResult.stopped} '
-        'exitConfirmed=${stopResult.exitConfirmed}',
-        stopResult.exitConfirmed ? LogLevel.info : LogLevel.warning,
-      );
       if (!stopResult.exitConfirmed) {
         if (!allowUnconfirmedExit) {
           throw _failure(
@@ -722,12 +612,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
         ]);
       }
       if (!disconnected.isCompleted) {
-        _diagnosticLog(
-          'desktop Core IPC disconnect missing after confirmed exit '
-          'revision=$revision owner=${session.owner.name} pid=${session.pid}; '
-          'replacing transport=${!_terminalRequested}',
-          LogLevel.warning,
-        );
         _clearSession(session);
         if (!_terminalRequested) {
           await _transport.replace(transportFactory());
@@ -735,11 +619,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
         return;
       }
       _clearSession(session);
-      _diagnosticLog(
-        'desktop Core stop completed revision=$revision '
-        'owner=${session.owner.name} pid=${session.pid}',
-        LogLevel.info,
-      );
     } on DesktopCoreFailure {
       rethrow;
     } catch (error, stackTrace) {
@@ -800,12 +679,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
           : _targetsCoalesce(command.intent.target, settled.target)
           ? CoreLifecycleOutcome.coalesced
           : CoreLifecycleOutcome.superseded;
-      _diagnosticLog(
-        'desktop Core intent completed revision=${command.intent.revision} '
-        'target=${command.intent.target.name} outcome=${outcome.name} '
-        'owner=${_session?.owner.name} pid=${_session?.pid}',
-        LogLevel.info,
-      );
       command.completer.complete(
         CoreLifecycleResult(
           revision: command.intent.revision,
@@ -881,12 +754,6 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
       session: session,
       cause: cause,
       stackTrace: stackTrace,
-    );
-    _diagnosticLog(
-      'desktop Core unexpected disconnect code=$code '
-      'owner=${session.owner.name} pid=${session.pid} '
-      'generation=${session.connectionGeneration} cause=$cause',
-      LogLevel.error,
     );
     _publish(DesktopCoreFailed(failure));
     if (!_crashController.isClosed) {

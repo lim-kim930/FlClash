@@ -12,7 +12,6 @@ void main() {
 
   test('direct lease kills and confirms the owned process exit', () async {
     final process = _FakeProcess(pid: 42, exitCode: Future.value(0));
-    final diagnostics = <String>[];
     String? executable;
     List<String>? arguments;
     final launcher = DirectCoreLauncher(
@@ -21,7 +20,6 @@ void main() {
         arguments = valueArguments;
         return process;
       },
-      diagnosticLog: (message, _) => diagnostics.add(message),
       corePath: 'FlClashCore',
     );
 
@@ -39,15 +37,6 @@ void main() {
     expect(
       result,
       const CoreProcessStopResult(stopped: true, exitConfirmed: true),
-    );
-    expect(
-      diagnostics,
-      containsAllInOrder([
-        'direct Core launch requested',
-        'direct Core process started pid=42',
-        contains('direct Core stop requested pid=42'),
-        'direct Core exit confirmed pid=42',
-      ]),
     );
   });
 

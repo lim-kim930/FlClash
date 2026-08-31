@@ -384,50 +384,28 @@ final class WindowsHelperClient {
 
 final class WindowsHelperLauncher implements CoreProcessLauncher {
   final WindowsHelperClient client;
-  final CoreDiagnosticLogger _diagnosticLog;
 
-  WindowsHelperLauncher(this.client, {CoreDiagnosticLogger? diagnosticLog})
-    : _diagnosticLog = diagnosticLog ?? coreDiagnosticLog;
+  const WindowsHelperLauncher(this.client);
 
   @override
   Future<CoreProcessLease> start({
     required String sessionId,
     required String address,
   }) async {
-    _diagnosticLog('Windows Helper Core launch requested', LogLevel.info);
     try {
       final response = await client.start(
         address: address,
         sessionId: sessionId,
       );
-      _diagnosticLog(
-        'Windows Helper Core process started pid=${response.pid}',
-        LogLevel.info,
-      );
       return HelperCoreLease(
         sessionId: response.sessionId,
         pid: response.pid,
         client: client,
-        diagnosticLog: _diagnosticLog,
       );
     } catch (error, stackTrace) {
-      _diagnosticLog(
-        'Windows Helper Core launch failed: $error',
-        LogLevel.warning,
-      );
       try {
-        final response = await client.stop(sessionId);
-        _diagnosticLog(
-          'Windows Helper launch compensation completed '
-          'stopped=${response.stopped} reason=${response.reason}',
-          LogLevel.info,
-        );
-      } catch (stopError) {
-        _diagnosticLog(
-          'Windows Helper launch compensation failed: $stopError',
-          LogLevel.warning,
-        );
-      }
+        await client.stop(sessionId);
+      } catch (_) {}
       Error.throwWithStackTrace(error, stackTrace);
     }
   }
@@ -441,13 +419,8 @@ const _preSpawnHelperErrors = {'coreVerificationFailed', 'processLaunchFailed'};
 final class FallbackCoreLauncher implements CoreProcessLauncher {
   final CoreProcessLauncher primary;
   final CoreProcessLauncher fallback;
-  final CoreDiagnosticLogger _diagnosticLog;
 
-  FallbackCoreLauncher({
-    required this.primary,
-    required this.fallback,
-    CoreDiagnosticLogger? diagnosticLog,
-  }) : _diagnosticLog = diagnosticLog ?? coreDiagnosticLog;
+  const FallbackCoreLauncher({required this.primary, required this.fallback});
 
   @override
   Future<CoreProcessLease> start({
@@ -457,18 +430,11 @@ final class FallbackCoreLauncher implements CoreProcessLauncher {
     try {
       return await primary.start(sessionId: sessionId, address: address);
     } on WindowsHelperException catch (error) {
-      if (!_preSpawnHelperErrors.contains(error.code)) {
-        _diagnosticLog(
-          'Windows Helper Core launch is not safe to fall back '
-          'code=${error.code}: $error',
-          LogLevel.error,
-        );
-        rethrow;
-      }
-      _diagnosticLog(
-        'Windows Helper Core launch failed before spawn '
-        'code=${error.code}; falling back to direct Core',
-        LogLevel.warning,
+      if (!_preSpawnHelperErrors.contains(error.code)) rethrow;
+      commonPrint.log(
+        'Helper could not start the Core ($error); '
+        'falling back to direct Core',
+        logLevel: LogLevel.warning,
       );
       return fallback.start(sessionId: sessionId, address: address);
     }
@@ -483,51 +449,24 @@ final class WindowsHelperLauncherResolver
   final CoreProcessLauncher directLauncher;
   final CoreProcessLauncher helperLauncher;
   final HelperReadinessProbe helperReady;
-  final CoreDiagnosticLogger _diagnosticLog;
 
-  WindowsHelperLauncherResolver({
+  const WindowsHelperLauncherResolver({
     required this.isWindows,
     required this.directLauncher,
     required this.helperLauncher,
     required this.helperReady,
-    CoreDiagnosticLogger? diagnosticLog,
-  }) : _diagnosticLog = diagnosticLog ?? coreDiagnosticLog;
+  });
 
   @override
   Future<CoreProcessLauncher> resolve() async {
-    if (!isWindows) {
-      _diagnosticLog(
-        'desktop Core launcher selected direct owner on non-Windows',
-        LogLevel.info,
-      );
-      return directLauncher;
-    }
-    final stopwatch = Stopwatch()..start();
+    if (!isWindows) return directLauncher;
     final readiness = await helperReady();
-    _diagnosticLog(
-      'Windows Helper launcher readiness=${readiness.name} '
-      'elapsedMs=${stopwatch.elapsedMilliseconds}',
-      readiness == WindowsHelperReadiness.ready
-          ? LogLevel.info
-          : LogLevel.warning,
-    );
     if (readiness == WindowsHelperReadiness.ready) {
-      _diagnosticLog(
-        'desktop Core launcher selected Windows Helper with direct fallback',
-        LogLevel.info,
-      );
       return FallbackCoreLauncher(
         primary: helperLauncher,
         fallback: directLauncher,
-        diagnosticLog: _diagnosticLog,
       );
     }
-    _diagnosticLog(
-      'desktop Core launcher selected direct owner because '
-      'Windows Helper readiness=${readiness.name} '
-      'elapsedMs=${stopwatch.elapsedMilliseconds}',
-      LogLevel.warning,
-    );
     return directLauncher;
   }
 }
@@ -540,16 +479,13 @@ final class HelperCoreLease implements CoreProcessLease {
   final int pid;
 
   final WindowsHelperClient _client;
-  final CoreDiagnosticLogger _diagnosticLog;
   Future<CoreProcessStopResult>? _stopOperation;
 
   HelperCoreLease({
     required this.sessionId,
     required this.pid,
     required WindowsHelperClient client,
-    CoreDiagnosticLogger? diagnosticLog,
-  }) : _client = client,
-       _diagnosticLog = diagnosticLog ?? coreDiagnosticLog;
+  }) : _client = client;
 
   @override
   CoreProcessOwner get owner => CoreProcessOwner.windowsHelper;
@@ -572,28 +508,11 @@ final class HelperCoreLease implements CoreProcessLease {
   }
 
   Future<CoreProcessStopResult> _stop() async {
-    _diagnosticLog(
-      'Windows Helper Core stop requested pid=$pid',
-      LogLevel.info,
+    final response = await _client.stop(sessionId);
+    return CoreProcessStopResult(
+      stopped: response.stopped,
+      exitConfirmed: true,
     );
-    try {
-      final response = await _client.stop(sessionId);
-      _diagnosticLog(
-        'Windows Helper Core stop completed pid=$pid '
-        'stopped=${response.stopped} reason=${response.reason}',
-        LogLevel.info,
-      );
-      return CoreProcessStopResult(
-        stopped: response.stopped,
-        exitConfirmed: true,
-      );
-    } catch (error) {
-      _diagnosticLog(
-        'Windows Helper Core stop failed pid=$pid: $error',
-        LogLevel.warning,
-      );
-      rethrow;
-    }
   }
 }
 

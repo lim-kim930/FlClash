@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:fl_clash/core/desktop/launcher.dart';
 import 'package:fl_clash/core/desktop/lifecycle.dart';
 import 'package:fl_clash/core/desktop/model.dart';
 import 'package:fl_clash/core/desktop/transport.dart';
@@ -16,11 +15,9 @@ void main() {
     () async {
       final transport = FakeDesktopCoreTransport();
       final launcher = FakeLauncher(owner: CoreProcessOwner.direct, pid: 42);
-      final diagnostics = <String>[];
       final lifecycle = _createLifecycle(
         transport: transport,
         resolver: MutableLauncherResolver(launcher),
-        diagnosticLog: (message, _) => diagnostics.add(message),
       );
 
       final start = lifecycle.start();
@@ -34,16 +31,6 @@ void main() {
       expect(result.session?.owner, CoreProcessOwner.direct);
       expect(result.session?.connectionGeneration, 1);
       expect(lifecycle.state, isA<DesktopCoreRunning>());
-      expect(
-        diagnostics,
-        containsAllInOrder([
-          contains('desktop Core start began revision=1'),
-          contains('desktop Core transport ready revision=1'),
-          'desktop Core lease acquired revision=1 owner=direct pid=42',
-          contains('peerPid=42 generation=1'),
-          contains('desktop Core running revision=1 owner=direct pid=42'),
-        ]),
-      );
       await _closeRunning(lifecycle, transport, launcher.lease, 1);
     },
   );
@@ -725,14 +712,12 @@ void _afterMicrotasks(int count, void Function() action) {
 DesktopCoreLifecycle _createLifecycle({
   required FakeDesktopCoreTransport transport,
   required MutableLauncherResolver resolver,
-  CoreDiagnosticLogger? diagnosticLog,
 }) {
   return DesktopCoreLifecycle(
     transportFactory: () => transport,
     launcherResolver: resolver,
     sessionIdFactory: () => _sessionId,
     verifyPeerPid: true,
-    diagnosticLog: diagnosticLog,
     timeouts: const DesktopCoreTimeouts(
       ready: Duration(seconds: 1),
       connection: Duration(seconds: 1),

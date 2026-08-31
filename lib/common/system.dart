@@ -62,15 +62,8 @@ class System {
   Future<bool> checkIsAdmin() async {
     final corePath = appPath.corePath.replaceAll(' ', '\\\\ ');
     if (system.isWindows) {
-      final readiness = await windowsHelperClient.readiness();
-      commonPrint.log(
-        'Windows Core privilege probe '
-        'helperReadiness=${readiness.name}',
-        logLevel: readiness == WindowsHelperReadiness.ready
-            ? LogLevel.info
-            : LogLevel.warning,
-      );
-      return readiness == WindowsHelperReadiness.ready;
+      return await windowsHelperClient.readiness() ==
+          WindowsHelperReadiness.ready;
     } else if (system.isMacOS) {
       final result = await Process.run('stat', ['-f', '%Su:%Sg %Sp', corePath]);
       final output = result.stdout.trim();
@@ -224,12 +217,6 @@ class Windows {
 
   Future<AuthorizeCode> registerService() async {
     final readiness = await windowsHelperClient.readiness();
-    commonPrint.log(
-      'Windows Helper authorization initial readiness=${readiness.name}',
-      logLevel: readiness == WindowsHelperReadiness.ready
-          ? LogLevel.info
-          : LogLevel.warning,
-    );
     switch (readiness) {
       case WindowsHelperReadiness.ready:
         commonPrint.log('helper service is ready');
@@ -246,12 +233,6 @@ class Windows {
         break;
     }
 
-    commonPrint.log(
-      'waiting for Windows Helper startup '
-      'timeoutMs=${_helperStartupTimeout.inMilliseconds} '
-      'intervalMs=${_helperStartupInterval.inMilliseconds}',
-      logLevel: LogLevel.warning,
-    );
     if (await _waitForHelperService(
       timeout: _helperStartupTimeout,
       interval: _helperStartupInterval,
@@ -272,11 +253,6 @@ class Windows {
       return AuthorizeCode.error;
     }
 
-    commonPrint.log(
-      'waiting for elevated Windows Helper installation '
-      'timeoutMs=${_helperInstallTimeout.inMilliseconds}',
-      logLevel: LogLevel.warning,
-    );
     final isRunning = await _waitForHelperService(
       timeout: _helperInstallTimeout,
     );
@@ -298,40 +274,18 @@ class Windows {
     Duration interval = const Duration(seconds: 1),
   }) async {
     final stopwatch = Stopwatch()..start();
-    var attempts = 0;
     while (true) {
       final remaining = timeout - stopwatch.elapsed;
-      if (remaining <= Duration.zero) {
-        commonPrint.log(
-          'Windows Helper readiness wait timed out '
-          'attempts=$attempts elapsedMs=${stopwatch.elapsedMilliseconds}',
-          logLevel: LogLevel.warning,
-        );
-        return false;
-      }
-      attempts++;
+      if (remaining <= Duration.zero) return false;
       final isRunning =
           await windowsHelperClient.readiness(
             timeout: remaining,
             logFailure: false,
           ) ==
           WindowsHelperReadiness.ready;
-      if (isRunning) {
-        commonPrint.log(
-          'Windows Helper readiness wait succeeded '
-          'attempts=$attempts elapsedMs=${stopwatch.elapsedMilliseconds}',
-        );
-        return true;
-      }
+      if (isRunning) return true;
       final delay = timeout - stopwatch.elapsed;
-      if (delay <= Duration.zero) {
-        commonPrint.log(
-          'Windows Helper readiness wait timed out '
-          'attempts=$attempts elapsedMs=${stopwatch.elapsedMilliseconds}',
-          logLevel: LogLevel.warning,
-        );
-        return false;
-      }
+      if (delay <= Duration.zero) return false;
       await Future.delayed(delay < interval ? delay : interval);
     }
   }

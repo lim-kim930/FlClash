@@ -459,14 +459,12 @@ void main() {
         owner: CoreProcessOwner.windowsHelper,
         pid: 2,
       );
-      final diagnostics = <String>[];
       var helperReadiness = WindowsHelperReadiness.ready;
       final resolver = WindowsHelperLauncherResolver(
         isWindows: true,
         directLauncher: direct,
         helperLauncher: helper,
         helperReady: () async => helperReadiness,
-        diagnosticLog: (message, _) => diagnostics.add(message),
       );
 
       final resolved = await resolver.resolve();
@@ -478,19 +476,6 @@ void main() {
       expect(await resolver.resolve(), same(direct));
       helperReadiness = WindowsHelperReadiness.manifestMissing;
       expect(await resolver.resolve(), same(direct));
-      expect(
-        diagnostics,
-        containsAllInOrder([
-          contains('Windows Helper launcher readiness=ready elapsedMs='),
-          'desktop Core launcher selected Windows Helper with direct fallback',
-          contains('Windows Helper launcher readiness=notReady elapsedMs='),
-          contains('selected direct owner because Windows Helper'),
-          contains(
-            'Windows Helper launcher readiness=manifestMissing elapsedMs=',
-          ),
-          contains('selected direct owner because Windows Helper'),
-        ]),
-      );
     },
   );
 
@@ -541,11 +526,9 @@ void main() {
                 message: 'Core executable SHA256 mismatch',
               );
         final direct = FakeLauncher(owner: CoreProcessOwner.direct, pid: 3);
-        final diagnostics = <String>[];
         final launcher = FallbackCoreLauncher(
           primary: helper,
           fallback: direct,
-          diagnosticLog: (message, _) => diagnostics.add(message),
         );
 
         final lease = await launcher.start(
@@ -557,14 +540,6 @@ void main() {
         expect(lease.owner, CoreProcessOwner.direct);
         expect(helper.startCount, 1);
         expect(direct.startCount, 1);
-        expect(
-          diagnostics,
-          contains(
-            contains(
-              'code=coreVerificationFailed; falling back to direct Core',
-            ),
-          ),
-        );
       },
     );
 

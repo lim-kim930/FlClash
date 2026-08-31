@@ -175,31 +175,13 @@ class SetupAction extends _$SetupAction {
       final updateParams = ref.read(updateParamsProvider);
       final shouldContinueSetup = await requestAdmin(updateParams.tun.enable);
       if (!shouldContinueSetup) {
-        commonPrint.log(
-          'TUN update handed off to Core restart after authorization',
-        );
         await _restartCoreAfterAuthorization();
         return;
       }
-      final authorizationState = ref.read(authorizedTunEnableProvider);
-      final effectiveTunEnable = _getEffectiveTunEnable(
-        updateParams.tun.enable,
-      );
-      commonPrint.log(
-        'TUN update decision requested=${updateParams.tun.enable} '
-        'authorization=${authorizationState.name} '
-        'effective=$effectiveTunEnable',
-        logLevel: updateParams.tun.enable && !effectiveTunEnable
-            ? LogLevel.warning
-            : LogLevel.info,
-      );
       final message = await coreController.updateConfig(
-        updateParams.copyWith.tun(enable: effectiveTunEnable),
-      );
-      commonPrint.log(
-        'Core TUN update response '
-        'effective=$effectiveTunEnable messageEmpty=${message.isEmpty}',
-        logLevel: message.isEmpty ? LogLevel.info : LogLevel.warning,
+        updateParams.copyWith.tun(
+          enable: _getEffectiveTunEnable(updateParams.tun.enable),
+        ),
       );
       ref.read(checkIpNumProvider.notifier).add();
       if (message.isNotEmpty) throw message;
@@ -369,72 +351,36 @@ class SetupAction extends _$SetupAction {
 
   @visibleForTesting
   Future<bool> requestAdmin(bool enableTun) async {
-    final currentState = ref.read(authorizedTunEnableProvider);
-    commonPrint.log(
-      'TUN authorization requested=$enableTun state=${currentState.name}',
-    );
     if (!enableTun) {
-      commonPrint.log('TUN authorization skipped because TUN is disabled');
       return true;
     }
-    final authorizationState = currentState;
+    final authorizationState = ref.read(authorizedTunEnableProvider);
     final authorizationNotifier = ref.read(
       authorizedTunEnableProvider.notifier,
     );
     if (authorizationState == TunAuthorizationState.authorized) {
-      commonPrint.log('TUN authorization reused authorized state');
       return true;
     }
     if (authorizationState == TunAuthorizationState.unauthorized) {
-      final hasPrivilege = await hasCorePrivilege();
-      commonPrint.log(
-        'TUN authorization silent privilege re-probe '
-        'available=$hasPrivilege',
-        logLevel: hasPrivilege ? LogLevel.info : LogLevel.warning,
-      );
-      if (!hasPrivilege) {
-        commonPrint.log(
-          'TUN remains unauthorized; setup will continue with TUN disabled',
-          logLevel: LogLevel.warning,
-        );
+      if (!await hasCorePrivilege()) {
         return true;
       }
       authorizationNotifier.value = TunAuthorizationState.authorized;
-      commonPrint.log(
-        'TUN authorization recovered; handing off to Core restart',
-      );
       return false;
     }
 
     authorizationNotifier.value = TunAuthorizationState.unauthorized;
-    commonPrint.log('TUN authorization state set to unauthorized before probe');
 
     final code = await authorizeCore();
-    commonPrint.log(
-      'TUN authorization platform result=${code.name}',
-      logLevel: code == AuthorizeCode.error ? LogLevel.warning : LogLevel.info,
-    );
 
     switch (code) {
       case AuthorizeCode.success:
         authorizationNotifier.value = TunAuthorizationState.authorized;
-        commonPrint.log(
-          'TUN authorization installed privileges; '
-          'handing off to Core restart',
-        );
         return false;
       case AuthorizeCode.none:
         authorizationNotifier.value = TunAuthorizationState.authorized;
-        commonPrint.log(
-          'TUN authorization found existing privileges; '
-          'continuing with the current Core',
-        );
         return true;
       case AuthorizeCode.error:
-        commonPrint.log(
-          'TUN authorization failed; setup will continue with TUN disabled',
-          logLevel: LogLevel.warning,
-        );
         return true;
     }
   }
@@ -455,21 +401,9 @@ class SetupAction extends _$SetupAction {
     final patchConfig = ref.read(patchClashConfigProvider);
     final shouldContinueSetup = await requestAdmin(patchConfig.tun.enable);
     if (!shouldContinueSetup) {
-      commonPrint.log(
-        'TUN profile setup handed off to Core restart after authorization',
-      );
       return _SetupTaskResult.handoffToCoreRestart;
     }
     final effectiveTunEnable = _getEffectiveTunEnable(patchConfig.tun.enable);
-    final authorizationState = ref.read(authorizedTunEnableProvider);
-    commonPrint.log(
-      'TUN profile decision requested=${patchConfig.tun.enable} '
-      'authorization=${authorizationState.name} '
-      'effective=$effectiveTunEnable',
-      logLevel: patchConfig.tun.enable && !effectiveTunEnable
-          ? LogLevel.warning
-          : LogLevel.info,
-    );
     final realPatchConfig = patchConfig.copyWith.tun(
       enable: effectiveTunEnable,
     );
@@ -495,11 +429,6 @@ class SetupAction extends _$SetupAction {
         final message = await coreController.setupConfig(
           params: _setupParams,
           preloadInvoke: preloadInvoke,
-        );
-        commonPrint.log(
-          'Core profile setup response '
-          'tunEffective=$effectiveTunEnable messageEmpty=${message.isEmpty}',
-          logLevel: message.isEmpty ? LogLevel.info : LogLevel.warning,
         );
         if (message.isNotEmpty && !message.endsWith('is empty')) {
           throw message;
