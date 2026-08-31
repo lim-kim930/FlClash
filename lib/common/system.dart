@@ -346,7 +346,7 @@ Future<AuthorizeCode> registerHelperService(
     interval: const Duration(milliseconds: 500),
   )) {
     commonPrint.log('helper service became ready while still starting');
-    return AuthorizeCode.none;
+    return AuthorizeCode.success;
   }
 
   commonPrint.log(
