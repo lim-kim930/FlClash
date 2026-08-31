@@ -16,6 +16,7 @@ class SetupAction extends _$SetupAction {
   final _listenerScheduler = SerialTaskScheduler();
   _RunRequest? _latestRunRequest;
   DateTime? _startTime;
+  bool _tunOwnerHandoffAttempted = false;
 
   bool get _isRunning => _startTime != null && _startTime!.isBeforeNow;
 
@@ -349,6 +350,26 @@ class SetupAction extends _$SetupAction {
     return system.checkIsAdmin();
   }
 
+  @protected
+  bool get requiresHelperOwnedCore => system.isWindows;
+
+  @protected
+  CoreProcessOwner? get runningCoreOwner => coreController.runningCoreOwner;
+
+  bool _canRunningCoreServeTun() {
+    if (!requiresHelperOwnedCore) {
+      return true;
+    }
+    if (runningCoreOwner != CoreProcessOwner.direct) {
+      return true;
+    }
+    if (_tunOwnerHandoffAttempted) {
+      return true;
+    }
+    _tunOwnerHandoffAttempted = true;
+    return false;
+  }
+
   @visibleForTesting
   Future<bool> requestAdmin(bool enableTun) async {
     if (!enableTun) {
@@ -359,7 +380,7 @@ class SetupAction extends _$SetupAction {
       authorizedTunEnableProvider.notifier,
     );
     if (authorizationState == TunAuthorizationState.authorized) {
-      return true;
+      return _canRunningCoreServeTun();
     }
     if (authorizationState == TunAuthorizationState.unauthorized) {
       if (!await hasCorePrivilege()) {
@@ -379,7 +400,7 @@ class SetupAction extends _$SetupAction {
         return false;
       case AuthorizeCode.none:
         authorizationNotifier.value = TunAuthorizationState.authorized;
-        return true;
+        return _canRunningCoreServeTun();
       case AuthorizeCode.error:
         return true;
     }

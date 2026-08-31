@@ -238,7 +238,7 @@ class Windows {
       interval: _helperStartupInterval,
     )) {
       commonPrint.log('helper service became ready while still starting');
-      return AuthorizeCode.none;
+      return AuthorizeCode.success;
     }
 
     commonPrint.log(

@@ -752,6 +752,74 @@ void main() {
       expect(setupAction.authorizationRequestCount, 1);
       expect(setupAction.privilegeCheckCount, 0);
     });
+
+    test(
+      'hands off to a core restart when the core is not helper owned',
+      () async {
+        late _AuthorizationSetupAction setupAction;
+        final container = ProviderContainer(
+          overrides: [
+            setupActionProvider.overrideWith(() {
+              setupAction = _AuthorizationSetupAction([AuthorizeCode.none])
+                ..coreOwner = CoreProcessOwner.direct;
+              return setupAction;
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+        container.read(setupActionProvider);
+
+        expect(await setupAction.requestAdmin(true), isFalse);
+        expect(
+          container.read(authorizedTunEnableProvider),
+          TunAuthorizationState.authorized,
+        );
+      },
+    );
+
+    test('stops handing off once a restart left the core direct', () async {
+      late _AuthorizationSetupAction setupAction;
+      final container = ProviderContainer(
+        overrides: [
+          setupActionProvider.overrideWith(() {
+            setupAction = _AuthorizationSetupAction([AuthorizeCode.none])
+              ..coreOwner = CoreProcessOwner.direct;
+            return setupAction;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(setupActionProvider);
+
+      expect(await setupAction.requestAdmin(true), isFalse);
+      expect(await setupAction.requestAdmin(true), isTrue);
+      expect(setupAction.authorizationRequestCount, 1);
+    });
+
+    test(
+      'keeps a direct core when the platform does not need a helper',
+      () async {
+        late _AuthorizationSetupAction setupAction;
+        final container = ProviderContainer(
+          overrides: [
+            setupActionProvider.overrideWith(() {
+              setupAction = _AuthorizationSetupAction([AuthorizeCode.none])
+                ..coreOwner = CoreProcessOwner.direct
+                ..helperOwnedCoreRequired = false;
+              return setupAction;
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+        container.read(setupActionProvider);
+
+        expect(await setupAction.requestAdmin(true), isTrue);
+        expect(
+          container.read(authorizedTunEnableProvider),
+          TunAuthorizationState.authorized,
+        );
+      },
+    );
   });
 }
 
@@ -851,6 +919,8 @@ final _restartFailure = Exception('restart failed');
 class _AuthorizationSetupAction extends SetupAction {
   final List<AuthorizeCode> authorizationResults;
   bool privilege = false;
+  bool helperOwnedCoreRequired = true;
+  CoreProcessOwner? coreOwner = CoreProcessOwner.windowsHelper;
   int authorizationRequestCount = 0;
   int privilegeCheckCount = 0;
 
@@ -866,6 +936,12 @@ class _AuthorizationSetupAction extends SetupAction {
     privilegeCheckCount++;
     return privilege;
   }
+
+  @override
+  bool get requiresHelperOwnedCore => helperOwnedCoreRequired;
+
+  @override
+  CoreProcessOwner? get runningCoreOwner => coreOwner;
 }
 
 class _RaceSetupAction extends SetupAction {
