@@ -40,6 +40,8 @@ class CoreController {
     return _instance!;
   }
 
+  CoreProcessOwner? get runningCoreOwner => _interface.runningCoreOwner;
+
   Future<CoreLifecycleResult> start() => _interface.start();
 
   Future<CoreLifecycleResult> restart() => _interface.restart();
