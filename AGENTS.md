@@ -110,6 +110,10 @@ for every pushed beta attempt, because successful matrix jobs retain installable
 artifacts even when the final release upload is skipped, and Android versionCode
 must keep increasing.
 
+Beta release commits (`chore(release): 100.x.y-beta.N`) stay directly on `dev`;
+push both `origin dev` and the tag. Never run `git reset` to detach or dangle
+beta release commits off `dev`.
+
 ### Fork CI differences
 
 The fork's `.github/workflows/build.yaml` drops upstream's Telegram, Homebrew
