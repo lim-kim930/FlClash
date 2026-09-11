@@ -689,6 +689,7 @@
   "geoResources": "Geo",
   "geoSkipped": "{name}: уже последняя версия",
   "geoUpdated": "{name}: обновлено",
+  "geoConfigSyncFailed": "Не удалось синхронизировать настройки Geo. Повторите попытку.",
   "secondsCount": "{count, plural, one{{count} секунда} few{{count} секунды} many{{count} секунд} other{{count} секунды}}",
   "proxiesCount": "{count, plural, other{{label} прокси}}",
   "rulesCount": "{count, plural, one{{label} правило} few{{label} правила} many{{label} правил} other{{label} правила}}",

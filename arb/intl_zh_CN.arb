@@ -689,6 +689,7 @@
   "geoResources": "Geo",
   "geoSkipped": "{name} 已是最新版本",
   "geoUpdated": "{name} 已更新",
+  "geoConfigSyncFailed": "Geo 设置同步失败，请重试。",
   "secondsCount": "{count} 秒",
   "proxiesCount": "{count, plural, other{{label} 个代理}}",
   "rulesCount": "{count, plural, other{{label} 条规则}}",

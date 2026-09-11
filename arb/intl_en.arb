@@ -689,6 +689,7 @@
   "geoResources": "Geo",
   "geoSkipped": "{name} is already up to date",
   "geoUpdated": "{name} updated",
+  "geoConfigSyncFailed": "Failed to sync Geo settings. Please try again.",
   "secondsCount": "{count, plural, =1{1 second} other{{count} seconds}}",
   "proxiesCount": "{count, plural, =1{1 proxy} other{{label} proxies}}",
   "rulesCount": "{count, plural, =1{1 rule} other{{label} rules}}",

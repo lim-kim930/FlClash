@@ -47,6 +47,7 @@ class GeoResourceAction extends _$GeoResourceAction {
     GeoResource geoResource, {
     bool announceSuccess = true,
   }) async {
+    await _syncConfig();
     final running = _operations.containsKey(geoResource);
     final previous = _manualUpdates[geoResource];
     _manualUpdates[geoResource] = announceSuccess;
@@ -105,6 +106,15 @@ class GeoResourceAction extends _$GeoResourceAction {
     ref.read(patchClashConfigProvider.notifier).update((state) {
       return state.copyWith(geoXUrl: {...state.geoXUrl, geoResource: newUrl});
     });
-    await ref.read(setupActionProvider.notifier).applyProfile(silence: true);
+    await _syncConfig();
+  }
+
+  Future<void> _syncConfig() async {
+    final applied = await ref
+        .read(setupActionProvider.notifier)
+        .applyProfile(silence: true);
+    if (!applied) {
+      throw MessageException(currentAppLocalizations.geoConfigSyncFailed);
+    }
   }
 }
