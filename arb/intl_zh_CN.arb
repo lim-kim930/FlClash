@@ -583,6 +583,7 @@
   "geoResources": "Geo 资源",
   "geoSkipped": "{name} 已是最新版本",
   "geoUpdated": "{name} 已更新",
+  "geoConfigSyncFailed": "Geo 设置同步失败，请重试。",
   "secondsCount": "{count} 秒",
   "entriesCount": "{count} 个条目",
   "proxiesCount": "{count} 个代理",

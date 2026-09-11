@@ -583,6 +583,7 @@
   "geoResources": "Geoリソース",
   "geoSkipped": "{name} はすでに最新です",
   "geoUpdated": "{name} を更新しました",
+  "geoConfigSyncFailed": "Geo 設定の同期に失敗しました。もう一度お試しください。",
   "secondsCount": "{count} 秒",
   "entriesCount": "{count} 件",
   "proxiesCount": "プロキシ {count} 件",
