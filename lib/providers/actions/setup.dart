@@ -318,7 +318,15 @@ class SetupAction extends _$SetupAction {
     required PatchClashConfig patchConfig,
   }) async {
     final profileId = setupState.profileId;
-    if (profileId == null) return (yaml: '', md5: '');
+    if (profileId == null) {
+      final geoXUrl = {...defaultGeoXUrl, ...patchConfig.geoXUrl};
+      final yamlString = yaml.encode({
+        'geox-url': geoXUrl.raw,
+        'geo-auto-update': patchConfig.geoAutoUpdate,
+        'geo-update-interval': patchConfig.geoUpdateInterval,
+      });
+      return (yaml: yamlString, md5: yamlString.toMd5());
+    }
     final defaultUA = globalState.packageInfo.ua;
     final networkSetting = ref.read(
       networkSettingProvider.select(

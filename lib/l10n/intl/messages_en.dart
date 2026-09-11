@@ -481,6 +481,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoAutoUpdateIntervalTip": MessageLookupByLibrary.simpleMessage(
       "The auto-update interval must be greater than 0",
     ),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to sync Geo settings. Please try again.",
+    ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo options"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo resources"),
     "geoSkipped": m10,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/theme.dart';
 import 'package:fl_clash/core/controller.dart';
@@ -16,12 +18,26 @@ import 'package:mocktail/mocktail.dart';
 
 class _MockCoreHandlerInterface extends Mock implements CoreHandlerInterface {}
 
+class _TestSetupAction extends SetupAction {
+  Future<bool> Function() apply = () async => true;
+
+  @override
+  Future<bool> applyProfile({
+    bool silence = false,
+    bool force = false,
+    Future<void> Function()? preloadInvoke,
+  }) => apply();
+}
+
 Future<ProviderContainer> _pumpGeoResourceAction(
   WidgetTester tester,
-  CoreHandlerInterface coreInterface,
-) async {
+  CoreHandlerInterface coreInterface, {
+  SetupAction? setupAction,
+}) async {
   final container = ProviderContainer(
     overrides: [
+      viewSizeProvider.overrideWithBuild((_, _) => const Size(800, 600)),
+      setupActionProvider.overrideWith(() => setupAction ?? _TestSetupAction()),
       coreHandlerProvider.overrideWithValue(
         CoreController.scoped(coreInterface),
       ),
@@ -48,6 +64,62 @@ Future<ProviderContainer> _pumpGeoResourceAction(
 }
 
 void main() {
+  testWidgets('manual downloads wait for config synchronization', (
+    tester,
+  ) async {
+    final core = _MockCoreHandlerInterface();
+    when(() => core.updateGeoData('MMDB')).thenAnswer((_) async => '');
+    final synced = Completer<bool>();
+    final setup = _TestSetupAction()..apply = () => synced.future;
+    final container = await _pumpGeoResourceAction(
+      tester,
+      core,
+      setupAction: setup,
+    );
+    final update = container
+        .read(geoResourceActionProvider.notifier)
+        .updateGeoResource(GeoResource.MMDB);
+
+    await tester.pump();
+    verifyNever(() => core.updateGeoData(any()));
+
+    synced.complete(true);
+    await update;
+    verify(() => core.updateGeoData('MMDB')).called(1);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('a failed sync reports an error without starting a download', (
+    tester,
+  ) async {
+    final core = _MockCoreHandlerInterface();
+    final setup = _TestSetupAction()..apply = () async => false;
+    final container = await _pumpGeoResourceAction(
+      tester,
+      core,
+      setupAction: setup,
+    );
+
+    await globalState.safeRun<void>(
+      () => container
+          .read(geoResourceActionProvider.notifier)
+          .updateGeoResource(GeoResource.MMDB),
+      silence: false,
+    );
+    await tester.pump();
+
+    verifyNever(() => core.updateGeoData(any()));
+    expect(
+      container.read(isUpdatingProvider(GeoResource.MMDB.updatingKey)),
+      isFalse,
+    );
+    expect(
+      find.text(currentAppLocalizations.geoConfigSyncFailed),
+      findsOneWidget,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('passive updates change progress without surfacing messages', (
     tester,
   ) async {

@@ -4817,6 +4817,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Failed to sync Geo settings. Please try again.`
+  String get geoConfigSyncFailed {
+    return Intl.message(
+      'Failed to sync Geo settings. Please try again.',
+      name: 'geoConfigSyncFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{count, plural, =1{1 second} other{{count} seconds}}`
   String secondsCount(num count) {
     return Intl.plural(

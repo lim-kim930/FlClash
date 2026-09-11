@@ -41,6 +41,7 @@ class GeoResourceAction extends _$GeoResourceAction {
   /// Completion arrives as a geo-update event through [handleCoreUpdate];
   /// callers that need it watch [isUpdatingProvider] for the key to clear.
   Future<void> updateGeoResource(GeoResource geoResource) async {
+    await _syncConfig();
     _manualUpdates.add(geoResource);
     final operation = _startUpdating(geoResource);
     try {
@@ -91,6 +92,15 @@ class GeoResourceAction extends _$GeoResourceAction {
     ref.read(patchClashConfigProvider.notifier).update((state) {
       return state.copyWith(geoXUrl: {...state.geoXUrl, geoResource: newUrl});
     });
-    await ref.read(setupActionProvider.notifier).applyProfile(silence: true);
+    await _syncConfig();
+  }
+
+  Future<void> _syncConfig() async {
+    final applied = await ref
+        .read(setupActionProvider.notifier)
+        .applyProfile(silence: true);
+    if (!applied) {
+      throw MessageException(currentAppLocalizations.geoConfigSyncFailed);
+    }
   }
 }
