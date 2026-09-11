@@ -1,0 +1,7 @@
+geox-url:
+  mmdb: http://geo.test/geoip.metadb
+  asn: http://geo.test/asn.mmdb
+  geoip: http://geo.test/geoip.dat
+  geosite: http://geo.test/first/geosite.dat
+geo-auto-update: false
+geo-update-interval: 48

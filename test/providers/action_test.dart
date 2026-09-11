@@ -231,6 +231,7 @@ void main() {
       when(() => core.updateGeoData('MMDB')).thenAnswer((_) async => '');
       final container = ProviderContainer(
         overrides: [
+          setupActionProvider.overrideWith(_TestSetupAction.new),
           coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
         ],
       );
@@ -249,6 +250,7 @@ void main() {
       ).thenThrow(StateError('disconnected'));
       final container = ProviderContainer(
         overrides: [
+          setupActionProvider.overrideWith(_TestSetupAction.new),
           coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
         ],
       );
