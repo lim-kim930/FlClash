@@ -66,6 +66,29 @@ void main() {
     await tester.pump();
   }
 
+  testWidgets('connection details follow live traffic updates', (tester) async {
+    var snapshot = [
+      buildConnections(1).single.copyWith(upload: 100, download: 200),
+    ];
+    await pumpConnections(tester, connectionsReader: () async => snapshot);
+    await tester.pump();
+    await tester.tap(find.byType(TrackerInfoItem).first);
+    await tester.pumpAndSettle();
+    expect(find.byType(TrackerInfoDetailView), findsOneWidget);
+    snapshot = [snapshot.single.copyWith(upload: 1124, download: 2248)];
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    final detail = tester.widget<TrackerInfoDetailView>(
+      find.byType(TrackerInfoDetailView),
+    );
+    expect(detail.trackerInfo.upload, 1124);
+    expect(detail.trackerInfo.download, 2248);
+    expect(detail.trackerInfo.uploadSpeed, 1024);
+    expect(detail.trackerInfo.downloadSpeed, 2048);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(commonDuration);
+  });
+
   testWidgets('ConnectionsView lazily builds every connection', (tester) async {
     final connections = buildConnections(100);
 

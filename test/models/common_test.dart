@@ -10,6 +10,34 @@ import 'package:mocktail/mocktail.dart';
 class MockFile extends Mock implements File {}
 
 void main() {
+  group('TrackerInfosState', () {
+    test('connection sorting breaks equal keys by id in either direction', () {
+      final connections = [
+        for (final id in ['c', 'a', 'b'])
+          TrackerInfo(
+            id: id,
+            start: DateTime.utc(2026),
+            metadata: const Metadata(host: 'same.test'),
+            chains: const [],
+            rule: 'MATCH',
+            rulePayload: '',
+          ),
+      ];
+      for (final type in ConnectionsSortType.values.where(
+        (type) => type != ConnectionsSortType.none,
+      )) {
+        for (final direction in SortDirection.values) {
+          final state = TrackerInfosState(
+            trackerInfos: connections,
+            sortType: type,
+            sortDirection: direction,
+          );
+          expect(state.list.map((info) => info.id), ['a', 'b', 'c']);
+        }
+      }
+    });
+  });
+
   group('FileInfo', () {
     late MockFile file;
 

@@ -78,6 +78,25 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
   }
 
+  testWidgets('clear empties paused requests and later requests still appear', (
+    tester,
+  ) async {
+    seedRequests([_tracker(id: 'old', host: 'old.test')]);
+    await pumpRequests(tester);
+    await tester.tap(find.byIcon(Icons.block));
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.delete_sweep_outlined));
+    await tester.pumpAndSettle();
+    expect(container.read(requestsProvider).list, isEmpty);
+    expect(find.textContaining('old.test'), findsNothing);
+    expect(find.byType(NullStatus), findsOneWidget);
+    addRequest(_tracker(id: 'new', host: 'new.test'));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('new.test'), findsWidgets);
+    await teardownView(tester);
+  });
+
   testWidgets('shows the empty state without any request', (tester) async {
     await pumpRequests(tester);
 
