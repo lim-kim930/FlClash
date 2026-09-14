@@ -82,33 +82,37 @@ a plain `git rebase upstream/main dev` — the merge-base is usually an older
 commit, so git would replay upstream's own abandoned WIP commits on top of a
 `main` that already contains their finalized equivalents.
 
-### Expect the `pubspec.yaml` conflict
+### Branch roles: `dev` vs `release`
 
-Upstream bumps the `+YYYYMMDDNN` build stamp on the same line the fork's
-`chore(release)` commit rewrites to `100.x`. Resolve as
-`100.x.y+<upstream's newer stamp>`; the build number feeds Android versionCode
-and must increase. Stable release tags must match the pubspec base version,
-because artifacts are named from it.
+- **`dev`**: Pure development branch for features, fixes, and docs. **Never commit `pubspec.yaml` version bumps to `dev`**. Keeping `dev` on upstream's base version ensures re-syncing with upstream never encounters repeated `pubspec.yaml` conflicts.
+- **`release`**: Dedicated branch for publishing releases (both stable and beta releases). All `chore(release)` version bump commits and release tags live on `release`. **Never merge `release` back into `dev`**.
 
-### Keep beta package versions numeric
+### Release process
 
-For a beta release, keep `pubspec.yaml` on the numeric base version and put the
-prerelease suffix only in the tag. For example:
+To cut a new release (stable or beta):
 
-```text
-pubspec: 100.0.4+2026082701
-tag:     v100.0.4-beta.2
-files:   FlClash-100.0.4-...
+```bash
+git checkout release
+git reset --hard dev
+# Bump version in pubspec.yaml to 100.x.y+YYYYMMDDNN
+git commit -am "chore(release): 100.x.y"
+git tag v100.x.y
+git push origin release v100.x.y
+git checkout dev
 ```
 
-Do not write `100.0.4-beta.2+...` into `pubspec.yaml`; native package formats do
-not share one prerelease-version syntax. In release notes, use the tag version
-for the `releases/download/v.../` path and the pubspec base version for artifact
-file names. Never move or reuse a pushed failed beta tag: fix forward and
-increment the beta sequence. Also increment the `NN` portion of `+YYYYMMDDNN`
-for every pushed beta attempt, because successful matrix jobs retain installable
-artifacts even when the final release upload is skipped, and Android versionCode
-must keep increasing.
+For beta releases, keep `pubspec.yaml` on the numeric base version (`100.x.y+YYYYMMDDNN`) and put the prerelease suffix only in the tag (`v100.x.y-beta.N`), because native package formats do not share one prerelease syntax. In release notes, use the tag version for the `releases/download/v.../` path and the pubspec base version for artifact file names. Increment the `NN` build portion for every pushed beta attempt so Android `versionCode` keeps increasing. Never move or reuse a pushed tag.
+
+### Re-syncing with upstream
+
+Because `dev` never touches `pubspec.yaml`'s `version:` line, re-syncing with `upstream/main` is completely conflict-free for versions:
+
+```bash
+git fetch upstream --tags
+git rebase --onto upstream/main <old-base> dev
+```
+
+`<old-base>` is the upstream release commit `dev` previously sat on (e.g. `7c61c90a` for `v0.8.98`). All fork feature and fix commits replay cleanly onto the new upstream release.
 
 ### Fork CI differences
 
