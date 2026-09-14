@@ -376,6 +376,8 @@ it there is.
 
 ## Testing Rules
 
+Local packaging and test execution are strictly prohibited. Do not run `flutter test`, `dart test`, `cargo test`, `go test`, or packaging scripts (`setup.dart`, `flutter build`) locally. Only syntax and static analysis error checks (`flutter analyze --no-fatal-infos`) are allowed. Full test suites and package builds are run exclusively in CI.
+
 The `core/` directory is excluded from automated coverage accounting. Do not add coverage instrumentation or coverage
 collection for code under `core/`. CI still runs `CGO_ENABLED=0 go test .` and `go vet .` to compile/check the Go wrapper,
 plus a `GOOS=android` vet that covers the `android` files the first two exclude; verify cross-language
