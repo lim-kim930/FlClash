@@ -93,8 +93,7 @@ chip-sized `sm` and the near-pill `md` on a 40 tall row. Reach for this only onc
 ## Verification
 
 - A behavior change gets a focused widget test covering rendering states, taps, scrolling, and empty/error states,
-  including the exception path of any async action. Run `flutter analyze` and `flutter test test/widgets/` plus the
-  tests of the touched view.
+  including the exception path of any async action. Run `flutter analyze --no-fatal-infos`; widget tests run exclusively in CI.
 - The scans in `test/lint/` fail on the common UI mistakes and run as part of `flutter test`: an `IconButton` whose
   icon is an icon needs a `tooltip`; a field that constructs its own controller, notifier, or focus node is released in
   the same file; a public declaration nothing references is dead. `.agents/rules.md` explains each rule and its

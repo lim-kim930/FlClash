@@ -39,10 +39,7 @@ Read these only when the task touches their area:
   touch. Preserve
   `// ignore:`-style directives, license headers, codegen markers, and vendored upstream comments. See
   [.agents/rules.md](.agents/rules.md) for what belongs in a test or in `.agents/` instead.
-- Start FlClash on the host only as a safe mode build, and end only processes you started, by recorded pid. Never
-  kill a FlClash instance by name; the user's own instance is not yours to close. See
-  [.agents/rules.md](.agents/rules.md).
-- Use `flutter test`, not `dart test`, because models pull in Flutter types.
+- Do not run any local packaging, builds, or tests (such as `flutter test`, `dart test`, `flutter build`, `dart setup.dart`, `cargo test`, or `go test`). Local packaging and test execution are strictly prohibited; only syntax error checking and static analysis (`flutter analyze --no-fatal-infos`) are permitted.
 - Run code generation after modifying models, providers, or database schema.
 - Do not manually edit generated files.
 - Preserve lifecycle ownership: desktop Core process convergence belongs to `lib/core/desktop/`; Android service intent
@@ -59,18 +56,13 @@ Read these only when the task touches their area:
   [.agents/rules.md](.agents/rules.md).
 - Follow `lint_options.yaml` (included by every `analysis_options.yaml`), especially single quotes, trailing commas, `child:` last, no `print()`, const/final
   preferences, and declared return types.
-- Before reporting a change done, run `flutter pub get`, `flutter analyze --no-fatal-infos`, and the `flutter test`
-  suites that cover it, as CI does. If a toolchain the build hook needs is missing (Go, and on Linux and Windows
-  cargo), say which check was skipped rather than dropping it silently.
+- For verification, only check for syntax and analysis errors using `flutter analyze --no-fatal-infos` (and `flutter pub get` when needed). Never run packaging or tests locally; full tests and packaging run exclusively in CI.
 
 ## Repo Skills
 
 Use repo skills from `.agents/skills/` when a task matches their descriptions; `.claude/skills/` symlinks expose the
 same skills to Claude Code. Current skills cover localization, UI work, core/platform changes, and pre-commit
 structural quality review.
-
-Use repo skills from `.agents/skills/` when a task matches their descriptions. Current skills cover localization,
-provider tests, UI work, and core/platform changes.
 
 ## Fork Workflow
 
@@ -173,3 +165,11 @@ CI runner, so do not treat them as fork regressions:
   allowlists, so every exemption misses and the exempted files are reported.
 
 Verified at 0.8.97. A lint failure that names any other file is real.
+
+### No local packaging or testing
+
+Local packaging and test execution are strictly prohibited in local environments and agent sessions:
+- Never run `flutter build`, `dart setup.dart`, or native packaging commands locally.
+- Never run `flutter test`, `dart test`, `cargo test`, `go test`, or native test runners locally.
+- Verification is strictly limited to checking for syntax and static analysis errors via `flutter analyze --no-fatal-infos` (and `flutter pub get` when necessary).
+- Packaging and automated testing are handled exclusively by remote CI workflows.

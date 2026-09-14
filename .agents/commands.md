@@ -2,13 +2,16 @@
 
 ## Building
 
+> [!IMPORTANT]
+> Local packaging and builds are strictly prohibited. Do not execute local packaging commands (`setup.dart`, `flutter build`, etc.). Packaging is performed exclusively in remote CI workflows.
+
 Update submodules first. The ClashMeta Go core lives in `core/Clash.Meta/`.
 
 ```bash
 git submodule update --init --recursive
 ```
 
-Full package build, including Go core, Flutter, and packaging, runs through `setup.dart`:
+Full package build, including Go core, Flutter, and packaging, runs through `setup.dart` (CI only):
 
 ```bash
 dart setup.dart macos
@@ -63,15 +66,13 @@ holds a `rust_api` library built from the same sources.
 
 ## Flutter Development
 
-Use the default Flutter SDK directly:
+Use the default Flutter SDK directly for dependency resolution:
 
 ```bash
 flutter pub get
-flutter run
-flutter test
 ```
 
-Use `flutter test`, not `dart test`, because models pull in Flutter types.
+Local packaging and test runs (`flutter run`, `flutter test`, `dart test`) are strictly prohibited. Local verification is limited to checking for syntax and static analysis errors via `flutter analyze --no-fatal-infos`.
 
 A development build takes over the host exactly like a release: it creates the TUN device, sets the system proxy, on
 macOS rewrites the system DNS, registers itself as the login item, and on Windows and Linux starts its Core through the
@@ -137,6 +138,9 @@ build only bundles the format its tray loads; a new status icon needs a source S
 script's `statusIconNames`, nothing in `pubspec.yaml`.
 
 ## Testing
+
+> [!IMPORTANT]
+> Local test execution is strictly prohibited. Do not run `flutter test`, `dart test`, or native test runners locally. Test suites are run exclusively by CI.
 
 Tests use `package:test/test.dart` for pure Dart logic and `flutter_test` for provider and widget tests. `mocktail` is the mocking framework.
 
@@ -321,7 +325,7 @@ flutter test --reporter expanded --coverage
 dart run tool/check_coverage.dart coverage/lcov.info 75
 ```
 
-Run `flutter analyze` before committing; CI fails on anything it reports.
+Run `flutter analyze` locally before committing when practical. Local packaging and test execution (`flutter test`, `dart test`, `setup.dart`, etc.) are strictly prohibited; only syntax error checking and static analysis (`flutter analyze --no-fatal-infos`) are allowed.
 
 Release builds run only for `v*` tag pushes; pull requests trigger nothing.
 Root analysis excludes `plugins/**`, and root tests do not discover nested
