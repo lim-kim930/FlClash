@@ -67,7 +67,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
           showSheet(
             context: context,
             props: const SheetProps(isScrollControlled: true),
-            builder: (_) => AdaptiveSheetScaffold(
+            builder: (_) => CommonScaffold(
               title: context.appLocalizations.settings,
               body: ConnectionsSetting(stateNotifier: _listController),
             ),

@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/features/features.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/ui/chip.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/scrollbar.dart';
+import '../helpers/glyph_finders.dart';
 import '../helpers/test_app.dart';
 import '../helpers/test_profiles.dart';
 
@@ -102,9 +104,13 @@ void main() {
   ) async {
     seedRequests([_tracker(id: 'old', host: 'old.test')]);
     await pumpRequests(tester);
-    await tester.tap(find.byIcon(Icons.block));
+    tester
+        .widget<ScrollToEndBox<TrackerInfo>>(
+          find.byType(ScrollToEndBox<TrackerInfo>),
+        )
+        .onCancelToEnd!();
     await tester.pump();
-    await tester.tap(find.byIcon(Icons.delete_sweep_outlined));
+    await tester.tap(find.byGlyph(AppGlyphs.clearAll));
     await tester.pumpAndSettle();
     expect(container.read(requestsProvider).list, isEmpty);
     expect(find.textContaining('old.test'), findsNothing);

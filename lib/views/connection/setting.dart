@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -9,15 +10,15 @@ class ConnectionsSetting extends StatelessWidget {
 
   const ConnectionsSetting({super.key, required this.stateNotifier});
 
-  IconData _getIconWithConnectionsSortType(ConnectionsSortType type) {
+  Glyph _getGlyphWithConnectionsSortType(ConnectionsSortType type) {
     return switch (type) {
-      ConnectionsSortType.none => Icons.sort,
-      ConnectionsSortType.host => Icons.link,
-      ConnectionsSortType.download => Icons.download,
-      ConnectionsSortType.downloadSpeed => Icons.keyboard_double_arrow_down,
-      ConnectionsSortType.upload => Icons.upload,
-      ConnectionsSortType.uploadSpeed => Icons.keyboard_double_arrow_up,
-      ConnectionsSortType.connectTime => Icons.access_time,
+      ConnectionsSortType.none => AppGlyphs.sort,
+      ConnectionsSortType.host => AppGlyphs.link,
+      ConnectionsSortType.download => AppGlyphs.arrowDown,
+      ConnectionsSortType.downloadSpeed => AppGlyphs.arrowDown,
+      ConnectionsSortType.upload => AppGlyphs.upload,
+      ConnectionsSortType.uploadSpeed => AppGlyphs.arrowUp,
+      ConnectionsSortType.connectTime => AppGlyphs.clock,
     };
   }
 
@@ -57,7 +58,7 @@ class ConnectionsSetting extends StatelessWidget {
                     SettingInfoCard(
                       Info(
                         label: _getStringConnectionsSortType(context, item),
-                        iconData: _getIconWithConnectionsSortType(item),
+                        glyph: _getGlyphWithConnectionsSortType(item),
                       ),
                       isSelected: sortType == item,
                       onPressed: () {
@@ -93,7 +94,7 @@ class ConnectionsSetting extends StatelessWidget {
                   SettingInfoCard(
                     Info(
                       label: appLocalizations.sortAsc,
-                      iconData: Icons.arrow_upward,
+                      glyph: AppGlyphs.arrowUp,
                     ),
                     isSelected: sortDirection == SortDirection.asc,
                     onPressed: () {
@@ -105,7 +106,7 @@ class ConnectionsSetting extends StatelessWidget {
                   SettingInfoCard(
                     Info(
                       label: appLocalizations.sortDesc,
-                      iconData: Icons.arrow_downward,
+                      glyph: AppGlyphs.arrowDown,
                     ),
                     isSelected: sortDirection == SortDirection.desc,
                     onPressed: () {
