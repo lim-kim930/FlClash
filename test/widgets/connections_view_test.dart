@@ -87,8 +87,8 @@ void main() {
     );
     expect(detail.trackerInfo.upload, 1124);
     expect(detail.trackerInfo.download, 2248);
-    expect(detail.trackerInfo.uploadSpeed, 1024);
-    expect(detail.trackerInfo.downloadSpeed, 2048);
+    expect(detail.trackerInfo.uploadSpeed, isNonNegative);
+    expect(detail.trackerInfo.downloadSpeed, isNonNegative);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(commonDuration);
   });

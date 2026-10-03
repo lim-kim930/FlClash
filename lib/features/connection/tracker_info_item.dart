@@ -58,6 +58,7 @@ class TrackerInfoItem extends ConsumerWidget {
           context,
           builder: (_) {
             return CommonScaffold(
+              title: detailTitle,
               body: stateNotifier == null
                   ? TrackerInfoDetailView(trackerInfo: trackerInfo)
                   : ValueListenableBuilder<TrackerInfosState>(
@@ -69,7 +70,6 @@ class TrackerInfoItem extends ConsumerWidget {
                         ),
                       ),
                     ),
-              title: detailTitle,
             );
           },
         );

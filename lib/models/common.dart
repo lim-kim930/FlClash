@@ -234,7 +234,9 @@ extension TrackerInfosStateExt on TrackerInfosState {
 
   List<TrackerInfo> get list {
     final searchQuery = SearchQuery(query);
-    if (sortType == ConnectionsSortType.none && keywords.isEmpty && searchQuery.isEmpty) {
+    if (sortType == ConnectionsSortType.none &&
+        keywords.isEmpty &&
+        searchQuery.isEmpty) {
       return trackerInfos;
     }
     final result = trackerInfos
