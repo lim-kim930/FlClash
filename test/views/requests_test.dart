@@ -94,12 +94,15 @@ void main() {
         .onCancelToEnd!();
     await tester.pump();
     await tester.tap(find.byGlyph(AppGlyphs.clearAll));
+    await tester.pump();
+    await tester.pump(renderThrottleDuration);
     await tester.pumpAndSettle();
     expect(container.read(requestsProvider).list, isEmpty);
     expect(find.textContaining('old.test'), findsNothing);
     expect(find.byType(NullStatus), findsOneWidget);
     addRequest(_tracker(id: 'new', host: 'new.test'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(renderThrottleDuration);
     await tester.pumpAndSettle();
     expect(find.textContaining('new.test'), findsWidgets);
     await teardownView(tester);
@@ -140,9 +143,9 @@ void main() {
     expect(find.textContaining('gamma.test'), findsNothing);
 
     addRequest(_tracker(id: 'c', host: 'gamma.test'));
-    await tester.pump(const Duration(seconds: 1));
     await tester.pump();
-    await tester.pump();
+    await tester.pump(renderThrottleDuration);
+    await tester.pumpAndSettle();
 
     expect(find.textContaining('gamma.test'), findsWidgets);
 
