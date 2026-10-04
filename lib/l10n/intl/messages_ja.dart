@@ -1092,6 +1092,31 @@ class MessageLookup extends MessageLookupByLibrary {
       "LinuxのユーザーIDにマッチ",
     ),
     "ruleEmpty": MessageLookupByLibrary.simpleMessage("ルールが空です"),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("ルーティング検索"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "ルートを確認する前にコアに接続してください",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "ドメインまたは IP に適用されるルールとポリシーを確認",
+    ),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "ルートを確認できません。コアと DNS を確認して再試行してください",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "1〜65535 のポートを入力してください",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "URL やポートを含まない有効なドメインまたは IP アドレスを入力してください",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "一致するルールなし。現在のモードまたは既定のポリシーを使用",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "現在読み込まれている設定で検索し、対象には接続しません。IP ルールの照合時に DNS を問い合わせる場合があります。実際のアプリ接続は、プロセス、送信元、インバウンド、スニッフィングのルールで異なる経路になる場合があります。表示ノードはグループの現在の選択で、負荷分散では別のノードになる場合があります。設定やポリシー変更後は再検索してください。",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("一致した内容"),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("ルートを確認"),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage("ドメインまたは IP アドレス"),
     "ruleName": MessageLookupByLibrary.simpleMessage("ルール名"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent を直接接続",

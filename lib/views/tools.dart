@@ -17,6 +17,7 @@ import 'config/advanced.dart';
 import 'developer.dart';
 import 'disclaimer.dart';
 import 'theme.dart';
+import 'rule_lookup.dart';
 
 class ToolsView extends ConsumerStatefulWidget {
   const ToolsView({super.key});
@@ -97,6 +98,12 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         },
       ),
       ..._getSettingList(),
+      ListItem.open(
+        leading: const GlyphIcon(AppGlyphs.rules),
+        title: Text(context.appLocalizations.ruleLookup),
+        subtitle: Text(context.appLocalizations.ruleLookupDesc),
+        widget: const RuleLookupView(),
+      ),
       ..._getOtherList(appSetting.developerMode),
     ];
     return CommonScaffold(

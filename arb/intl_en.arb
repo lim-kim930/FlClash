@@ -781,5 +781,16 @@
   "sortAsc": "Ascending",
   "sortDesc": "Descending",
   "downloadSpeed": "Download speed",
-  "uploadSpeed": "Upload speed"
+  "uploadSpeed": "Upload speed",
+  "ruleLookup": "Routing lookup",
+  "ruleLookupDesc": "Check which rule and policy a domain or IP address would use",
+  "ruleLookupTarget": "Domain or IP address",
+  "ruleLookupQuery": "Check route",
+  "ruleLookupInvalidTarget": "Enter a valid domain or IP address without a URL or port",
+  "ruleLookupInvalidPort": "Enter a port between 1 and 65535",
+  "ruleLookupCoreRequired": "Connect the core before checking a route",
+  "ruleLookupFailed": "Couldn't check the route. Check the core and DNS, then try again",
+  "ruleLookupNoRule": "No rule matched; the current mode or default policy applies",
+  "ruleLookupNote": "Uses the currently loaded configuration without connecting to the target. DNS may be queried for IP rules. Process, source, inbound and sniffing rules may give actual app connections a different route. The node shown is the current group choice; load balancing may choose another node. Check again after changing the configuration or policy.",
+  "ruleLookupPayload": "Matched value"
 }

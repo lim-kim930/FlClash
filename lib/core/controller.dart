@@ -10,6 +10,8 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 
+import 'rule_lookup.dart';
+
 class CoreController {
   static CoreController? _instance;
   late CoreHandlerInterface _interface;
@@ -222,6 +224,12 @@ class CoreController {
   }
 
   Future<ProbeResult?> probe(ProbeParams params) => _interface.probe(params);
+
+  Future<RuleLookupResult> ruleLookup({
+    required String target,
+    required int port,
+    required String network,
+  }) => _interface.ruleLookup(target: target, port: port, network: network);
 
   Future<OutboundIpResult?> outboundIp(OutboundIpParams params) =>
       _interface.outboundIp(params);

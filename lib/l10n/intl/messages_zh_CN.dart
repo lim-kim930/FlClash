@@ -971,6 +971,31 @@ class MessageLookup extends MessageLookupByLibrary {
       "匹配 Linux USER ID",
     ),
     "ruleEmpty": MessageLookupByLibrary.simpleMessage("规则为空"),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("分流查询"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "请先连接内核，再查询分流",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "查询域名或 IP 会命中哪条规则、使用哪个策略",
+    ),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "分流查询失败，请检查内核与 DNS 后重试",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "请输入 1 到 65535 之间的端口",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "请输入有效的域名或 IP 地址，不要包含网址或端口",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "未命中规则，使用当前模式或默认策略",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "根据当前已加载配置查询，不连接目标；匹配 IP 规则时可能查询 DNS。实际应用连接还可能受进程、来源、入站和嗅探规则影响。显示的节点为策略组当前选择，负载均衡可能选择其他节点。修改配置或策略后，请重新查询。",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("匹配内容"),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("查询分流"),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage("域名或 IP 地址"),
     "ruleName": MessageLookupByLibrary.simpleMessage("规则名称"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BT 下载直连",

@@ -781,5 +781,16 @@
   "sortAsc": "升序",
   "sortDesc": "降序",
   "downloadSpeed": "下载速度",
-  "uploadSpeed": "上传速度"
+  "uploadSpeed": "上传速度",
+  "ruleLookup": "分流查询",
+  "ruleLookupDesc": "查询域名或 IP 会命中哪条规则、使用哪个策略",
+  "ruleLookupTarget": "域名或 IP 地址",
+  "ruleLookupQuery": "查询分流",
+  "ruleLookupInvalidTarget": "请输入有效的域名或 IP 地址，不要包含网址或端口",
+  "ruleLookupInvalidPort": "请输入 1 到 65535 之间的端口",
+  "ruleLookupCoreRequired": "请先连接内核，再查询分流",
+  "ruleLookupFailed": "分流查询失败，请检查内核与 DNS 后重试",
+  "ruleLookupNoRule": "未命中规则，使用当前模式或默认策略",
+  "ruleLookupNote": "根据当前已加载配置查询，不连接目标；匹配 IP 规则时可能查询 DNS。实际应用连接还可能受进程、来源、入站和嗅探规则影响。显示的节点为策略组当前选择，负载均衡可能选择其他节点。修改配置或策略后，请重新查询。",
+  "ruleLookupPayload": "匹配内容"
 }

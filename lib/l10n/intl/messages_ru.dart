@@ -759,9 +759,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Введите содержимое правила",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -1345,6 +1346,37 @@ class MessageLookup extends MessageLookupByLibrary {
       "Сопоставить Linux USER ID",
     ),
     "ruleEmpty": MessageLookupByLibrary.simpleMessage("Правило пусто"),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("Проверка маршрута"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Подключите ядро перед проверкой маршрута",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "Узнайте, какое правило и политика применяются к домену или IP",
+    ),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось проверить маршрут. Проверьте ядро и DNS и повторите попытку",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Введите порт от 1 до 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Введите корректный домен или IP-адрес без URL и порта",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "Нет совпавшего правила; применяется текущий режим или политика по умолчанию",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Проверка использует загруженную конфигурацию без подключения к цели. Для правил IP возможен запрос DNS. Правила процессов, источника, входящих подключений и анализа трафика могут изменить маршрут реального приложения. Показан текущий выбор группы; балансировка нагрузки может выбрать другой узел. После изменения настроек или политики повторите проверку.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage(
+      "Совпавшее значение",
+    ),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage(
+      "Проверить маршрут",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Домен или IP-адрес",
+    ),
     "ruleName": MessageLookupByLibrary.simpleMessage("Название правила"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent напрямую",

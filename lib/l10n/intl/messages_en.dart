@@ -736,9 +736,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Enter the rule content",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1282,6 +1283,33 @@ class MessageLookup extends MessageLookupByLibrary {
       "Match the Linux user ID",
     ),
     "ruleEmpty": MessageLookupByLibrary.simpleMessage("Rule is empty"),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("Routing lookup"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Connect the core before checking a route",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "Check which rule and policy a domain or IP address would use",
+    ),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t check the route. Check the core and DNS, then try again",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Enter a port between 1 and 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Enter a valid domain or IP address without a URL or port",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "No rule matched; the current mode or default policy applies",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Uses the currently loaded configuration without connecting to the target. DNS may be queried for IP rules. Process, source, inbound and sniffing rules may give actual app connections a different route. The node shown is the current group choice; load balancing may choose another node. Check again after changing the configuration or policy.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("Matched value"),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("Check route"),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Domain or IP address",
+    ),
     "ruleName": MessageLookupByLibrary.simpleMessage("Rule name"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent direct",

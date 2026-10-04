@@ -5,6 +5,7 @@ import 'package:fl_clash/models/models.dart';
 
 import 'desktop/model.dart';
 import 'method.dart';
+import 'rule_lookup.dart';
 
 mixin CoreInterface {
   CoreProcessOwner? get runningCoreOwner => null;
@@ -34,6 +35,12 @@ mixin CoreInterface {
   Future<Delay?> asyncTestDelay(String url, String proxyName);
 
   Future<ProbeResult?> probe(ProbeParams params);
+
+  Future<RuleLookupResult> ruleLookup({
+    required String target,
+    required int port,
+    required String network,
+  });
 
   Future<OutboundIpResult?> outboundIp(OutboundIpParams params);
 
@@ -435,6 +442,26 @@ abstract class CoreHandlerInterface with CoreInterface {
       timeout: coreGuardFor(params.timeout),
     );
     return data == null ? null : OutboundIpResult.fromJson(data);
+  }
+
+  @override
+  Future<RuleLookupResult> ruleLookup({
+    required String target,
+    required int port,
+    required String network,
+  }) async {
+    final data = await _invokeMethod<Map<String, dynamic>>(
+      method: CoreMethod.ruleLookup,
+      arguments: {'target': target, 'port': port, 'network': network},
+      timeout: const Duration(seconds: 30),
+    );
+    if (data == null) {
+      throw const CoreMethodException(
+        code: 'no_response',
+        message: 'Core did not answer ruleLookup',
+      );
+    }
+    return RuleLookupResult.fromJson(data);
   }
 
   @override

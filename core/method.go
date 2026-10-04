@@ -238,6 +238,21 @@ var methodHandlers = map[CoreMethod]methodHandler{
 			response.success(handleProbe(params))
 		})
 	}),
+	ruleLookupMethod: withArguments(func(params *RuleLookupParams, response MethodResponse) {
+		metadata, err := ruleLookupMetadata(params)
+		if err != nil {
+			response.failure("invalid_arguments", err.Error(), nil)
+			return
+		}
+		safeGo(response, func() {
+			result, err := handleRuleLookup(metadata, params.Target)
+			if err != nil {
+				response.failure("core_error", err.Error(), nil)
+				return
+			}
+			response.success(result)
+		})
+	}),
 	outboundIpMethod: withArguments(func(params *OutboundIpParams, response MethodResponse) {
 		safeGo(response, func() {
 			response.success(handleOutboundIp(params))

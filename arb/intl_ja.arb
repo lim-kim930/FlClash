@@ -781,5 +781,16 @@
   "sortAsc": "昇順",
   "sortDesc": "降順",
   "downloadSpeed": "ダウンロード速度",
-  "uploadSpeed": "アップロード速度"
+  "uploadSpeed": "アップロード速度",
+  "ruleLookup": "ルーティング検索",
+  "ruleLookupDesc": "ドメインまたは IP に適用されるルールとポリシーを確認",
+  "ruleLookupTarget": "ドメインまたは IP アドレス",
+  "ruleLookupQuery": "ルートを確認",
+  "ruleLookupInvalidTarget": "URL やポートを含まない有効なドメインまたは IP アドレスを入力してください",
+  "ruleLookupInvalidPort": "1〜65535 のポートを入力してください",
+  "ruleLookupCoreRequired": "ルートを確認する前にコアに接続してください",
+  "ruleLookupFailed": "ルートを確認できません。コアと DNS を確認して再試行してください",
+  "ruleLookupNoRule": "一致するルールなし。現在のモードまたは既定のポリシーを使用",
+  "ruleLookupNote": "現在読み込まれている設定で検索し、対象には接続しません。IP ルールの照合時に DNS を問い合わせる場合があります。実際のアプリ接続は、プロセス、送信元、インバウンド、スニッフィングのルールで異なる経路になる場合があります。表示ノードはグループの現在の選択で、負荷分散では別のノードになる場合があります。設定やポリシー変更後は再検索してください。",
+  "ruleLookupPayload": "一致した内容"
 }
