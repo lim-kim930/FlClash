@@ -84,12 +84,27 @@ void main() {
     await mount(tester);
     await tester.enterText(find.byType(TextFormField).first, 'example.com');
     await query(tester);
+    await tester.scrollUntilVisible(
+      find.text('Domain'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Domain'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Proxy → node-a'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Proxy → node-a'), findsOneWidget);
     verify(
       () =>
           handler.ruleLookup(target: 'example.com', port: 443, network: 'tcp'),
     ).called(1);
+    await tester.scrollUntilVisible(
+      find.byType(TextFormField).first,
+      -200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.enterText(find.byType(TextFormField).first, 'example.org');
     await tester.pump();
     expect(find.text('Proxy → node-a'), findsNothing);
@@ -167,6 +182,11 @@ void main() {
           handler.ruleLookup(target: 'example.com', port: 443, network: 'tcp'),
     ).thenAnswer((_) async => _result);
     await query(tester);
+    await tester.scrollUntilVisible(
+      find.text('Proxy → node-a'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Proxy → node-a'), findsOneWidget);
   });
 
