@@ -12,6 +12,8 @@ import (
 	"github.com/metacubex/mihomo/tunnel"
 )
 
+const ruleLookupMethod CoreMethod = "ruleLookup"
+
 type CoreMethod string
 
 const (

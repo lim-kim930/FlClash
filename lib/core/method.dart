@@ -29,6 +29,7 @@ enum CoreMethod {
   resetTraffic,
   asyncTestDelay,
   probe,
+  ruleLookup,
   outboundIp,
   serviceCheck,
   getConnections,
