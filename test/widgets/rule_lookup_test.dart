@@ -53,6 +53,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         coreHandlerProvider.overrideWithValue(CoreController.scoped(handler)),
+        viewSizeProvider.overrideWithBuild(
+          (_, _) => tester.view.physicalSize / tester.view.devicePixelRatio,
+        ),
       ],
     );
     addTearDown(container.dispose);
