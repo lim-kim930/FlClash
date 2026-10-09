@@ -2,11 +2,13 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/theme.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/interface.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/core.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/connection/connections.dart';
+import 'package:fl_clash/views/connection/setting.dart';
 import 'package:fl_clash/features/features.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -25,6 +27,61 @@ void main() {
   tearDown(() {
     container.dispose();
   });
+
+  for (final type in [SheetType.sideSheet, SheetType.bottomSheet]) {
+    testWidgets('connection settings clear the $type title bar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final settings = ValueNotifier(const TrackerInfosState());
+      addTearDown(settings.dispose);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: _TestApp(
+            child: SheetProvider(
+              type: type,
+              child: CommonScaffold(
+                title: 'Settings',
+                body: ConnectionsSetting(stateNotifier: settings),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester.getTopLeft(find.byType(ListHeader).first).dy,
+        greaterThanOrEqualTo(tester.getBottomLeft(find.byType(AppBar)).dy),
+      );
+      expect(find.text('Sort by'), findsOneWidget);
+      expect(find.text('Sort direction'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Scrollable && widget.axis == Axis.horizontal,
+        ),
+        findsNothing,
+      );
+      final cards = find.byType(SettingInfoCard);
+      expect(
+        tester.getTopLeft(cards.at(ConnectionsSortType.values.length - 1)).dy,
+        greaterThan(tester.getTopLeft(cards.first).dy),
+      );
+      await tester.tap(find.widgetWithText(SettingInfoCard, 'Host'));
+      await tester.pump();
+      expect(settings.value.sortType, ConnectionsSortType.host);
+      final ascending = find.widgetWithText(SettingInfoCard, 'Ascending');
+      await tester.ensureVisible(ascending);
+      await tester.tap(ascending);
+      await tester.pump();
+      expect(settings.value.sortDirection, SortDirection.asc);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  }
 
   List<TrackerInfo> buildConnections(int count) {
     return List.generate(

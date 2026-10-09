@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -99,6 +100,17 @@ class _DnsQueriesViewState extends ConsumerState<DnsQueriesView>
       title: PageLabel.dns.label,
       searchState: AppBarSearchState(onSearch: _listController.search),
       onKeywordsUpdate: _listController.updateKeywords,
+      iconActions: [
+        IconButtonData(
+          glyph: AppGlyphs.clearAll,
+          tooltip: appLocalizations.clearDnsQueries,
+          onPressed: () {
+            final notifier = ref.read(dnsQueriesProvider.notifier);
+            notifier.value = notifier.value.copyWith()..clear();
+            _listController.setDnsQueries(const []);
+          },
+        ),
+      ],
       body: ValueListenableBuilder<DnsQueriesState>(
         valueListenable: _listController,
         builder: (context, state, _) {

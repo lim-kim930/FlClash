@@ -279,6 +279,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkUpdate": MessageLookupByLibrary.simpleMessage("更新を確認"),
     "checkUpdateError": MessageLookupByLibrary.simpleMessage("すでに最新バージョンです"),
     "clearData": MessageLookupByLibrary.simpleMessage("データを消去"),
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage("DNS クエリを消去"),
     "clearRequests": MessageLookupByLibrary.simpleMessage("リクエストを消去"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("検索をクリア"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("クリップボードへエクスポート"),
@@ -373,6 +374,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destination": MessageLookupByLibrary.simpleMessage("宛先"),
     "destinationGeoIP": MessageLookupByLibrary.simpleMessage("宛先GeoIP"),
     "destinationIPASN": MessageLookupByLibrary.simpleMessage("宛先IP ASN"),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("宛先ポート"),
     "details": m7,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "サードパーティAPIに依存しているため、参考値です",
@@ -1116,6 +1118,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("一致した内容"),
     "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("ルートを確認"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "任意。不明な場合は空欄にしてください",
+    ),
     "ruleLookupTarget": MessageLookupByLibrary.simpleMessage("ドメインまたは IP アドレス"),
     "ruleName": MessageLookupByLibrary.simpleMessage("ルール名"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
@@ -1202,9 +1207,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("SOCKSポート"),
     "sort": MessageLookupByLibrary.simpleMessage("並べ替え"),
     "sortAsc": MessageLookupByLibrary.simpleMessage("昇順"),
+    "sortBy": MessageLookupByLibrary.simpleMessage("並べ替え基準"),
     "sortDesc": MessageLookupByLibrary.simpleMessage("降順"),
+    "sortDirection": MessageLookupByLibrary.simpleMessage("並べ替え順序"),
     "source": MessageLookupByLibrary.simpleMessage("ソース"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("送信元IP"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("送信元ポート"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("特殊プロキシ"),
     "specialRules": MessageLookupByLibrary.simpleMessage("特殊ルール"),
     "speedStatistics": MessageLookupByLibrary.simpleMessage("速度統計"),

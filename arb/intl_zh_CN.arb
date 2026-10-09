@@ -187,6 +187,8 @@
   "style": "风格",
   "size": "尺寸",
   "sort": "排序",
+  "sortBy": "排序依据",
+  "sortDirection": "排序方向",
   "columns": "列数",
   "proxyGroup": "策略组",
   "go": "前往",
@@ -417,6 +419,7 @@
   "launchInterruptedTip": "应用上次在启动过程中意外退出。已跳过本次自动配置，你可以手动启动重试。",
   "clearData": "清除数据",
   "clearRequests": "清除请求",
+  "clearDnsQueries": "清空 DNS 查询",
   "textScale": "文本缩放",
   "textScalePreview": "应用内的文字将以这个大小显示",
   "followSystem": "跟随系统",
@@ -792,5 +795,8 @@
   "ruleLookupFailed": "分流查询失败，请检查内核与 DNS 后重试",
   "ruleLookupNoRule": "未命中规则，使用当前模式或默认策略",
   "ruleLookupNote": "根据当前已加载配置查询，不连接目标；匹配 IP 规则时可能查询 DNS。实际应用连接还可能受进程、来源、入站和嗅探规则影响。显示的节点为策略组当前选择，负载均衡可能选择其他节点。修改配置或策略后，请重新查询。",
-  "ruleLookupPayload": "匹配内容"
+  "ruleLookupPayload": "匹配内容",
+  "sourcePort": "源端口",
+  "destinationPort": "目标端口",
+  "ruleLookupSourcePortHint": "可选，不确定时可留空"
 }

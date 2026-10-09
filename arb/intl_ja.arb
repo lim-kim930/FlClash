@@ -187,6 +187,8 @@
   "style": "スタイル",
   "size": "サイズ",
   "sort": "並べ替え",
+  "sortBy": "並べ替え基準",
+  "sortDirection": "並べ替え順序",
   "columns": "列数",
   "proxyGroup": "プロキシグループ",
   "go": "開く",
@@ -417,6 +419,7 @@
   "launchInterruptedTip": "前回、アプリは起動中に予期せず終了しました。今回の自動セットアップはスキップしました。手動で起動して再試行できます。",
   "clearData": "データを消去",
   "clearRequests": "リクエストを消去",
+  "clearDnsQueries": "DNS クエリを消去",
   "textScale": "テキストの拡大縮小",
   "textScalePreview": "アプリ内の文字はこの大きさで表示されます",
   "followSystem": "システムに従う",
@@ -792,5 +795,8 @@
   "ruleLookupFailed": "ルートを確認できません。コアと DNS を確認して再試行してください",
   "ruleLookupNoRule": "一致するルールなし。現在のモードまたは既定のポリシーを使用",
   "ruleLookupNote": "現在読み込まれている設定で検索し、対象には接続しません。IP ルールの照合時に DNS を問い合わせる場合があります。実際のアプリ接続は、プロセス、送信元、インバウンド、スニッフィングのルールで異なる経路になる場合があります。表示ノードはグループの現在の選択で、負荷分散では別のノードになる場合があります。設定やポリシー変更後は再検索してください。",
-  "ruleLookupPayload": "一致した内容"
+  "ruleLookupPayload": "一致した内容",
+  "sourcePort": "送信元ポート",
+  "destinationPort": "宛先ポート",
+  "ruleLookupSourcePortHint": "任意。不明な場合は空欄にしてください"
 }

@@ -54,7 +54,8 @@ class _RecordingCoreHandler extends CoreHandlerInterface {
       },
       CoreMethod.ruleLookup => {
         'target': 'example.com',
-        'port': 443,
+        'source-port': 54321,
+        'destination-port': 443,
         'network': 'tcp',
         'mode': 'rule',
         'rule': 'Domain',
@@ -164,14 +165,18 @@ void main() {
       final handler = _RecordingCoreHandler();
       final result = await handler.ruleLookup(
         target: 'example.com',
-        port: 443,
+        sourcePort: 54321,
+        destinationPort: 443,
         network: 'tcp',
       );
       expect(handler.calls[CoreMethod.ruleLookup], {
         'target': 'example.com',
-        'port': 443,
+        'source-port': 54321,
+        'destination-port': 443,
         'network': 'tcp',
       });
+      expect(result.sourcePort, 54321);
+      expect(result.destinationPort, 443);
       expect(result.rule, 'Domain');
       expect(result.rulePayload, 'example.com');
       expect(result.proxy, 'Proxy');

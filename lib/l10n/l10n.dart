@@ -1450,6 +1450,21 @@ class AppLocalizations {
     return Intl.message('Sort', name: 'sort', desc: '', args: []);
   }
 
+  /// `Sort by`
+  String get sortBy {
+    return Intl.message('Sort by', name: 'sortBy', desc: '', args: []);
+  }
+
+  /// `Sort direction`
+  String get sortDirection {
+    return Intl.message(
+      'Sort direction',
+      name: 'sortDirection',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Columns`
   String get columns {
     return Intl.message('Columns', name: 'columns', desc: '', args: []);
@@ -3320,6 +3335,16 @@ class AppLocalizations {
     return Intl.message(
       'Clear requests',
       name: 'clearRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear DNS queries`
+  String get clearDnsQueries {
+    return Intl.message(
+      'Clear DNS queries',
+      name: 'clearDnsQueries',
       desc: '',
       args: [],
     );
@@ -6583,6 +6608,31 @@ class AppLocalizations {
     return Intl.message(
       'Matched value',
       name: 'ruleLookupPayload',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Source port`
+  String get sourcePort {
+    return Intl.message('Source port', name: 'sourcePort', desc: '', args: []);
+  }
+
+  /// `Destination port`
+  String get destinationPort {
+    return Intl.message(
+      'Destination port',
+      name: 'destinationPort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional; leave blank if unknown`
+  String get ruleLookupSourcePortHint {
+    return Intl.message(
+      'Optional; leave blank if unknown',
+      name: 'ruleLookupSourcePortHint',
       desc: '',
       args: [],
     );

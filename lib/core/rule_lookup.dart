@@ -1,7 +1,8 @@
 class RuleLookupResult {
   const RuleLookupResult({
     required this.target,
-    required this.port,
+    required this.sourcePort,
+    required this.destinationPort,
     required this.network,
     required this.mode,
     required this.rule,
@@ -14,7 +15,8 @@ class RuleLookupResult {
   factory RuleLookupResult.fromJson(Map<String, dynamic> json) {
     return RuleLookupResult(
       target: json['target'] as String,
-      port: json['port'] as int,
+      sourcePort: json['source-port'] as int,
+      destinationPort: json['destination-port'] as int,
       network: json['network'] as String,
       mode: json['mode'] as String,
       rule: json['rule'] as String,
@@ -26,7 +28,8 @@ class RuleLookupResult {
   }
 
   final String target;
-  final int port;
+  final int sourcePort;
+  final int destinationPort;
   final String network;
   final String mode;
   final String rule;

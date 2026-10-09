@@ -11,7 +11,7 @@ import (
 
 func TestRuleLookupMetadata(t *testing.T) {
 	for _, target := range []string{"Example.COM.", "192.0.2.1", "2001:db8::1", "例子.中国"} {
-		metadata, err := ruleLookupMetadata(&RuleLookupParams{Target: target, Port: 443, Network: "tcp"})
+		metadata, err := ruleLookupMetadata(&RuleLookupParams{Target: target, DestinationPort: 443, Network: "tcp"})
 		if err != nil {
 			t.Fatalf("%s: %v", target, err)
 		}
@@ -23,17 +23,33 @@ func TestRuleLookupMetadata(t *testing.T) {
 		}
 	}
 	for _, target := range []string{"", "https://example.com", "example.com:443", "999.0.0.1", "a..com", "a b.com", "-a.com", "fe80::1%eth0"} {
-		if _, err := ruleLookupMetadata(&RuleLookupParams{Target: target, Port: 443, Network: "tcp"}); err == nil {
+		if _, err := ruleLookupMetadata(&RuleLookupParams{Target: target, DestinationPort: 443, Network: "tcp"}); err == nil {
 			t.Errorf("accepted invalid target %q", target)
 		}
 	}
 	for _, params := range []RuleLookupParams{
-		{Target: "example.com", Port: 0, Network: "tcp"},
-		{Target: "example.com", Port: 65536, Network: "tcp"},
-		{Target: "example.com", Port: 443, Network: "http"},
+		{Target: "example.com", SourcePort: -1, DestinationPort: 443, Network: "tcp"},
+		{Target: "example.com", SourcePort: 65536, DestinationPort: 443, Network: "tcp"},
+		{Target: "example.com", DestinationPort: 0, Network: "tcp"},
+		{Target: "example.com", DestinationPort: 65536, Network: "tcp"},
+		{Target: "example.com", DestinationPort: 443, Network: "http"},
 	} {
 		if _, err := ruleLookupMetadata(&params); err == nil {
 			t.Errorf("accepted invalid parameters %+v", params)
+		}
+	}
+}
+
+func TestRuleLookupSourcePortBounds(t *testing.T) {
+	for _, sourcePort := range []int{0, 1, 65535} {
+		metadata, err := ruleLookupMetadata(&RuleLookupParams{
+			Target: "example.com", SourcePort: sourcePort, DestinationPort: 443, Network: "tcp",
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if int(metadata.SrcPort) != sourcePort || metadata.DstPort != 443 {
+			t.Fatalf("unexpected ports: %+v", metadata)
 		}
 	}
 }
@@ -62,7 +78,7 @@ func TestRuleLookupUsesLiveRulesAndMode(t *testing.T) {
 
 	lookup := func(target string) *RuleLookupResult {
 		t.Helper()
-		metadata, err := ruleLookupMetadata(&RuleLookupParams{Target: target, Port: 443, Network: "tcp"})
+		metadata, err := ruleLookupMetadata(&RuleLookupParams{Target: target, DestinationPort: 443, Network: "tcp"})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -113,10 +129,15 @@ func TestRuleLookupUsesLiveRulesAndMode(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tunnel.UpdateRules([]C.Rule{udpRule, portRule}, nil, nil)
+	sourcePortRule, err := rules.ParseRule("SRC-PORT", "54321", "node-a", nil, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tunnel.UpdateRules([]C.Rule{udpRule, sourcePortRule, portRule}, nil, nil)
 	for _, params := range []RuleLookupParams{
-		{Target: "192.0.2.1", Port: 443, Network: "udp"},
-		{Target: "192.0.2.1", Port: 8443, Network: "tcp"},
+		{Target: "192.0.2.1", DestinationPort: 443, Network: "udp"},
+		{Target: "192.0.2.1", DestinationPort: 8443, Network: "tcp"},
+		{Target: "192.0.2.1", SourcePort: 54321, DestinationPort: 8443, Network: "tcp"},
 	} {
 		metadata, err := ruleLookupMetadata(&params)
 		if err != nil {
@@ -127,11 +148,14 @@ func TestRuleLookupUsesLiveRulesAndMode(t *testing.T) {
 			t.Fatal(err)
 		}
 		want := "node-a"
-		if params.Port == 8443 {
+		if params.DestinationPort == 8443 && params.SourcePort == 0 {
 			want = "node-b"
 		}
 		if result.Proxy != want {
 			t.Fatalf("%+v routed to %s, want %s", params, result.Proxy, want)
+		}
+		if result.SourcePort != params.SourcePort || result.DestinationPort != params.DestinationPort {
+			t.Fatalf("unexpected result ports: %+v", result)
 		}
 	}
 }

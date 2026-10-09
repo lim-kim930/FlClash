@@ -227,9 +227,15 @@ class CoreController {
 
   Future<RuleLookupResult> ruleLookup({
     required String target,
-    required int port,
+    required int sourcePort,
+    required int destinationPort,
     required String network,
-  }) => _interface.ruleLookup(target: target, port: port, network: network);
+  }) => _interface.ruleLookup(
+    target: target,
+    sourcePort: sourcePort,
+    destinationPort: destinationPort,
+    network: network,
+  );
 
   Future<OutboundIpResult?> outboundIp(OutboundIpParams params) =>
       _interface.outboundIp(params);

@@ -353,6 +353,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "У вас уже последняя версия",
     ),
     "clearData": MessageLookupByLibrary.simpleMessage("Очистить данные"),
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
+      "Очистить DNS-запросы",
+    ),
     "clearRequests": MessageLookupByLibrary.simpleMessage("Очистить запросы"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Очистить поиск"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage(
@@ -463,6 +466,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destinationIPASN": MessageLookupByLibrary.simpleMessage(
       "ASN IP назначения",
     ),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("Порт назначения"),
     "details": m7,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "Использует сторонний API; только для справки",
@@ -1373,6 +1377,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleLookupQuery": MessageLookupByLibrary.simpleMessage(
       "Проверить маршрут",
     ),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "Необязательно; оставьте пустым, если неизвестен",
+    ),
     "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
       "Домен или IP-адрес",
     ),
@@ -1483,9 +1490,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("Порт SOCKS"),
     "sort": MessageLookupByLibrary.simpleMessage("Сортировка"),
     "sortAsc": MessageLookupByLibrary.simpleMessage("По возрастанию"),
+    "sortBy": MessageLookupByLibrary.simpleMessage("Сортировать по"),
     "sortDesc": MessageLookupByLibrary.simpleMessage("По убыванию"),
+    "sortDirection": MessageLookupByLibrary.simpleMessage(
+      "Направление сортировки",
+    ),
     "source": MessageLookupByLibrary.simpleMessage("Источник"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP источника"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("Порт источника"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Специальный прокси"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Специальные правила"),
     "speedStatistics": MessageLookupByLibrary.simpleMessage(
