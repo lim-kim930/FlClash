@@ -32,6 +32,7 @@ void main() {
   late _MockCore core;
   late ProviderContainer container;
   late List<String> appliedConfigs;
+  late List<UpdateParams> updatedConfigs;
   final supportDirectory = AppPath.supportDirectory;
   final temporaryDirectory = AppPath.temporaryDirectory;
   final cacheDirectory = AppPath.cacheDirectory;
@@ -67,6 +68,12 @@ void main() {
 
   setUpAll(() async {
     registerFallbackValue(const SetupParams(selectedMap: {}, testUrl: ''));
+    registerFallbackValue(
+      const PatchClashConfig().toUpdateParams(
+        routeMode: RouteMode.config,
+        authentication: const [],
+      ),
+    );
     directory = Directory.systemTemp.createTempSync('geo_config_test');
     AppPath.supportDirectory = () async => directory;
     AppPath.temporaryDirectory = () async => directory;
@@ -77,6 +84,7 @@ void main() {
   setUp(() {
     core = _MockCore();
     appliedConfigs = [];
+    updatedConfigs = [];
     when(() => core.setupConfig(any())).thenAnswer((_) async {
       appliedConfigs.add(
         await File(await appPath.configFilePath).readAsString(),
@@ -88,6 +96,10 @@ void main() {
     ).thenAnswer((_) async => const ProxiesData(proxies: {}, all: []));
     when(() => core.getExternalProviders()).thenAnswer((_) async => []);
     when(() => core.updateGeoData(any())).thenAnswer((_) async => '');
+    when(() => core.updateConfig(any())).thenAnswer((invocation) async {
+      updatedConfigs.add(invocation.positionalArguments.single as UpdateParams);
+      return '';
+    });
     container = createContainer();
   });
 
@@ -138,33 +150,32 @@ void main() {
     },
   );
 
-  test(
-    'every Geo URL change reloads the base config with a new digest',
-    () async {
-      globalState.lastConfigMd5 = '';
-      await apply();
-      final action = container.read(geoResourceActionProvider.notifier);
-      final expectedUrls = Map.of(defaultGeoXUrl);
+  test('Geo URL edits use a lightweight sync before downloading', () async {
+    globalState.lastConfigMd5 = '';
+    await apply();
+    final originalDigest = globalState.lastConfigMd5;
+    final action = container.read(geoResourceActionProvider.notifier);
+    final expectedUrls = Map.of(defaultGeoXUrl);
 
-      for (final resource in GeoResource.values) {
-        final previousDigest = globalState.lastConfigMd5;
-        final url = 'http://geo.test/custom/${resource.configKey}';
-        expectedUrls[resource] = url;
-        await action.updateGeoResourceUrl(resource, url);
+    for (final resource in GeoResource.values) {
+      final url = 'http://geo.test/custom/${resource.configKey}';
+      expectedUrls[resource] = url;
+      action.updateGeoResourceUrl(resource, url);
+      await action.updateGeoResource(resource);
 
-        expect(
-          (loadYaml(appliedConfigs.last) as YamlMap)['geox-url'],
-          expectedUrls.raw,
-        );
-        expect(globalState.lastConfigMd5, isNot(previousDigest));
-        expect(globalState.lastConfigMd5, appliedConfigs.last.toMd5());
-      }
+      expect(updatedConfigs.last.geoXUrl, expectedUrls.raw);
+      expect(globalState.lastConfigMd5, originalDigest);
+      expect(appliedConfigs, hasLength(1));
+    }
 
-      await apply();
-      expect(appliedConfigs, hasLength(1 + GeoResource.values.length));
-      expect(container.read(profilesProvider), isEmpty);
-    },
-  );
+    await apply();
+    expect(appliedConfigs, hasLength(2));
+    expect(
+      (loadYaml(appliedConfigs.last) as YamlMap)['geox-url'],
+      expectedUrls.raw,
+    );
+    expect(container.read(profilesProvider), isEmpty);
+  });
 
   test(
     'automatic update settings also change the base config digest',
@@ -203,7 +214,7 @@ void main() {
   });
 
   test(
-    'a queued manual update uses the last of consecutive URL edits',
+    'manual downloads wait for a full apply and then sync the latest URL',
     () async {
       final started = Completer<void>();
       final release = Completer<void>();
@@ -219,36 +230,60 @@ void main() {
       });
       String? urlAtDownload;
       when(() => core.updateGeoData('GEOSITE')).thenAnswer((_) async {
-        urlAtDownload =
-            (loadYaml(appliedConfigs.last) as YamlMap)['geox-url']['geosite']
-                as String;
+        urlAtDownload = updatedConfigs.last.geoXUrl['geosite'];
         return '';
       });
       final action = container.read(geoResourceActionProvider.notifier);
-      final first = action.updateGeoResourceUrl(
+      final applying = container
+          .read(setupActionProvider.notifier)
+          .applyProfile(silence: true);
+      await started.future.timeout(const Duration(seconds: 5));
+      action.updateGeoResourceUrl(
         GeoResource.GEOSITE,
         'http://geo.test/first/geosite.dat',
       );
-      await started.future.timeout(const Duration(seconds: 5));
-      final second = action.updateGeoResourceUrl(
+      action.updateGeoResourceUrl(
         GeoResource.GEOSITE,
         'http://geo.test/second/geosite.dat',
       );
       final update = action.updateGeoResource(GeoResource.GEOSITE);
+      await Future<void>.delayed(Duration.zero);
 
       verifyNever(() => core.updateGeoData(any()));
+      verifyNever(() => core.updateConfig(any()));
       release.complete();
-      await Future.wait([first, second, update]);
+      await applying;
+      await update;
 
       expect(urlAtDownload, 'http://geo.test/second/geosite.dat');
-      expect(appliedConfigs, hasLength(2));
+      expect(appliedConfigs, hasLength(1));
     },
   );
 
   test(
-    'a rejected setup blocks downloading and allows a later retry',
+    'a transport failure blocks downloading and allows a later retry',
     () async {
-      when(() => core.setupConfig(any())).thenAnswer((_) async => 'rejected');
+      when(
+        () => core.updateConfig(any()),
+      ).thenThrow(StateError('disconnected'));
+      final action = container.read(geoResourceActionProvider.notifier);
+
+      await expectLater(
+        action.updateGeoResource(GeoResource.GEOSITE),
+        throwsA(isA<MessageException>()),
+      );
+
+      verifyNever(() => core.updateGeoData(any()));
+      when(() => core.updateConfig(any())).thenAnswer((_) async => '');
+      await action.updateGeoResource(GeoResource.GEOSITE);
+      verify(() => core.updateGeoData('GEOSITE')).called(1);
+    },
+  );
+
+  test(
+    'a rejected lightweight sync blocks downloading and allows a later retry',
+    () async {
+      when(() => core.updateConfig(any())).thenAnswer((_) async => 'rejected');
       final action = container.read(geoResourceActionProvider.notifier);
 
       await expectLater(
@@ -263,22 +298,22 @@ void main() {
         isFalse,
       );
 
-      when(() => core.setupConfig(any())).thenAnswer((_) async => '');
+      when(() => core.updateConfig(any())).thenAnswer((_) async => '');
       await action.updateGeoResource(GeoResource.GEOSITE);
       verify(() => core.updateGeoData('GEOSITE')).called(1);
     },
   );
 
-  test('a failed URL sync keeps the new address for retry', () async {
-    when(() => core.setupConfig(any())).thenAnswer((_) async => 'rejected');
+  test('a failed download sync keeps the new address for retry', () async {
+    when(() => core.updateConfig(any())).thenAnswer((_) async => 'rejected');
+    final action = container.read(geoResourceActionProvider.notifier);
+    action.updateGeoResourceUrl(
+      GeoResource.GEOSITE,
+      'http://geo.test/retry/geosite.dat',
+    );
 
     await expectLater(
-      container
-          .read(geoResourceActionProvider.notifier)
-          .updateGeoResourceUrl(
-            GeoResource.GEOSITE,
-            'http://geo.test/retry/geosite.dat',
-          ),
+      action.updateGeoResource(GeoResource.GEOSITE),
       throwsA(isA<MessageException>()),
     );
 
@@ -311,7 +346,7 @@ void main() {
   test(
     'application relaunch restores persisted Geo settings without profiles',
     () async {
-      await container
+      container
           .read(geoResourceActionProvider.notifier)
           .updateGeoResourceUrl(
             GeoResource.GEOSITE,
@@ -323,8 +358,11 @@ void main() {
 
       await container.read(setupActionProvider.notifier).initStatus();
 
-      expect(appliedConfigs, hasLength(2));
-      expect(appliedConfigs.last, appliedConfigs.first);
+      final config = loadYaml(appliedConfigs.single) as YamlMap;
+      expect(
+        config['geox-url']['geosite'],
+        'http://geo.test/relaunch/geosite.dat',
+      );
       expect(container.read(profilesProvider), isEmpty);
     },
   );
@@ -357,11 +395,11 @@ void main() {
           .read(geoResourceActionProvider.notifier)
           .updateGeoResource(GeoResource.GEOSITE);
 
-      final config = loadYaml(appliedConfigs.single) as YamlMap;
-      expect(config['geox-url']['geosite'], 'http://geo.test/kept.dat');
-      expect(config['geo-auto-update'], isTrue);
-      expect(config['geo-update-interval'], 12);
-      expect(config.containsKey('proxies'), isFalse);
+      final config = updatedConfigs.single;
+      expect(config.geoXUrl['geosite'], 'http://geo.test/kept.dat');
+      expect(config.geoAutoUpdate, isTrue);
+      expect(config.geoUpdateInterval, 12);
+      expect(appliedConfigs, isEmpty);
       expect(container.read(profilesProvider), isEmpty);
       expect(container.read(currentProfileIdProvider), isNull);
       verify(() => core.updateGeoData('GEOSITE')).called(1);

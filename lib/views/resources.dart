@@ -455,7 +455,7 @@ class _GeoResourceItem extends ConsumerWidget {
     );
     if (newUrl != null && newUrl != url && context.mounted) {
       try {
-        await ref
+        ref
             .read(geoResourceActionProvider.notifier)
             .updateGeoResourceUrl(type, newUrl);
       } catch (e) {
