@@ -22,14 +22,10 @@ import '../helpers/glyph_finders.dart';
 class _MockCoreHandlerInterface extends Mock implements CoreHandlerInterface {}
 
 class _TestSetupAction extends SetupAction {
-  Future<bool> Function() apply = () async => true;
+  Future<bool> Function() sync = () async => true;
 
   @override
-  Future<bool> applyProfile({
-    bool silence = false,
-    bool force = false,
-    Future<void> Function()? preloadInvoke,
-  }) => apply();
+  Future<bool> updateConfig() => sync();
 }
 
 Future<ProviderContainer> _pumpGeoResourceAction(
@@ -73,7 +69,7 @@ void main() {
     final core = _MockCoreHandlerInterface();
     when(() => core.updateGeoData('MMDB')).thenAnswer((_) async => '');
     final synced = Completer<bool>();
-    final setup = _TestSetupAction()..apply = () => synced.future;
+    final setup = _TestSetupAction()..sync = () => synced.future;
     final container = await _pumpGeoResourceAction(
       tester,
       core,
@@ -96,7 +92,7 @@ void main() {
     tester,
   ) async {
     final core = _MockCoreHandlerInterface();
-    final setup = _TestSetupAction()..apply = () async => false;
+    final setup = _TestSetupAction()..sync = () async => false;
     final container = await _pumpGeoResourceAction(
       tester,
       core,
