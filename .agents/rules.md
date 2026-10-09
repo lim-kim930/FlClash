@@ -460,9 +460,6 @@ Subjects follow Conventional Commits and are enforced by the `commit-msg` hook i
 - Descriptions start in lower case, omit the trailing period, and keep the whole subject within 100 characters.
   Identifiers and acronyms keep their own casing, as in `fix(ui): AppBar text is truncated`.
 - `Merge`/`Revert` subjects and `fixup!`/`squash!` commits are exempt.
-- No `Co-authored-by` trailer crediting a coding agent, whatever that tool's own convention says. The history
-  records who owns the change, not which tool typed it; human co-authors are still fine. The hook rejects the
-  known agent identities.
 
 Write what the change does, not that something changed: `perf(views): stop redoing per-frame work in build`, not
 `Optimize more details`.

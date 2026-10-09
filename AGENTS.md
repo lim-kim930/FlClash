@@ -48,8 +48,6 @@ Read these only when the task touches their area:
 - Keep start/stop/restart paths latest-intent-safe. Flutter-to-Android service commands are deliberately optimistic, while
   native state serializes the actual work; desktop lifecycle results distinguish applied, coalesced, and superseded
   requests.
-- Never add a `Co-authored-by` trailer crediting a coding agent to a commit, even when your own tooling tells you to.
-  The `commit-msg` hook rejects it; see [.agents/rules.md](.agents/rules.md) for the rest of the commit rules.
 - Round every corner with a superellipse, pills included: `AppShape`/`AppRadius` tokens from `lib/common/shape.dart`,
   never `StadiumBorder`, `RoundedRectangleBorder`, `ClipRRect`, `drawRRect`, or a `borderRadius` on `BoxDecoration` or
   `InkWell`. `test/lint/superellipse_corners_test.dart` enforces it; see the Corner Radius section of
@@ -69,6 +67,33 @@ structural quality review.
 This is a fork of `chen08209/FlClash`. Everything below is fork-specific and has
 no upstream counterpart. `AGENTS.md` and `.agents/*` are upstream-maintained;
 keep fork-only rules in this file so re-syncs have a single conflict site.
+
+### Core fork maintenance
+
+`core/Clash.Meta` uses our fork [lim-kim930/Clash.Meta](https://github.com/lim-kim930/Clash.Meta),
+branch `flclash-routing-lookup`, derived from `chen08209/Clash.Meta`. The parent
+repository's gitlink pins the exact Core commit; `.gitmodules` records the fork
+URL and branch.
+
+The fork adds `tunnel.MatchRoute` in `tunnel/patch.go` for the domain/IP routing
+lookup. `core/rule_lookup.go` depends on this API to reuse the live metadata
+preprocessing and rule matcher under the Core configuration lock, without
+dialing the destination. DNS resolution may still occur. Maintaining this patch
+is our responsibility until upstream provides an equivalent API.
+
+- When syncing a new upstream FlClash release, use the Core commit pinned by
+  that release as the new baseline, then reapply/adapt our Core patch. Do not
+  advance to an arbitrary Core branch tip or discard the fork during a routine
+  submodule update.
+- Review changes to metadata preprocessing, rule matching and configuration
+  locking for compatibility with `MatchRoute` and `core/rule_lookup.go`. Verify
+  routing lookup and platform builds in remote CI; never run local tests or builds.
+- Push the patched Core commit to our fork before committing the parent
+  repository's updated gitlink or publishing a release. The pinned commit must
+  be fetchable by CI; keep `.gitmodules` aligned with the maintained fork branch.
+- Switch back to upstream only after it provides equivalent behavior, the
+  wrapper is migrated and remote CI passes. Update the submodule URL, gitlink
+  and this maintenance note together when retiring the fork.
 
 ### Track `upstream/main`, never `upstream/dev`
 
