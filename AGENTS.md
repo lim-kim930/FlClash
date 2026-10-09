@@ -130,10 +130,18 @@ git checkout release
 git reset --hard dev
 # Bump version in pubspec.yaml to 100.x.y+YYYYMMDDNN
 git commit -am "chore(release): 100.x.y"
+# Push only the release branch first; rebuilding it from dev may require a leased force push.
+git push --force-with-lease origin release
+# Wait for the build workflow on this exact release commit to pass all CI checks and tests.
 git tag v100.x.y
-git push origin release v100.x.y
+git push origin v100.x.y
 git checkout dev
 ```
+
+The remote `release` commit is the release gate: a passing run on an earlier commit or on `dev` alone is not enough.
+Do not create or push the release tag while its checks are queued, running, failed, or cancelled, and never push the
+branch and tag together. If CI fails, fix the cause on `dev`, prepare a new release commit, and push `release` again;
+wait for that commit's CI to pass before tagging. Full tests run only in remote CI, never locally.
 
 For beta releases, keep `pubspec.yaml` on the numeric base version (`100.x.y+YYYYMMDDNN`) and put the prerelease suffix only in the tag (`v100.x.y-beta.N`), because native package formats do not share one prerelease syntax. In release notes, use the tag version for the `releases/download/v.../` path and the pubspec base version for artifact file names. Increment the `NN` build portion for every pushed beta attempt so Android `versionCode` keeps increasing. Never move or reuse a pushed tag.
 
