@@ -14,7 +14,7 @@ import 'launcher.dart';
 import 'model.dart';
 import 'process_probe.dart';
 
-enum HelperReadiness { ready, notReady, manifestMissing }
+enum HelperReadiness { ready, notReady, incompatible, manifestMissing }
 
 final class HelperStartResponse {
   final String sessionId;
@@ -181,7 +181,7 @@ final class HelperClient {
     }
     if (protocolVersion != helperProtocolVersion) {
       _logPingFailure('helper protocol mismatch: $protocolVersion', logFailure);
-      return HelperReadiness.notReady;
+      return HelperReadiness.incompatible;
     }
     final matches = _pathContext.equals(
       helperPath.trim(),
@@ -189,7 +189,7 @@ final class HelperClient {
     );
     if (!matches) {
       _logPingFailure('helper executable path mismatch', logFailure);
-      return HelperReadiness.notReady;
+      return HelperReadiness.incompatible;
     }
     return HelperReadiness.ready;
   }
@@ -200,11 +200,15 @@ final class HelperClient {
   ) {
     final statusCode = response.statusCode;
     final protocolVersion = response.headers.value(helperProtocolVersionHeader);
+    if (protocolVersion != null && protocolVersion != helperProtocolVersion) {
+      _logPingFailure('helper protocol mismatch: $protocolVersion', logFailure);
+      return HelperReadiness.incompatible;
+    }
     if (statusCode == HttpStatus.conflict) {
       final code = _mapFrom(response.data)?['code'];
       if (code == 'coreSha256Mismatch') {
         _logPingFailure('Helper Core SHA256 mismatch', logFailure);
-        return HelperReadiness.notReady;
+        return HelperReadiness.incompatible;
       }
       if (protocolVersion == helperProtocolVersion) {
         _logPingFailure(

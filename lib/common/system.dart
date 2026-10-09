@@ -7,6 +7,7 @@ import 'package:fl_clash/common/boot_record.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/system_dns.dart';
 import 'package:fl_clash/core/desktop/helper_client.dart';
+import 'package:fl_clash/core/desktop/windows_helper_service.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/plugins/app.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
@@ -311,17 +312,26 @@ class Windows {
   Future<AuthorizeCode> registerService() {
     return registerHelperService(
       () async => runas(appPath.helperPath, 'install'),
+      queryServiceState: queryWindowsHelperServiceState,
     );
   }
 }
 
 typedef ElevatedHelperInstaller = Future<bool> Function();
+typedef HelperReadinessCheck =
+    Future<HelperReadiness> Function({
+      Duration? timeout,
+      required bool logFailure,
+    });
 
 @visibleForTesting
 Future<AuthorizeCode> registerHelperService(
-  ElevatedHelperInstaller install,
-) async {
-  final readiness = await helperClient.readiness();
+  ElevatedHelperInstaller install, {
+  HelperReadinessCheck? checkReadiness,
+  Future<WindowsHelperServiceState> Function()? queryServiceState,
+}) async {
+  final check = checkReadiness ?? helperClient.readiness;
+  final readiness = await check(logFailure: true);
   switch (readiness) {
     case HelperReadiness.ready:
       commonPrint.log('helper service is ready');
@@ -338,15 +348,26 @@ Future<AuthorizeCode> registerHelperService(
       );
       return AuthorizeCode.error;
     case HelperReadiness.notReady:
+    case HelperReadiness.incompatible:
       break;
   }
 
-  if (await _waitForHelperService(
-    timeout: const Duration(seconds: 5),
-    interval: const Duration(milliseconds: 500),
-  )) {
-    commonPrint.log('helper service became ready while still starting');
-    return AuthorizeCode.success;
+  if (readiness == HelperReadiness.notReady) {
+    final serviceState = await queryServiceState?.call();
+    if (serviceState != null) {
+      commonPrint.log('Windows helper service state: ${serviceState.name}');
+    }
+    // A stopped service may be inside SCM's five-second crash recovery delay.
+    if (serviceState != WindowsHelperServiceState.notInstalled &&
+        await _waitForHelperService(
+          check,
+          timeout: const Duration(seconds: 5),
+          interval: const Duration(milliseconds: 500),
+          stopOnIncompatible: true,
+        )) {
+      commonPrint.log('helper service became ready while still starting');
+      return AuthorizeCode.success;
+    }
   }
 
   commonPrint.log(
@@ -361,7 +382,7 @@ Future<AuthorizeCode> registerHelperService(
     return AuthorizeCode.error;
   }
 
-  final isRunning = await _waitForHelperService();
+  final isRunning = await _waitForHelperService(check);
   commonPrint.log(
     isRunning
         ? 'helper service installation completed'
@@ -371,18 +392,24 @@ Future<AuthorizeCode> registerHelperService(
   return isRunning ? AuthorizeCode.success : AuthorizeCode.error;
 }
 
-Future<bool> _waitForHelperService({
+Future<bool> _waitForHelperService(
+  HelperReadinessCheck checkReadiness, {
   Duration timeout = const Duration(seconds: 15),
   Duration interval = const Duration(seconds: 1),
+  bool stopOnIncompatible = false,
 }) async {
   final stopwatch = Stopwatch()..start();
   while (true) {
     final remaining = timeout - stopwatch.elapsed;
     if (remaining <= Duration.zero) return false;
-    final isRunning =
-        await helperClient.readiness(timeout: remaining, logFailure: false) ==
-        HelperReadiness.ready;
-    if (isRunning) return true;
+    final readiness = await checkReadiness(
+      timeout: remaining,
+      logFailure: false,
+    );
+    if (readiness == HelperReadiness.ready) return true;
+    if (stopOnIncompatible && readiness == HelperReadiness.incompatible) {
+      return false;
+    }
     final delay = timeout - stopwatch.elapsed;
     if (delay <= Duration.zero) return false;
     await Future.delayed(delay < interval ? delay : interval);

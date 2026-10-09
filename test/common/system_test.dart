@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/core/desktop/helper_client.dart';
+import 'package:fl_clash/core/desktop/windows_helper_service.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
@@ -17,6 +20,17 @@ class _FakePathProvider extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationCachePath() async => root;
+}
+
+class _HelperReadinessSequence {
+  _HelperReadinessSequence(this.responses);
+
+  final List<HelperReadiness> responses;
+
+  Future<HelperReadiness> readiness({
+    Duration? timeout,
+    bool logFailure = true,
+  }) async => responses.removeAt(0);
 }
 
 class _RecordedRun {
@@ -118,6 +132,140 @@ void main() {
     system.runProcess = Process.run;
     MacOS().runProcess = Process.run;
     Linux().runProcess = Process.run;
+  });
+
+  group('registerHelperService', () {
+    test('a ready Helper needs neither SCM query nor installation', () async {
+      final client = _HelperReadinessSequence([HelperReadiness.ready]);
+
+      final result = await registerHelperService(
+        () async => throw StateError('installation should not be requested'),
+        checkReadiness: client.readiness,
+        queryServiceState: () async => throw StateError('SCM is unnecessary'),
+      );
+
+      expect(result, AuthorizeCode.none);
+    });
+
+    testWidgets('an incompatible Helper requests elevation immediately', (
+      tester,
+    ) async {
+      var requested = false;
+      AuthorizeCode? result;
+      final client = _HelperReadinessSequence([HelperReadiness.incompatible]);
+      final registration = registerHelperService(
+        () async {
+          requested = true;
+          return false;
+        },
+        checkReadiness: client.readiness,
+        queryServiceState: () async => throw StateError('SCM is unnecessary'),
+      ).then((value) => result = value);
+
+      await tester.pump();
+
+      expect(requested, isTrue);
+      expect(result, AuthorizeCode.error);
+      await registration;
+    });
+
+    testWidgets('a missing service requests elevation immediately', (
+      tester,
+    ) async {
+      var requested = false;
+      AuthorizeCode? result;
+      final client = _HelperReadinessSequence([HelperReadiness.notReady]);
+      final registration = registerHelperService(
+        () async {
+          requested = true;
+          return false;
+        },
+        checkReadiness: client.readiness,
+        queryServiceState: () async => WindowsHelperServiceState.notInstalled,
+      ).then((value) => result = value);
+
+      await tester.pump();
+
+      expect(requested, isTrue);
+      expect(result, AuthorizeCode.error);
+      await registration;
+    });
+
+    for (final state in [
+      WindowsHelperServiceState.starting,
+      WindowsHelperServiceState.running,
+      WindowsHelperServiceState.stopped,
+      WindowsHelperServiceState.unknown,
+      null,
+    ]) {
+      testWidgets('a $state service can recover without elevation', (
+        tester,
+      ) async {
+        AuthorizeCode? result;
+        final client = _HelperReadinessSequence([
+          HelperReadiness.notReady,
+          HelperReadiness.notReady,
+          HelperReadiness.ready,
+        ]);
+        final registration = registerHelperService(
+          () async => throw StateError('installation should not be requested'),
+          checkReadiness: client.readiness,
+          queryServiceState: state == null ? null : () async => state,
+        ).then((value) => result = value);
+
+        await tester.pump();
+        expect(result, isNull);
+        await tester.pump(const Duration(milliseconds: 500));
+
+        expect(result, AuthorizeCode.success);
+        await registration;
+      });
+    }
+
+    testWidgets('a startup probe stops waiting once incompatibility is known', (
+      tester,
+    ) async {
+      var requested = false;
+      final client = _HelperReadinessSequence([
+        HelperReadiness.notReady,
+        HelperReadiness.incompatible,
+      ]);
+      final registration = registerHelperService(
+        () async {
+          requested = true;
+          return false;
+        },
+        checkReadiness: client.readiness,
+        queryServiceState: () async => WindowsHelperServiceState.starting,
+      );
+
+      await tester.pump();
+
+      expect(requested, isTrue);
+      expect(await registration, AuthorizeCode.error);
+    });
+
+    testWidgets('installation waits for the old Helper to be replaced', (
+      tester,
+    ) async {
+      AuthorizeCode? result;
+      final client = _HelperReadinessSequence([
+        HelperReadiness.incompatible,
+        HelperReadiness.incompatible,
+        HelperReadiness.ready,
+      ]);
+      final registration = registerHelperService(
+        () async => true,
+        checkReadiness: client.readiness,
+      ).then((value) => result = value);
+
+      await tester.pump();
+      expect(result, isNull);
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(result, AuthorizeCode.success);
+      await registration;
+    });
   });
 
   group('statArguments', () {
