@@ -57,7 +57,8 @@ mixin CoreInterface {
 
   Future<RuleLookupResult> ruleLookup({
     required String target,
-    required int port,
+    required int sourcePort,
+    required int destinationPort,
     required String network,
   });
 
@@ -602,12 +603,18 @@ abstract class CoreHandlerInterface with CoreInterface {
   @override
   Future<RuleLookupResult> ruleLookup({
     required String target,
-    required int port,
+    required int sourcePort,
+    required int destinationPort,
     required String network,
   }) async {
     final data = await _invokeMethod<Map<String, dynamic>>(
       method: CoreMethod.ruleLookup,
-      arguments: {'target': target, 'port': port, 'network': network},
+      arguments: {
+        'target': target,
+        'source-port': sourcePort,
+        'destination-port': destinationPort,
+        'network': network,
+      },
       timeout: const Duration(seconds: 30),
     );
     if (data == null) {

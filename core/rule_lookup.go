@@ -11,28 +11,36 @@ import (
 )
 
 type RuleLookupParams struct {
-	Target  string `json:"target"`
-	Port    int    `json:"port"`
-	Network string `json:"network"`
+	Target          string `json:"target"`
+	SourcePort      int    `json:"source-port"`
+	DestinationPort int    `json:"destination-port"`
+	Network         string `json:"network"`
 }
 
 type RuleLookupResult struct {
-	Target        string   `json:"target"`
-	Port          int      `json:"port"`
-	Network       string   `json:"network"`
-	Mode          string   `json:"mode"`
-	Rule          string   `json:"rule"`
-	RulePayload   string   `json:"rule-payload"`
-	Proxy         string   `json:"proxy"`
-	Chains        []string `json:"chains"`
-	DestinationIP string   `json:"destination-ip"`
+	Target          string   `json:"target"`
+	SourcePort      int      `json:"source-port"`
+	DestinationPort int      `json:"destination-port"`
+	Network         string   `json:"network"`
+	Mode            string   `json:"mode"`
+	Rule            string   `json:"rule"`
+	RulePayload     string   `json:"rule-payload"`
+	Proxy           string   `json:"proxy"`
+	Chains          []string `json:"chains"`
+	DestinationIP   string   `json:"destination-ip"`
 }
 
 func ruleLookupMetadata(params *RuleLookupParams) (*C.Metadata, error) {
-	if params.Port < 1 || params.Port > 65535 {
-		return nil, fmt.Errorf("port must be between 1 and 65535")
+	if params.SourcePort < 0 || params.SourcePort > 65535 {
+		return nil, fmt.Errorf("source port must be between 0 and 65535")
 	}
-	metadata := &C.Metadata{Type: C.INNER, DNSMode: C.DNSNormal, DstPort: uint16(params.Port)}
+	if params.DestinationPort < 1 || params.DestinationPort > 65535 {
+		return nil, fmt.Errorf("destination port must be between 1 and 65535")
+	}
+	metadata := &C.Metadata{
+		Type: C.INNER, DNSMode: C.DNSNormal,
+		SrcPort: uint16(params.SourcePort), DstPort: uint16(params.DestinationPort),
+	}
 	switch params.Network {
 	case "tcp":
 		metadata.NetWork = C.TCP
@@ -84,7 +92,8 @@ func handleRuleLookup(metadata *C.Metadata, target string) (*RuleLookupResult, e
 		return nil, fmt.Errorf("no routing policy available")
 	}
 	result := &RuleLookupResult{
-		Target: strings.TrimSpace(target), Port: int(metadata.DstPort),
+		Target:     strings.TrimSpace(target),
+		SourcePort: int(metadata.SrcPort), DestinationPort: int(metadata.DstPort),
 		Network: metadata.NetWork.String(), Mode: tunnel.Mode().String(),
 		Proxy: proxy.Name(), Chains: []string{},
 	}

@@ -8,6 +8,7 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/rule_lookup.dart';
+import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -19,7 +20,8 @@ class _LookupHandler extends Mock implements CoreHandlerInterface {}
 
 const _result = RuleLookupResult(
   target: 'example.com',
-  port: 443,
+  sourcePort: 0,
+  destinationPort: 443,
   network: 'tcp',
   mode: 'rule',
   rule: 'Domain',
@@ -37,7 +39,8 @@ void main() {
     when(
       () => handler.ruleLookup(
         target: any(named: 'target'),
-        port: any(named: 'port'),
+        sourcePort: any(named: 'sourcePort'),
+        destinationPort: any(named: 'destinationPort'),
         network: any(named: 'network'),
       ),
     ).thenAnswer((_) async => _result);
@@ -60,11 +63,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const TestApp(
-          includeNavigatorKey: false,
-          locale: Locale('en'),
-          child: RuleLookupView(),
-        ),
+        child: const TestApp(locale: Locale('en'), child: RuleLookupView()),
       ),
     );
     await tester.pump();
@@ -97,8 +96,12 @@ void main() {
     );
     expect(find.text('Proxy → node-a'), findsOneWidget);
     verify(
-      () =>
-          handler.ruleLookup(target: 'example.com', port: 443, network: 'tcp'),
+      () => handler.ruleLookup(
+        target: 'example.com',
+        sourcePort: 0,
+        destinationPort: 443,
+        network: 'tcp',
+      ),
     ).called(1);
     await tester.scrollUntilVisible(
       find.byType(TextFormField).first,
@@ -130,7 +133,70 @@ void main() {
     verifyNever(
       () => handler.ruleLookup(
         target: any(named: 'target'),
-        port: any(named: 'port'),
+        sourcePort: any(named: 'sourcePort'),
+        destinationPort: any(named: 'destinationPort'),
+        network: any(named: 'network'),
+      ),
+    );
+  });
+
+  testWidgets(
+    'uses a radio dialog and sends distinct source and destination ports',
+    (tester) async {
+      await mount(tester);
+      final fields = find.byType(TextFormField);
+      expect(find.text('Source port'), findsOneWidget);
+      expect(find.text('Destination port'), findsOneWidget);
+      await tester.enterText(fields.first, 'example.com');
+      await tester.enterText(fields.at(1), '54321');
+      await tester.enterText(fields.at(2), '8443');
+      await tester.ensureVisible(find.text('TCP'));
+      await tester.tap(find.text('TCP'));
+      await tester.pumpAndSettle();
+      expect(find.byType(Radio<(String,)>), findsNWidgets(2));
+      await tester.tap(find.text('UDP'));
+      await tester.pumpAndSettle();
+      expect(find.byType(CommonDialog), findsNothing);
+      await query(tester);
+      verify(
+        () => handler.ruleLookup(
+          target: 'example.com',
+          sourcePort: 54321,
+          destinationPort: 8443,
+          network: 'udp',
+        ),
+      ).called(1);
+      await tester.scrollUntilVisible(
+        find.text('Domain'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.scrollUntilVisible(
+        find.byType(ListItem<String>),
+        -200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.text('UDP'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('TCP').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Domain'), findsNothing);
+    },
+  );
+
+  testWidgets('rejects invalid source ports before querying', (tester) async {
+    await mount(tester);
+    await tester.enterText(find.byType(TextFormField).first, 'example.com');
+    for (final port in ['0', '65536']) {
+      await tester.enterText(find.byType(TextFormField).at(1), port);
+      await query(tester);
+      expect(find.text('Enter a port between 1 and 65535'), findsOneWidget);
+    }
+    verifyNever(
+      () => handler.ruleLookup(
+        target: any(named: 'target'),
+        sourcePort: any(named: 'sourcePort'),
+        destinationPort: any(named: 'destinationPort'),
         network: any(named: 'network'),
       ),
     );
@@ -159,8 +225,12 @@ void main() {
   ) async {
     final pending = Completer<RuleLookupResult>();
     when(
-      () =>
-          handler.ruleLookup(target: 'example.com', port: 443, network: 'tcp'),
+      () => handler.ruleLookup(
+        target: 'example.com',
+        sourcePort: 0,
+        destinationPort: 443,
+        network: 'tcp',
+      ),
     ).thenAnswer((_) => pending.future);
     await mount(tester);
     await tester.enterText(find.byType(TextFormField).first, 'example.com');
@@ -178,8 +248,12 @@ void main() {
       findsOneWidget,
     );
     when(
-      () =>
-          handler.ruleLookup(target: 'example.com', port: 443, network: 'tcp'),
+      () => handler.ruleLookup(
+        target: 'example.com',
+        sourcePort: 0,
+        destinationPort: 443,
+        network: 'tcp',
+      ),
     ).thenAnswer((_) async => _result);
     await query(tester);
     await tester.scrollUntilVisible(
@@ -193,8 +267,12 @@ void main() {
   testWidgets('ignores completion after the page is disposed', (tester) async {
     final pending = Completer<RuleLookupResult>();
     when(
-      () =>
-          handler.ruleLookup(target: 'example.com', port: 443, network: 'tcp'),
+      () => handler.ruleLookup(
+        target: 'example.com',
+        sourcePort: 0,
+        destinationPort: 443,
+        network: 'tcp',
+      ),
     ).thenAnswer((_) => pending.future);
     await mount(tester);
     await tester.enterText(find.byType(TextFormField).first, 'example.com');

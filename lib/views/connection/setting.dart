@@ -42,17 +42,17 @@ class ConnectionsSetting extends StatelessWidget {
     final appLocalizations = context.appLocalizations;
     return generateSection(
       isFirst: true,
-      title: appLocalizations.sort,
+      title: appLocalizations.sortBy,
       items: [
-        SingleChildScrollView(
+        Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          scrollDirection: Axis.horizontal,
           child: ValueListenableBuilder<TrackerInfosState>(
             valueListenable: stateNotifier,
             builder: (_, state, _) {
               final sortType = state.sortType;
               return Wrap(
                 spacing: 16,
+                runSpacing: 16,
                 children: [
                   for (final item in ConnectionsSortType.values)
                     SettingInfoCard(
@@ -79,17 +79,17 @@ class ConnectionsSetting extends StatelessWidget {
   List<Widget> _buildSortDirectionSetting(BuildContext context) {
     final appLocalizations = context.appLocalizations;
     return generateSection(
-      title: '',
+      title: appLocalizations.sortDirection,
       items: [
-        SingleChildScrollView(
+        Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          scrollDirection: Axis.horizontal,
           child: ValueListenableBuilder<TrackerInfosState>(
             valueListenable: stateNotifier,
             builder: (_, state, _) {
               final sortDirection = state.sortDirection;
               return Wrap(
                 spacing: 16,
+                runSpacing: 16,
                 children: [
                   SettingInfoCard(
                     Info(
@@ -127,7 +127,7 @@ class ConnectionsSetting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 32),
+      padding: EdgeInsets.only(top: context.contentTopPadding, bottom: 32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -20,7 +20,8 @@ class RuleLookupView extends ConsumerStatefulWidget {
 class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
   final _formKey = GlobalKey<FormState>();
   final _targetController = TextEditingController();
-  final _portController = TextEditingController(text: '443');
+  final _sourcePortController = TextEditingController();
+  final _destinationPortController = TextEditingController(text: '443');
   String _network = 'tcp';
   bool _loading = false;
   RuleLookupResult? _result;
@@ -29,7 +30,8 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
   @override
   void dispose() {
     _targetController.dispose();
-    _portController.dispose();
+    _sourcePortController.dispose();
+    _destinationPortController.dispose();
     super.dispose();
   }
 
@@ -59,7 +61,8 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
           .read(coreHandlerProvider)
           .ruleLookup(
             target: _targetController.text.trim(),
-            port: int.parse(_portController.text),
+            sourcePort: int.tryParse(_sourcePortController.text) ?? 0,
+            destinationPort: int.parse(_destinationPortController.text),
             network: _network,
           );
       if (mounted) {
@@ -136,12 +139,32 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _portController,
+                  controller: _sourcePortController,
+                  enabled: !_loading,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: l.sourcePort,
+                    helperText: l.ruleLookupSourcePortHint,
+                  ),
+                  onChanged: (_) => _clearResult(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return null;
+                    final port = int.tryParse(value);
+                    return port == null || port < 1 || port > 65535
+                        ? l.ruleLookupInvalidPort
+                        : null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _destinationPortController,
                   enabled: !_loading,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(labelText: l.port),
+                  decoration: InputDecoration(labelText: l.destinationPort),
                   onChanged: (_) => _clearResult(),
                   onFieldSubmitted: (_) => _lookup(),
                   validator: (value) {
@@ -152,20 +175,22 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
                   },
                 ),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  initialValue: _network,
-                  decoration: InputDecoration(labelText: l.networkType),
-                  items: const [
-                    DropdownMenuItem(value: 'tcp', child: Text('TCP')),
-                    DropdownMenuItem(value: 'udp', child: Text('UDP')),
-                  ],
-                  onChanged: _loading
-                      ? null
-                      : (value) {
-                          if (value == null) return;
-                          _network = value;
-                          _clearResult();
-                        },
+                AbsorbPointer(
+                  absorbing: _loading,
+                  child: ListItem<String>.options(
+                    padding: EdgeInsets.zero,
+                    title: Text(l.networkType),
+                    subtitle: Text(_network.toUpperCase()),
+                    dialogTitle: l.networkType,
+                    options: const ['tcp', 'udp'],
+                    value: _network,
+                    textBuilder: (value) => value.toUpperCase(),
+                    onChanged: (value) {
+                      if (!mounted || _loading || value == null) return;
+                      _network = value;
+                      _clearResult();
+                    },
+                  ),
                 ),
                 const SizedBox(height: 16),
                 FilledButton(
@@ -191,10 +216,11 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
           ],
           if (result != null) ...[
             const SizedBox(height: 24),
-            _resultRow(
-              l.ruleLookupTarget,
-              '${result.target} · ${result.port} · ${result.network.toUpperCase()}',
-            ),
+            _resultRow(l.ruleLookupTarget, result.target),
+            if (result.sourcePort != 0)
+              _resultRow(l.sourcePort, '${result.sourcePort}'),
+            _resultRow(l.destinationPort, '${result.destinationPort}'),
+            _resultRow(l.networkType, result.network.toUpperCase()),
             _resultRow(l.mode, Mode.values.byName(result.mode).label),
             _resultRow(l.ruleTarget, result.proxy),
             _resultRow(
