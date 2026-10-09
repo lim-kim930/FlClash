@@ -196,11 +196,9 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
             },
           ),
           const SizedBox(height: 16),
-          Container(
-            decoration: ShapeDecoration(
-              color: context.colorScheme.surfaceContainerLow,
-              shape: AppShape.xl,
-            ),
+          Material(
+            color: context.colorScheme.surfaceContainerLow,
+            shape: AppShape.xl,
             clipBehavior: Clip.antiAlias,
             child: AbsorbPointer(
               absorbing: _loading,
