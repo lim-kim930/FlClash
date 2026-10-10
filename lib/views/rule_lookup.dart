@@ -8,7 +8,6 @@ import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -22,22 +21,13 @@ class RuleLookupView extends ConsumerStatefulWidget {
 }
 
 class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
-  final _formKey = GlobalKey<FormState>();
-  final _targetController = TextEditingController();
-  final _sourcePortController = TextEditingController();
-  final _destinationPortController = TextEditingController(text: '443');
+  String _target = '';
+  String _sourcePort = '';
+  String _destinationPort = '443';
   String _network = 'tcp';
   bool _loading = false;
   RuleLookupResult? _result;
   String? _error;
-
-  @override
-  void dispose() {
-    _targetController.dispose();
-    _sourcePortController.dispose();
-    _destinationPortController.dispose();
-    super.dispose();
-  }
 
   void _clearResult() {
     setState(() {
@@ -46,11 +36,37 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
     });
   }
 
+  String? _validateTarget(String? value) {
+    final target = value?.trim() ?? '';
+    if (target.isEmpty ||
+        (InternetAddress.tryParse(target) == null &&
+            RegExp(r'[\s/:?#@\[\]\\]').hasMatch(target))) {
+      return context.appLocalizations.ruleLookupInvalidTarget;
+    }
+    return null;
+  }
+
+  String? _validatePort(String? value, {bool optional = false}) {
+    if (optional && (value == null || value.isEmpty)) return null;
+    final port = int.tryParse(value ?? '');
+    return port == null ||
+            !RegExp(r'^\d+$').hasMatch(value ?? '') ||
+            port < 1 ||
+            port > 65535
+        ? context.appLocalizations.ruleLookupInvalidPort
+        : null;
+  }
+
   Future<void> _lookup() async {
     if (_loading || ref.read(coreStatusProvider) != CoreStatus.connected) {
       return;
     }
-    if (!_formKey.currentState!.validate()) {
+    final validationError =
+        _validateTarget(_target) ??
+        _validatePort(_sourcePort, optional: true) ??
+        _validatePort(_destinationPort);
+    if (validationError != null) {
+      setState(() => _error = validationError);
       return;
     }
     FocusScope.of(context).unfocus();
@@ -64,9 +80,9 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
       final result = await ref
           .read(coreHandlerProvider)
           .ruleLookup(
-            target: _targetController.text.trim(),
-            sourcePort: int.tryParse(_sourcePortController.text) ?? 0,
-            destinationPort: int.parse(_destinationPortController.text),
+            target: _target,
+            sourcePort: int.tryParse(_sourcePort) ?? 0,
+            destinationPort: int.parse(_destinationPort),
             network: _network,
           );
       if (mounted) {
@@ -115,139 +131,115 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
   }
 
   Widget _buildForm(AppLocalizations l, bool connected) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextFormField(
-            controller: _targetController,
-            enabled: !_loading,
-            autocorrect: false,
-            enableSuggestions: false,
-            keyboardType: TextInputType.url,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              labelText: l.ruleLookupTarget,
-              prefixIcon: const GlyphIcon(AppGlyphs.search, size: 20),
-              suffixIcon: ValueListenableBuilder<TextEditingValue>(
-                valueListenable: _targetController,
-                builder: (_, value, _) {
-                  if (value.text.isEmpty || _loading) {
-                    return const SizedBox.shrink();
-                  }
-                  return IconButton(
-                    tooltip: l.clearSearch,
-                    icon: const GlyphIcon(AppGlyphs.close, size: 18),
-                    onPressed: () {
-                      _targetController.clear();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AbsorbPointer(
+          absorbing: _loading,
+          child: Column(
+            children: [
+              generateSectionV3(
+                title: l.source,
+                items: [
+                  ListItem.input(
+                    title: Text(l.sourcePort),
+                    subtitle: Text(
+                      _sourcePort.isEmpty
+                          ? l.ruleLookupSourcePortHint
+                          : _sourcePort,
+                    ),
+                    dialogTitle: l.sourcePort,
+                    value: _sourcePort,
+                    maxLength: TextInputLimits.port,
+                    keyboardType: TextInputType.number,
+                    validator: (value) => _validatePort(value, optional: true),
+                    onChanged: (value) {
+                      if (!mounted || _loading || value == null) return;
+                      _sourcePort = value;
                       _clearResult();
                     },
-                  );
-                },
+                  ),
+                ],
               ),
-            ),
-            onChanged: (_) => _clearResult(),
-            validator: (value) {
-              final target = value?.trim() ?? '';
-              if (target.isEmpty ||
-                  (InternetAddress.tryParse(target) == null &&
-                      RegExp(r'[\s/:?#@\[\]\\]').hasMatch(target))) {
-                return l.ruleLookupInvalidTarget;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _sourcePortController,
-            enabled: !_loading,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              labelText: l.sourcePort,
-              helperText: l.ruleLookupSourcePortHint,
-            ),
-            onChanged: (_) => _clearResult(),
-            validator: (value) {
-              if (value == null || value.isEmpty) return null;
-              final port = int.tryParse(value);
-              return port == null || port < 1 || port > 65535
-                  ? l.ruleLookupInvalidPort
-                  : null;
-            },
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _destinationPortController,
-            enabled: !_loading,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(labelText: l.destinationPort),
-            onChanged: (_) => _clearResult(),
-            onFieldSubmitted: (_) => _lookup(),
-            validator: (value) {
-              final port = int.tryParse(value ?? '');
-              return port == null || port < 1 || port > 65535
-                  ? l.ruleLookupInvalidPort
-                  : null;
-            },
-          ),
-          const SizedBox(height: 16),
-          Material(
-            color: context.colorScheme.surfaceContainerLow,
-            shape: AppShape.xl,
-            clipBehavior: Clip.antiAlias,
-            child: AbsorbPointer(
-              absorbing: _loading,
-              child: ListItem<String>.options(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                leading: const GlyphIcon(AppGlyphs.proxies),
-                title: Text(l.networkType),
-                subtitle: Text(_network.toUpperCase()),
-                dialogTitle: l.networkType,
-                options: const ['tcp', 'udp'],
-                value: _network,
-                textBuilder: (value) => value.toUpperCase(),
-                onChanged: (value) {
-                  if (!mounted || _loading || value == null) return;
-                  _network = value;
-                  _clearResult();
-                },
+              generateSectionV3(
+                title: l.ruleLookupDestination,
+                items: [
+                  ListItem.input(
+                    title: Text(l.ruleLookupTarget),
+                    subtitle: _target.isEmpty ? null : Text(_target),
+                    dialogTitle: l.ruleLookupTarget,
+                    value: _target,
+                    maxLength: TextInputLimits.domain,
+                    keyboardType: TextInputType.url,
+                    validator: _validateTarget,
+                    onChanged: (value) {
+                      if (!mounted || _loading || value == null) return;
+                      _target = value.trim();
+                      _clearResult();
+                    },
+                  ),
+                  ListItem.input(
+                    title: Text(l.destinationPort),
+                    subtitle: Text(_destinationPort),
+                    dialogTitle: l.destinationPort,
+                    value: _destinationPort,
+                    maxLength: TextInputLimits.port,
+                    keyboardType: TextInputType.number,
+                    validator: _validatePort,
+                    onChanged: (value) {
+                      if (!mounted || _loading || value == null) return;
+                      _destinationPort = value;
+                      _clearResult();
+                    },
+                  ),
+                ],
               ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          ElasticButton(
-            child: FilledButton(
-              onPressed: connected && !_loading ? _lookup : null,
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-                shape: AppShape.xl,
+              generateSectionV3(
+                title: l.other,
+                items: [
+                  ListItem<String>.options(
+                    title: Text(l.networkType),
+                    subtitle: Text(_network.toUpperCase()),
+                    dialogTitle: l.networkType,
+                    options: const ['tcp', 'udp'],
+                    value: _network,
+                    textBuilder: (value) => value.toUpperCase(),
+                    onChanged: (value) {
+                      if (!mounted || _loading || value == null) return;
+                      _network = value;
+                      _clearResult();
+                    },
+                  ),
+                ],
               ),
-              child: _loading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const GlyphIcon(AppGlyphs.search, size: 18, fill: 1),
-                        const SizedBox(width: 8),
-                        Text(l.ruleLookupQuery),
-                      ],
-                    ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 20),
+        ElasticButton(
+          child: FilledButton(
+            onPressed: connected && !_loading ? _lookup : null,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              shape: AppShape.xl,
+            ),
+            child: _loading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const GlyphIcon(AppGlyphs.search, size: 18, fill: 1),
+                      const SizedBox(width: 8),
+                      Text(l.ruleLookupQuery),
+                    ],
+                  ),
+          ),
+        ),
+      ],
     );
   }
 

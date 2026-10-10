@@ -7912,6 +7912,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Destination`
+  String get ruleLookupDestination {
+    return Intl.message(
+      'Destination',
+      name: 'ruleLookupDestination',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Check route`
   String get ruleLookupQuery {
     return Intl.message(
