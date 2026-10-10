@@ -788,6 +788,7 @@
   "ruleLookup": "分流查询",
   "ruleLookupDesc": "查询域名或 IP 会命中哪条规则、使用哪个策略",
   "ruleLookupTarget": "域名或 IP 地址",
+  "ruleLookupDestination": "目标",
   "ruleLookupQuery": "查询分流",
   "ruleLookupInvalidTarget": "请输入有效的域名或 IP 地址，不要包含网址或端口",
   "ruleLookupInvalidPort": "请输入 1 到 65535 之间的端口",

@@ -1293,6 +1293,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
       "Check which rule and policy a domain or IP address would use",
     ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage(
+      "Destination",
+    ),
     "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
       "Couldn\'t check the route. Check the core and DNS, then try again",
     ),

@@ -788,6 +788,7 @@
   "ruleLookup": "ルーティング検索",
   "ruleLookupDesc": "ドメインまたは IP に適用されるルールとポリシーを確認",
   "ruleLookupTarget": "ドメインまたは IP アドレス",
+  "ruleLookupDestination": "宛先",
   "ruleLookupQuery": "ルートを確認",
   "ruleLookupInvalidTarget": "URL やポートを含まない有効なドメインまたは IP アドレスを入力してください",
   "ruleLookupInvalidPort": "1〜65535 のポートを入力してください",

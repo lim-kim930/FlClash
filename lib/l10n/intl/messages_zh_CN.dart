@@ -980,6 +980,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
       "查询域名或 IP 会命中哪条规则、使用哪个策略",
     ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("目标"),
     "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
       "分流查询失败，请检查内核与 DNS 后重试",
     ),

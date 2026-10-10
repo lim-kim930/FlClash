@@ -1101,6 +1101,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
       "ドメインまたは IP に適用されるルールとポリシーを確認",
     ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("宛先"),
     "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
       "ルートを確認できません。コアと DNS を確認して再試行してください",
     ),

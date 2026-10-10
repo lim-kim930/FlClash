@@ -788,6 +788,7 @@
   "ruleLookup": "Проверка маршрута",
   "ruleLookupDesc": "Узнайте, какое правило и политика применяются к домену или IP",
   "ruleLookupTarget": "Домен или IP-адрес",
+  "ruleLookupDestination": "Назначение",
   "ruleLookupQuery": "Проверить маршрут",
   "ruleLookupInvalidTarget": "Введите корректный домен или IP-адрес без URL и порта",
   "ruleLookupInvalidPort": "Введите порт от 1 до 65535",

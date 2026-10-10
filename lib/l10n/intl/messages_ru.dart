@@ -1356,6 +1356,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
       "Узнайте, какое правило и политика применяются к домену или IP",
     ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("Назначение"),
     "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
       "Не удалось проверить маршрут. Проверьте ядро и DNS и повторите попытку",
     ),

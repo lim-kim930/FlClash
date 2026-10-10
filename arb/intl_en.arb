@@ -788,6 +788,7 @@
   "ruleLookup": "Routing lookup",
   "ruleLookupDesc": "Check which rule and policy a domain or IP address would use",
   "ruleLookupTarget": "Domain or IP address",
+  "ruleLookupDestination": "Destination",
   "ruleLookupQuery": "Check route",
   "ruleLookupInvalidTarget": "Enter a valid domain or IP address without a URL or port",
   "ruleLookupInvalidPort": "Enter a port between 1 and 65535",

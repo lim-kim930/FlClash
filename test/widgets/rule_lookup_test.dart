@@ -80,11 +80,38 @@ void main() {
     await tester.pump();
   }
 
+  Future<void> openInput(WidgetTester tester, String title) async {
+    final row = find.text(title).first;
+    await tester.ensureVisible(row);
+    await tester.tap(row);
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> submitInput(WidgetTester tester) async {
+    await tester.tap(find.widgetWithText(TextButton, 'Submit'));
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> editInput(
+    WidgetTester tester,
+    String title,
+    String value,
+  ) async {
+    await openInput(tester, title);
+    await tester.enterText(find.byType(TextFormField), value);
+    await submitInput(tester);
+  }
+
   testWidgets('shows the matched policy and clears results after edits', (
     tester,
   ) async {
     await mount(tester);
-    await tester.enterText(find.byType(TextFormField).first, 'example.com');
+    expect(find.text('Source'), findsOneWidget);
+    expect(find.text('Destination'), findsOneWidget);
+    expect(find.text('Other'), findsOneWidget);
+    expect(find.byType(DecorationListItem), findsNWidgets(4));
+    expect(find.byType(TextFormField), findsNothing);
+    await editInput(tester, 'Domain or IP address', 'example.com');
     await query(tester);
     await tester.scrollUntilVisible(
       find.text('Domain'),
@@ -106,33 +133,29 @@ void main() {
         network: 'tcp',
       ),
     ).called(1);
-    await tester.scrollUntilVisible(
-      find.byType(TextFormField).first,
-      -200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.enterText(find.byType(TextFormField).first, 'example.org');
-    await tester.pump();
+    await editInput(tester, 'Domain or IP address', 'example.org');
     expect(find.text('Proxy → node-a'), findsNothing);
   });
 
-  testWidgets('rejects URLs and ports outside the destination range', (
+  testWidgets('rejects URLs and invalid destination ports in input dialogs', (
     tester,
   ) async {
     await mount(tester);
-    await tester.enterText(
-      find.byType(TextFormField).first,
-      'https://example.com',
-    );
-    await query(tester);
+    await openInput(tester, 'Domain or IP address');
+    await tester.enterText(find.byType(TextFormField), 'https://example.com');
+    await submitInput(tester);
     expect(
       find.text('Enter a valid domain or IP address without a URL or port'),
       findsOneWidget,
     );
-    await tester.enterText(find.byType(TextFormField).first, '2001:db8::1');
-    await tester.enterText(find.byType(TextFormField).last, '65536');
-    await query(tester);
+    expect(find.byType(InputDialog), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField), '2001:db8::1');
+    await submitInput(tester);
+    await openInput(tester, 'Destination port');
+    await tester.enterText(find.byType(TextFormField), '65536');
+    await submitInput(tester);
     expect(find.text('Enter a port between 1 and 65535'), findsOneWidget);
+    expect(find.byType(InputDialog), findsOneWidget);
     verifyNever(
       () => handler.ruleLookup(
         target: any(named: 'target'),
@@ -147,12 +170,11 @@ void main() {
     'uses a radio dialog and sends distinct source and destination ports',
     (tester) async {
       await mount(tester);
-      final fields = find.byType(TextFormField);
       expect(find.text('Source port'), findsOneWidget);
       expect(find.text('Destination port'), findsOneWidget);
-      await tester.enterText(fields.first, 'example.com');
-      await tester.enterText(fields.at(1), '54321');
-      await tester.enterText(fields.at(2), '8443');
+      await editInput(tester, 'Domain or IP address', 'example.com');
+      await editInput(tester, 'Source port', '54321');
+      await editInput(tester, 'Destination port', '8443');
       await tester.ensureVisible(find.text('TCP'));
       await tester.tap(find.text('TCP'));
       await tester.pumpAndSettle();
@@ -175,7 +197,7 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.scrollUntilVisible(
-        find.byType(ListItem<String>),
+        find.text('UDP'),
         -200,
         scrollable: find.byType(Scrollable).first,
       );
@@ -189,10 +211,11 @@ void main() {
 
   testWidgets('rejects invalid source ports before querying', (tester) async {
     await mount(tester);
-    await tester.enterText(find.byType(TextFormField).first, 'example.com');
-    for (final port in ['0', '65536']) {
-      await tester.enterText(find.byType(TextFormField).at(1), port);
-      await query(tester);
+    await editInput(tester, 'Domain or IP address', 'example.com');
+    await openInput(tester, 'Source port');
+    for (final port in ['0', '65536', '0xff']) {
+      await tester.enterText(find.byType(TextFormField), port);
+      await submitInput(tester);
       expect(find.text('Enter a port between 1 and 65535'), findsOneWidget);
     }
     verifyNever(
@@ -223,6 +246,36 @@ void main() {
     );
   });
 
+  testWidgets('keeps cancelled edits and allows clearing the source port', (
+    tester,
+  ) async {
+    await mount(tester);
+    await query(tester);
+    expect(
+      find.text('Enter a valid domain or IP address without a URL or port'),
+      findsOneWidget,
+    );
+    await editInput(tester, 'Domain or IP address', 'example.com');
+    await editInput(tester, 'Source port', '54321');
+    await openInput(tester, 'Domain or IP address');
+    await tester.enterText(find.byType(TextFormField), 'example.org');
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.text('example.com'), findsOneWidget);
+    expect(find.text('example.org'), findsNothing);
+    await editInput(tester, 'Source port', '');
+    expect(find.text('Optional; leave blank if unknown'), findsOneWidget);
+    await query(tester);
+    verify(
+      () => handler.ruleLookup(
+        target: 'example.com',
+        sourcePort: 0,
+        destinationPort: 443,
+        network: 'tcp',
+      ),
+    ).called(1);
+  });
+
   testWidgets('releases loading state after failure and permits retry', (
     tester,
   ) async {
@@ -236,7 +289,7 @@ void main() {
       ),
     ).thenAnswer((_) => pending.future);
     await mount(tester);
-    await tester.enterText(find.byType(TextFormField).first, 'example.com');
+    await editInput(tester, 'Domain or IP address', 'example.com');
     await query(tester);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
     pending.completeError(
@@ -278,7 +331,7 @@ void main() {
       ),
     ).thenAnswer((_) => pending.future);
     await mount(tester);
-    await tester.enterText(find.byType(TextFormField).first, 'example.com');
+    await editInput(tester, 'Domain or IP address', 'example.com');
     await query(tester);
     await tester.pumpWidget(const SizedBox.shrink());
     pending.complete(_result);
