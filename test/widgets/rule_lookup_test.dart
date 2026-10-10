@@ -230,20 +230,16 @@ void main() {
 
   testWidgets('disables queries until the core is connected', (tester) async {
     final container = await mount(tester, connected: false);
-    expect(
-      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
-      isNull,
-    );
+    final queryButton = find.widgetWithText(FilledButton, 'Check route');
+    expect(queryButton, findsOneWidget);
+    expect(tester.widget<FilledButton>(queryButton).onPressed, isNull);
     expect(
       find.text('Connect the core before checking a route'),
       findsOneWidget,
     );
     container.read(coreStatusProvider.notifier).value = CoreStatus.connected;
     await tester.pump();
-    expect(
-      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
-      isNotNull,
-    );
+    expect(tester.widget<FilledButton>(queryButton).onPressed, isNotNull);
   });
 
   testWidgets('keeps cancelled edits and allows clearing the source port', (
