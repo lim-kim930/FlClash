@@ -659,7 +659,7 @@ final class GeoResourceActionProvider
   }
 }
 
-String _$geoResourceActionHash() => r'1984c171b28238293479df3c4cf19b0199aabc0e';
+String _$geoResourceActionHash() => r'39444c8525d4d778fe817a69a4bb6d38b242680d';
 
 abstract class _$GeoResourceAction extends $Notifier<void> {
   void build();

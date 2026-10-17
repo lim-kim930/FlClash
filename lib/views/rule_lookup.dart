@@ -222,11 +222,7 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
               shape: AppShape.xl,
             ),
             child: _loading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
+                ? const CommonCircleLoading(size: 20)
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -311,77 +307,79 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
     final colorScheme = context.colorScheme;
     return CommonScaffold(
       title: l.ruleLookup,
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
-          top: context.contentTopPadding + 16,
-          bottom: 20 + BottomInsetScope.of(context),
-        ),
-        children: [
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: _maxContentWidth),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ListHeader(
-                    title: l.ruleLookup,
-                    padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
-                  ),
-                  ListFooter(text: l.ruleLookupDesc),
-                  _buildForm(l, connected),
-                  if (!connected) ...[
-                    const SizedBox(height: 16),
-                    _buildStatusMessage(
-                      message: l.ruleLookupCoreRequired,
-                      glyph: AppGlyphs.info,
-                      containerColor: colorScheme.errorContainer.opacity80,
-                      contentColor: colorScheme.onErrorContainer,
+      body: Builder(
+        builder: (context) => ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
+            top: context.contentTopPadding + 16,
+            bottom: 20 + BottomInsetScope.of(context),
+          ),
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ListHeader(
+                      title: l.ruleLookup,
+                      padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
                     ),
-                  ],
-                  if (_error != null) ...[
-                    const SizedBox(height: 16),
-                    _buildStatusMessage(
-                      message: _error!,
-                      glyph: AppGlyphs.close,
-                      containerColor: colorScheme.errorContainer.opacity80,
-                      contentColor: colorScheme.onErrorContainer,
-                    ),
-                  ],
-                  if (result != null) ...[
+                    ListFooter(text: l.ruleLookupDesc),
+                    _buildForm(l, connected),
+                    if (!connected) ...[
+                      const SizedBox(height: 16),
+                      _buildStatusMessage(
+                        message: l.ruleLookupCoreRequired,
+                        glyph: AppGlyphs.info,
+                        containerColor: colorScheme.errorContainer.opacity80,
+                        contentColor: colorScheme.onErrorContainer,
+                      ),
+                    ],
+                    if (_error != null) ...[
+                      const SizedBox(height: 16),
+                      _buildStatusMessage(
+                        message: _error!,
+                        glyph: AppGlyphs.close,
+                        containerColor: colorScheme.errorContainer.opacity80,
+                        contentColor: colorScheme.onErrorContainer,
+                      ),
+                    ],
+                    if (result != null) ...[
+                      const SizedBox(height: 24),
+                      _buildResults(l, result),
+                    ],
                     const SizedBox(height: 24),
-                    _buildResults(l, result),
-                  ],
-                  const SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: GlyphIcon(
-                            AppGlyphs.info,
-                            size: 14,
-                            color: colorScheme.outline,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: GlyphIcon(
+                              AppGlyphs.info,
+                              size: 14,
+                              color: colorScheme.outline,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            l.ruleLookupNote,
-                            style: AppTextStyle.footnote
-                                .of(context)
-                                .copyWith(color: colorScheme.outline),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              l.ruleLookupNote,
+                              style: AppTextStyle.footnote
+                                  .of(context)
+                                  .copyWith(color: colorScheme.outline),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

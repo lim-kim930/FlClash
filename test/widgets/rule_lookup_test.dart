@@ -75,7 +75,9 @@ void main() {
 
   Future<void> query(WidgetTester tester) async {
     final button = find.widgetWithText(FilledButton, 'Check route');
+    await tester.pumpAndSettle();
     await tester.ensureVisible(button);
+    await tester.pumpAndSettle();
     await tester.tap(button);
     await tester.pump();
   }
@@ -178,7 +180,13 @@ void main() {
     await tester.ensureVisible(find.text('TCP'));
     await tester.tap(find.text('TCP'));
     await tester.pumpAndSettle();
-    expect(find.byType(CommonPopupMenuItem), findsNWidgets(2));
+    expect(
+      tester
+          .widget<CommonPopupMenu>(find.byType(CommonPopupMenu))
+          .items
+          .map((item) => item.label),
+      ['TCP', 'UDP'],
+    );
     await tester.tap(find.text('UDP'));
     await tester.pumpAndSettle();
     expect(find.byType(CommonDialog), findsNothing);
@@ -286,12 +294,12 @@ void main() {
     await mount(tester);
     await editInput(tester, 'Domain or IP address', 'example.com');
     await query(tester);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.byType(CommonCircleLoading), findsOneWidget);
     pending.completeError(
       const CoreMethodException(code: 'no_response', message: 'unavailable'),
     );
     await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byType(CommonCircleLoading), findsNothing);
     expect(
       find.text(
         "Couldn't check the route. Check the core and DNS, then try again",

@@ -132,7 +132,7 @@ void main() {
     ];
     await pumpConnections(tester, connectionsReader: () async => snapshot);
     await tester.pump();
-    await tester.tap(find.byType(TrackerInfoTableRow).first);
+    await tester.tap(find.byType(TrackerInfoItem).first);
     await tester.pumpAndSettle();
     expect(find.byType(TrackerInfoDetailView), findsOneWidget);
     snapshot = [snapshot.single.copyWith(upload: 1124, download: 2248)];
@@ -155,7 +155,7 @@ void main() {
     await pumpConnections(tester, connectionsReader: () async => connections);
     await tester.pump(const Duration(seconds: 1));
 
-    final builtItems = find.byType(TrackerInfoTableRow).evaluate().length;
+    final builtItems = find.byType(TrackerInfoItem).evaluate().length;
     expect(builtItems, greaterThan(0));
     expect(builtItems, lessThan(connections.length));
     expect(find.textContaining('host-0.com'), findsOneWidget);

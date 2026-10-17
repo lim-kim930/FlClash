@@ -47,12 +47,12 @@ class GeoResourceAction extends _$GeoResourceAction {
     GeoResource geoResource, {
     bool announceSuccess = true,
   }) async {
-    await _syncConfig();
     final running = _operations.containsKey(geoResource);
     final previous = _manualUpdates[geoResource];
     _manualUpdates[geoResource] = announceSuccess;
     final operation = _startUpdating(geoResource);
     try {
+      await _syncConfig();
       final message = await _core.updateGeoData(geoResource.name);
       if (message.isNotEmpty) {
         throw MessageException(message);

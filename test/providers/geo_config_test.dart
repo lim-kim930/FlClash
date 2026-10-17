@@ -391,6 +391,7 @@ void main() {
       await container
           .read(profilesActionProvider.notifier)
           .deleteProfile(profile.id);
+      await container.read(setupActionProvider.notifier).setRunning(false);
       await container
           .read(geoResourceActionProvider.notifier)
           .updateGeoResource(GeoResource.GEOSITE);
