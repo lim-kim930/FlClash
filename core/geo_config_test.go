@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"context"
@@ -101,8 +101,8 @@ func runBaseConfigGeoDownloads(t *testing.T, home string) {
 	}
 	applyAndDownload := func() {
 		t.Helper()
-		if message := handleSetupConfig(&SetupParams{}); message != "" {
-			t.Fatalf("apply base config: %s", message)
+		if err := handleSetupConfig(&SetupParams{}); err != nil {
+			t.Fatalf("apply base config: %s", err)
 		}
 		urls := currentConfig.General.GeoXUrl
 		if geodata.GeoSiteUrl() != urls.GeoSite || geodata.GeoIpUrl() != urls.GeoIp ||
@@ -112,8 +112,8 @@ func runBaseConfigGeoDownloads(t *testing.T, home string) {
 		if updater.GeoAutoUpdate() || updater.GeoUpdateInterval() != 48 {
 			t.Fatalf("auto update = %v, interval = %d", updater.GeoAutoUpdate(), updater.GeoUpdateInterval())
 		}
-		if message := handleUpdateGeoData("GEOSITE"); message != "" {
-			t.Fatalf("request geosite update: %s", message)
+		if err := handleUpdateGeoData("GEOSITE"); err != nil {
+			t.Fatalf("request geosite update: %s", err)
 		}
 		select {
 		case err := <-completed:

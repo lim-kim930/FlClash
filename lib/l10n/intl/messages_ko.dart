@@ -268,7 +268,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "answers": MessageLookupByLibrary.simpleMessage("응답"),
     "app": MessageLookupByLibrary.simpleMessage("앱"),
     "appAccessControl": MessageLookupByLibrary.simpleMessage("앱 접근 제어"),
-    "appIconDesign": MessageLookupByLibrary.simpleMessage("앱 아이콘 디자인"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("로컬 프록시 없음"),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage("시스템 DNS 추가"),
     "authentication": MessageLookupByLibrary.simpleMessage("인증"),
@@ -366,6 +365,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "모든 프로필, 설정, 로컬 데이터를 삭제한 후 앱을 종료합니다. 앱을 다시 열면 처음부터 시작합니다.",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage("DNS ?? ???"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("?? ???"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("검색 지우기"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("클라이언트 핑거프린트"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("클립보드로 내보내기"),
@@ -484,6 +485,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destination": MessageLookupByLibrary.simpleMessage("목적지"),
     "destinationGeoIP": MessageLookupByLibrary.simpleMessage("목적지 GeoIP"),
     "destinationIPASN": MessageLookupByLibrary.simpleMessage("목적지 IP ASN"),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("?? ??"),
     "details": m21,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "서드파티 API에 의존하므로 참고용으로만 사용하세요",
@@ -600,6 +602,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "done": MessageLookupByLibrary.simpleMessage("완료"),
     "download": MessageLookupByLibrary.simpleMessage("다운로드"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("다운로드 대역폭"),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage("???? ??"),
     "duration": MessageLookupByLibrary.simpleMessage("소요 시간"),
     "edit": MessageLookupByLibrary.simpleMessage("편집"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("대시보드 편집"),
@@ -699,6 +702,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fr": MessageLookupByLibrary.simpleMessage("프랑스어"),
     "general": MessageLookupByLibrary.simpleMessage("일반"),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "Geo ??? ????? ?????. ?? ?????.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m27,
     "geoUpdated": m28,
@@ -1056,7 +1062,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "optional": MessageLookupByLibrary.simpleMessage("선택 사항"),
     "options": MessageLookupByLibrary.simpleMessage("옵션"),
     "other": MessageLookupByLibrary.simpleMessage("기타"),
-    "otherContributors": MessageLookupByLibrary.simpleMessage("기타 기여자"),
     "outbound": MessageLookupByLibrary.simpleMessage("아웃바운드"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("출구"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("아웃바운드 IP"),
@@ -1306,6 +1311,35 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "규칙은 항목마다 규칙 하나인 YAML 목록이어야 합니다. 예: - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("??? ??"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "??? ???? ?? ??? ?????",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "??? ?? IP ??? ??? ??? ?? ??",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("??"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "??? ???? ?????. ??? DNS? ??? ? ?? ?????",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "1~65535 ??? ??? ?????",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "URL?? ?? ?? ??? ??? ?? IP ??? ?????",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "???? ??? ?? ?? ?? ?? ?? ??? ?????",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "??? ???? ?? ?? ??? ??? ?????. IP ??? ?? DNS ??? ??? ? ????. ????, ??, ???? ? ??? ???? ?? ?? ? ???? ?? ??? ??? ? ????. ??? ??? ?? ??? ????, ?? ??? ?? ??? ??? ? ????. ???? ??? ??? ? ?? ?????.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("??? ?"),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("?? ??"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "?? ??; ??? ?? ???",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage("??? ?? IP ??"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent 직접 연결",
     ),
@@ -1429,8 +1463,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("SOCKS 포트"),
     "softStyle": MessageLookupByLibrary.simpleMessage("부드러움"),
     "sort": MessageLookupByLibrary.simpleMessage("정렬"),
+    "sortAsc": MessageLookupByLibrary.simpleMessage("????"),
+    "sortBy": MessageLookupByLibrary.simpleMessage("?? ??"),
+    "sortDesc": MessageLookupByLibrary.simpleMessage("????"),
+    "sortDirection": MessageLookupByLibrary.simpleMessage("?? ??"),
     "source": MessageLookupByLibrary.simpleMessage("소스"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("출발지 IP"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("?? ??"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("특수 프록시"),
     "specialRules": MessageLookupByLibrary.simpleMessage("특수 규칙"),
     "spectrum": MessageLookupByLibrary.simpleMessage("스펙트럼"),
@@ -1536,6 +1575,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "update": MessageLookupByLibrary.simpleMessage("업데이트"),
     "upload": MessageLookupByLibrary.simpleMessage("업로드"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("업로드 대역폭"),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("??? ??"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m80,
     "useHosts": MessageLookupByLibrary.simpleMessage("hosts 사용"),

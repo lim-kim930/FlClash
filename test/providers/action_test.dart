@@ -902,12 +902,15 @@ void main() {
       expect(setupAction.authorizationRequestCount, 1);
     });
 
-    test('recovers from a failed authorization without prompting', () async {
+    test('retries authorization when the user re-enables tun', () async {
       late _AuthorizationSetupAction setupAction;
       final container = ProviderContainer(
         overrides: [
           setupActionProvider.overrideWith(() {
-            setupAction = _AuthorizationSetupAction([AuthorizeCode.error]);
+            setupAction = _AuthorizationSetupAction([
+              AuthorizeCode.error,
+              AuthorizeCode.none,
+            ]);
             return setupAction;
           }),
         ],
@@ -921,14 +924,17 @@ void main() {
       expect(await setupAction.requestAdmin(true), isTrue);
       expect(
         container.read(authorizedTunEnableProvider),
-        TunAuthorizationState.unauthorized,
+        TunAuthorizationState.none,
       );
       expect(container.read(shouldPatchSystemDnsProvider), isFalse);
 
-      setupAction.privilege = true;
+      expect(container.read(patchClashConfigProvider).tun.enable, isFalse);
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update((state) => state.copyWith.tun(enable: true));
 
-      expect(await setupAction.requestAdmin(true), isFalse);
-      expect(setupAction.authorizationRequestCount, 1);
+      expect(await setupAction.requestAdmin(true), isTrue);
+      expect(setupAction.authorizationRequestCount, 2);
       expect(
         container.read(authorizedTunEnableProvider),
         TunAuthorizationState.authorized,

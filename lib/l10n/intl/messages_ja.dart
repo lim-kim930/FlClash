@@ -271,7 +271,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "answers": MessageLookupByLibrary.simpleMessage("応答"),
     "app": MessageLookupByLibrary.simpleMessage("アプリ"),
     "appAccessControl": MessageLookupByLibrary.simpleMessage("アプリアクセス制御"),
-    "appIconDesign": MessageLookupByLibrary.simpleMessage("アプリアイコンのデザイン"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("ローカルプロキシがありません"),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage("システムDNSを追加"),
     "authentication": MessageLookupByLibrary.simpleMessage("認証"),
@@ -375,6 +374,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "すべてのプロファイル、設定、ローカルデータを削除してアプリを終了します。もう一度開くと最初から始められます。",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage("DNS クエリを消去"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("リクエストを消去"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("検索をクリア"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "クライアントフィンガープリント",
@@ -497,6 +498,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destination": MessageLookupByLibrary.simpleMessage("宛先"),
     "destinationGeoIP": MessageLookupByLibrary.simpleMessage("宛先GeoIP"),
     "destinationIPASN": MessageLookupByLibrary.simpleMessage("宛先IP ASN"),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("宛先ポート"),
     "details": m21,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "サードパーティAPIに依存しているため、参考値です",
@@ -611,6 +613,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "done": MessageLookupByLibrary.simpleMessage("完了"),
     "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("ダウンロード帯域幅"),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage("ダウンロード速度"),
     "duration": MessageLookupByLibrary.simpleMessage("経過時間"),
     "edit": MessageLookupByLibrary.simpleMessage("編集"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("ダッシュボードを編集"),
@@ -710,6 +713,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fr": MessageLookupByLibrary.simpleMessage("フランス語"),
     "general": MessageLookupByLibrary.simpleMessage("一般"),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "Geo 設定の同期に失敗しました。もう一度お試しください。",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m27,
     "geoUpdated": m28,
@@ -1075,7 +1081,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "optional": MessageLookupByLibrary.simpleMessage("任意"),
     "options": MessageLookupByLibrary.simpleMessage("オプション"),
     "other": MessageLookupByLibrary.simpleMessage("その他"),
-    "otherContributors": MessageLookupByLibrary.simpleMessage("その他の貢献者"),
     "outbound": MessageLookupByLibrary.simpleMessage("アウトバウンド"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("出口"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("アウトバウンド IP"),
@@ -1333,6 +1338,35 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "ルールは 1 項目に 1 つのルールを書いた YAML リストにしてください。例：- DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("ルーティング検索"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "ルートを確認する前にコアに接続してください",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "ドメインまたは IP に適用されるルールとポリシーを確認",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("宛先"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "ルートを確認できません。コアと DNS を確認して再試行してください",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "1〜65535 のポートを入力してください",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "URL やポートを含まない有効なドメインまたは IP アドレスを入力してください",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "一致するルールなし。現在のモードまたは既定のポリシーを使用",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "現在読み込まれている設定で検索し、対象には接続しません。IP ルールの照合時に DNS を問い合わせる場合があります。実際のアプリ接続は、プロセス、送信元、インバウンド、スニッフィングのルールで異なる経路になる場合があります。表示ノードはグループの現在の選択で、負荷分散では別のノードになる場合があります。設定やポリシー変更後は再検索してください。",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("一致した内容"),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("ルートを確認"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "任意。不明な場合は空欄にしてください",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage("ドメインまたは IP アドレス"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent を直接接続",
     ),
@@ -1458,8 +1492,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("SOCKSポート"),
     "softStyle": MessageLookupByLibrary.simpleMessage("ソフト"),
     "sort": MessageLookupByLibrary.simpleMessage("並べ替え"),
+    "sortAsc": MessageLookupByLibrary.simpleMessage("昇順"),
+    "sortBy": MessageLookupByLibrary.simpleMessage("並べ替え基準"),
+    "sortDesc": MessageLookupByLibrary.simpleMessage("降順"),
+    "sortDirection": MessageLookupByLibrary.simpleMessage("並べ替え順序"),
     "source": MessageLookupByLibrary.simpleMessage("ソース"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("送信元IP"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("送信元ポート"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("特殊プロキシ"),
     "specialRules": MessageLookupByLibrary.simpleMessage("特殊ルール"),
     "spectrum": MessageLookupByLibrary.simpleMessage("スペクトル"),
@@ -1561,6 +1600,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "update": MessageLookupByLibrary.simpleMessage("更新"),
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("アップロード速度"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m80,
     "useHosts": MessageLookupByLibrary.simpleMessage("Hostsを使用"),

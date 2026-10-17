@@ -61,6 +61,12 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         const _AdvancedConfigItem(),
         const _CustomResourcesItem(),
         const _GeneralItem(),
+        ListItem.open(
+          leading: const GlyphIcon(AppGlyphs.rules),
+          title: Text(appLocalizations.ruleLookup),
+          subtitle: Text(appLocalizations.ruleLookupDesc),
+          widget: const RuleLookupView(),
+        ),
       ],
       footer: [
         if (system.isAndroid) appLocalizations.accessControlDesc,
@@ -89,7 +95,6 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         },
       ),
       _getSettingList(),
-      generateSection(items: [ListItem.open(leading: const GlyphIcon(AppGlyphs.rules), title: Text(context.appLocalizations.ruleLookup), subtitle: Text(context.appLocalizations.ruleLookupDesc), widget: const RuleLookupView())]),
       _getOtherList(developerMode),
     ];
     return CommonScaffold(

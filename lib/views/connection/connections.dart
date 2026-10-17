@@ -66,7 +66,6 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
         onPressed: () {
           showSheet(
             context: context,
-            props: const SheetProps(isScrollControlled: true),
             builder: (_) => CommonScaffold(
               title: context.appLocalizations.settings,
               body: ConnectionsSetting(stateNotifier: _listController),
@@ -178,6 +177,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
                 actionBuilder: buildAction,
               ),
               builder: (context, table, connections) => TrackerInfoAnimatedList(
+                stateNotifier: _listController,
                 controller: _scrollController,
                 padding: EdgeInsets.only(
                   top: context.contentTopPadding,

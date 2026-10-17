@@ -443,7 +443,18 @@ class SetupAction extends _$SetupAction {
   }) async {
     final profileId = setupState.profileId;
     if (profileId == null) {
-      return (yaml: '', md5: '', counts: configCountsOf(const {}), base: null);
+      final config = {
+        'geox-url': {...defaultGeoXUrl, ...patchConfig.geoXUrl}.raw,
+        'geo-auto-update': patchConfig.geoAutoUpdate,
+        'geo-update-interval': patchConfig.geoUpdateInterval,
+      };
+      final yamlString = yaml.encode(config);
+      return (
+        yaml: yamlString,
+        md5: yamlString.toMd5(),
+        counts: configCountsOf(config),
+        base: null,
+      );
     }
     final defaultUA = globalState.packageInfo.ua;
     final networkSetting = ref.read(

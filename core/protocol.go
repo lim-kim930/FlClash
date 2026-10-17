@@ -12,8 +12,6 @@ import (
 	"github.com/metacubex/mihomo/tunnel"
 )
 
-const ruleLookupMethod CoreMethod = "ruleLookup"
-
 type CoreMethod string
 
 const (
@@ -37,6 +35,7 @@ const (
 	resetTrafficMethod             CoreMethod = "resetTraffic"
 	asyncTestDelayMethod           CoreMethod = "asyncTestDelay"
 	probeMethod                    CoreMethod = "probe"
+	ruleLookupMethod               CoreMethod = "ruleLookup"
 	outboundIpMethod               CoreMethod = "outboundIp"
 	serviceCheckMethod             CoreMethod = "serviceCheck"
 	getConnectionsMethod           CoreMethod = "getConnections"

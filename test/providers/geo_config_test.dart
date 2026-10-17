@@ -70,7 +70,7 @@ void main() {
     registerFallbackValue(const SetupParams(selectedMap: {}, testUrl: ''));
     registerFallbackValue(
       const PatchClashConfig().toUpdateParams(
-        routeMode: RouteMode.config,
+        skipCertVerify: false,
         authentication: const [],
       ),
     );

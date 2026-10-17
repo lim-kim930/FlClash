@@ -166,48 +166,47 @@ void main() {
     );
   });
 
-  testWidgets(
-    'uses a radio dialog and sends distinct source and destination ports',
-    (tester) async {
-      await mount(tester);
-      expect(find.text('Source port'), findsOneWidget);
-      expect(find.text('Destination port'), findsOneWidget);
-      await editInput(tester, 'Domain or IP address', 'example.com');
-      await editInput(tester, 'Source port', '54321');
-      await editInput(tester, 'Destination port', '8443');
-      await tester.ensureVisible(find.text('TCP'));
-      await tester.tap(find.text('TCP'));
-      await tester.pumpAndSettle();
-      expect(find.byType(Radio<(String,)>), findsNWidgets(2));
-      await tester.tap(find.text('UDP'));
-      await tester.pumpAndSettle();
-      expect(find.byType(CommonDialog), findsNothing);
-      await query(tester);
-      verify(
-        () => handler.ruleLookup(
-          target: 'example.com',
-          sourcePort: 54321,
-          destinationPort: 8443,
-          network: 'udp',
-        ),
-      ).called(1);
-      await tester.scrollUntilVisible(
-        find.text('Domain'),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.scrollUntilVisible(
-        find.text('UDP'),
-        -200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(find.text('UDP'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('TCP').last);
-      await tester.pumpAndSettle();
-      expect(find.text('Domain'), findsNothing);
-    },
-  );
+  testWidgets('uses a popup and sends distinct source and destination ports', (
+    tester,
+  ) async {
+    await mount(tester);
+    expect(find.text('Source port'), findsOneWidget);
+    expect(find.text('Destination port'), findsOneWidget);
+    await editInput(tester, 'Domain or IP address', 'example.com');
+    await editInput(tester, 'Source port', '54321');
+    await editInput(tester, 'Destination port', '8443');
+    await tester.ensureVisible(find.text('TCP'));
+    await tester.tap(find.text('TCP'));
+    await tester.pumpAndSettle();
+    expect(find.byType(CommonPopupMenuItem), findsNWidgets(2));
+    await tester.tap(find.text('UDP'));
+    await tester.pumpAndSettle();
+    expect(find.byType(CommonDialog), findsNothing);
+    await query(tester);
+    verify(
+      () => handler.ruleLookup(
+        target: 'example.com',
+        sourcePort: 54321,
+        destinationPort: 8443,
+        network: 'udp',
+      ),
+    ).called(1);
+    await tester.scrollUntilVisible(
+      find.text('Domain'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.scrollUntilVisible(
+      find.text('UDP'),
+      -200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('UDP'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('TCP').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Domain'), findsNothing);
+  });
 
   testWidgets('rejects invalid source ports before querying', (tester) async {
     await mount(tester);

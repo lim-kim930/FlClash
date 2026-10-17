@@ -29,14 +29,25 @@ String _endpointText(String ip, String port) {
 void showTrackerInfoDetail(
   BuildContext context,
   TrackerInfo trackerInfo,
-  String title,
-) {
+  String title, {
+  ValueNotifier<TrackerInfosState>? stateNotifier,
+}) {
   showInSheet<void>(
     context,
     builder: (_) {
       return CommonScaffold(
-        body: TrackerInfoDetailView(trackerInfo: trackerInfo),
         title: title,
+        body: stateNotifier == null
+            ? TrackerInfoDetailView(trackerInfo: trackerInfo)
+            : ValueListenableBuilder<TrackerInfosState>(
+                valueListenable: stateNotifier,
+                builder: (_, state, _) => TrackerInfoDetailView(
+                  trackerInfo: state.trackerInfos.firstWhere(
+                    (info) => info.id == trackerInfo.id,
+                    orElse: () => trackerInfo,
+                  ),
+                ),
+              ),
       );
     },
   );
@@ -69,7 +80,12 @@ class TrackerInfoItem extends ConsumerWidget {
       ),
     );
     return RecordListItem(
-      onTap: () => showTrackerInfoDetail(context, trackerInfo, detailTitle),
+      onTap: () => showTrackerInfoDetail(
+        context,
+        trackerInfo,
+        detailTitle,
+        stateNotifier: stateNotifier,
+      ),
       header: _buildHeader(context),
       body: _TrackerInfoBody(
         trackerInfo: trackerInfo,

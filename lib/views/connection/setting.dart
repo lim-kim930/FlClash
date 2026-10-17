@@ -1,6 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -38,103 +38,50 @@ class ConnectionsSetting extends StatelessWidget {
     };
   }
 
-  List<Widget> _buildSortSetting(BuildContext context) {
-    final appLocalizations = context.appLocalizations;
-    return generateSection(
-      isFirst: true,
-      title: appLocalizations.sortBy,
-      items: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ValueListenableBuilder<TrackerInfosState>(
-            valueListenable: stateNotifier,
-            builder: (_, state, _) {
-              final sortType = state.sortType;
-              return Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                children: [
-                  for (final item in ConnectionsSortType.values)
-                    SettingInfoCard(
-                      Info(
-                        label: _getStringConnectionsSortType(context, item),
-                        glyph: _getGlyphWithConnectionsSortType(item),
-                      ),
-                      isSelected: sortType == item,
-                      onPressed: () {
-                        stateNotifier.value = stateNotifier.value.copyWith(
-                          sortType: item,
-                        );
-                      },
-                    ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _buildSortDirectionSetting(BuildContext context) {
-    final appLocalizations = context.appLocalizations;
-    return generateSection(
-      title: appLocalizations.sortDirection,
-      items: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ValueListenableBuilder<TrackerInfosState>(
-            valueListenable: stateNotifier,
-            builder: (_, state, _) {
-              final sortDirection = state.sortDirection;
-              return Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                children: [
-                  SettingInfoCard(
-                    Info(
-                      label: appLocalizations.sortAsc,
-                      glyph: AppGlyphs.arrowUp,
-                    ),
-                    isSelected: sortDirection == SortDirection.asc,
-                    onPressed: () {
-                      stateNotifier.value = stateNotifier.value.copyWith(
-                        sortDirection: SortDirection.asc,
-                      );
-                    },
-                  ),
-                  SettingInfoCard(
-                    Info(
-                      label: appLocalizations.sortDesc,
-                      glyph: AppGlyphs.arrowDown,
-                    ),
-                    isSelected: sortDirection == SortDirection.desc,
-                    onPressed: () {
-                      stateNotifier.value = stateNotifier.value.copyWith(
-                        sortDirection: SortDirection.desc,
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final l = context.appLocalizations;
     return SingleChildScrollView(
       padding: EdgeInsets.only(top: context.contentTopPadding, bottom: 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ..._buildSortSetting(context),
-          ..._buildSortDirectionSetting(context),
-        ],
+      child: ValueListenableBuilder<TrackerInfosState>(
+        valueListenable: stateNotifier,
+        builder: (_, state, _) => generateSection(
+          title: l.settings,
+          items: [
+            ListItem<ConnectionsSortType>.options(
+              leading: GlyphIcon(
+                _getGlyphWithConnectionsSortType(state.sortType),
+              ),
+              title: Text(l.sortBy),
+              options: ConnectionsSortType.values,
+              value: state.sortType,
+              textBuilder: (value) =>
+                  _getStringConnectionsSortType(context, value),
+              onChanged: (value) {
+                stateNotifier.value = stateNotifier.value.copyWith(
+                  sortType: value,
+                );
+              },
+            ),
+            ListItem<SortDirection>.options(
+              leading: GlyphIcon(
+                state.sortDirection == SortDirection.asc
+                    ? AppGlyphs.arrowUp
+                    : AppGlyphs.arrowDown,
+              ),
+              title: Text(l.sortDirection),
+              options: SortDirection.values,
+              value: state.sortDirection,
+              textBuilder: (value) =>
+                  value == SortDirection.asc ? l.sortAsc : l.sortDesc,
+              onChanged: (value) {
+                stateNotifier.value = stateNotifier.value.copyWith(
+                  sortDirection: value,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

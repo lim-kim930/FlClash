@@ -4,7 +4,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/method.dart';
 import 'package:fl_clash/core/rule_lookup.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -120,9 +120,9 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
           Expanded(
             child: Text(
               message,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: contentColor,
-              ),
+              style: AppTextStyle.subheadline
+                  .of(context)
+                  .copyWith(color: contentColor),
             ),
           ),
         ],
@@ -138,7 +138,7 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
           absorbing: _loading,
           child: Column(
             children: [
-              generateSectionV3(
+              generateSection(
                 title: l.source,
                 items: [
                   ListItem.input(
@@ -161,7 +161,7 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
                   ),
                 ],
               ),
-              generateSectionV3(
+              generateSection(
                 title: l.ruleLookupDestination,
                 items: [
                   ListItem.input(
@@ -194,18 +194,16 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
                   ),
                 ],
               ),
-              generateSectionV3(
+              generateSection(
                 title: l.other,
                 items: [
                   ListItem<String>.options(
                     title: Text(l.networkType),
-                    subtitle: Text(_network.toUpperCase()),
-                    dialogTitle: l.networkType,
                     options: const ['tcp', 'udp'],
                     value: _network,
                     textBuilder: (value) => value.toUpperCase(),
                     onChanged: (value) {
-                      if (!mounted || _loading || value == null) return;
+                      if (!mounted || _loading) return;
                       _network = value;
                       _clearResult();
                     },
@@ -247,17 +245,16 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        generateSectionV3(
+        generateSection(
           title: l.rules,
           items: [
             DetailRow(
               title: l.ruleTarget,
               value: Text(
                 result.proxy,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: context.colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyle.subheadline
+                    .of(context, emphasized: true)
+                    .copyWith(color: context.colorScheme.primary),
               ),
               copyText: result.proxy,
             ),
@@ -281,7 +278,7 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
           ],
         ),
         const SizedBox(height: 16),
-        generateSectionV3(
+        generateSection(
           title: l.basicInfo,
           items: [
             DetailRow.text(title: l.ruleLookupTarget, value: result.target),
@@ -328,9 +325,9 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
                 children: [
                   ListHeader(
                     title: l.ruleLookup,
-                    subTitle: l.ruleLookupDesc,
                     padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
                   ),
+                  ListFooter(text: l.ruleLookupDesc),
                   _buildForm(l, connected),
                   if (!connected) ...[
                     const SizedBox(height: 16),
@@ -372,9 +369,9 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
                         Expanded(
                           child: Text(
                             l.ruleLookupNote,
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.outline,
-                            ),
+                            style: AppTextStyle.footnote
+                                .of(context)
+                                .copyWith(color: colorScheme.outline),
                           ),
                         ),
                       ],

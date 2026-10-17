@@ -178,7 +178,7 @@ func acknowledged(run func()) methodHandler {
 }
 
 var methodHandlers = map[CoreMethod]methodHandler{
-	ruleLookupMethod: ruleLookupHandler,
+	ruleLookupMethod:               ruleLookupHandler,
 	initClashMethod:                withArguments(handleInitClash),
 	getIsInitMethod:                withoutArguments(handleGetIsInit),
 	forceGcMethod:                  acknowledged(handleForceGC),
@@ -243,8 +243,12 @@ func registerMethod(method CoreMethod, handler methodHandler) {
 
 func ruleLookupHandler(call *MethodCall) (any, error) {
 	params, err := decodeArguments[*RuleLookupParams](call)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	metadata, err := ruleLookupMetadata(params)
-	if err != nil { return nil, &MethodError{Code: "invalid_arguments", Message: err.Error()} }
+	if err != nil {
+		return nil, &MethodError{Code: "invalid_arguments", Message: err.Error()}
+	}
 	return handleRuleLookup(metadata, params.Target)
 }

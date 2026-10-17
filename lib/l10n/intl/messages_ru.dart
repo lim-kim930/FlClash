@@ -319,9 +319,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Контроль доступа приложений",
     ),
-    "appIconDesign": MessageLookupByLibrary.simpleMessage(
-      "Дизайн значка приложения",
-    ),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage(
       "Нет локальных прокси",
     ),
@@ -457,6 +454,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Все профили, настройки и локальные данные будут удалены, после чего приложение закроется. Откройте его снова, чтобы начать заново.",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
+      "Очистить DNS-запросы",
+    ),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("Очистить запросы"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Очистить поиск"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Отпечаток клиента",
@@ -605,6 +606,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destinationIPASN": MessageLookupByLibrary.simpleMessage(
       "ASN IP назначения",
     ),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("Порт назначения"),
     "details": m21,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "Использует сторонний API; только для справки",
@@ -745,6 +747,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Скорость загрузки",
     ),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage(
+      "Скорость скачивания",
+    ),
     "duration": MessageLookupByLibrary.simpleMessage("Длительность"),
     "edit": MessageLookupByLibrary.simpleMessage("Редактировать"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("Изменить панель"),
@@ -874,6 +879,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fr": MessageLookupByLibrary.simpleMessage("Французский"),
     "general": MessageLookupByLibrary.simpleMessage("Общие"),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось синхронизировать настройки Geo. Повторите попытку.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m27,
     "geoUpdated": m28,
@@ -1304,9 +1312,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "optional": MessageLookupByLibrary.simpleMessage("Необязательно"),
     "options": MessageLookupByLibrary.simpleMessage("Опции"),
     "other": MessageLookupByLibrary.simpleMessage("Другое"),
-    "otherContributors": MessageLookupByLibrary.simpleMessage(
-      "Другие участники",
-    ),
     "outbound": MessageLookupByLibrary.simpleMessage("Исходящие"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("Выход"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("Исходящий IP"),
@@ -1626,6 +1631,41 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "Правила должны быть YAML-списком, по одному правилу в элементе, например - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("Проверка маршрута"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Подключите ядро перед проверкой маршрута",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "Узнайте, какое правило и политика применяются к домену или IP",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("Назначение"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось проверить маршрут. Проверьте ядро и DNS и повторите попытку",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Введите порт от 1 до 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Введите корректный домен или IP-адрес без URL и порта",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "Нет совпавшего правила; применяется текущий режим или политика по умолчанию",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Проверка использует загруженную конфигурацию без подключения к цели. Для правил IP возможен запрос DNS. Правила процессов, источника, входящих подключений и анализа трафика могут изменить маршрут реального приложения. Показан текущий выбор группы; балансировка нагрузки может выбрать другой узел. После изменения настроек или политики повторите проверку.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage(
+      "Совпавшее значение",
+    ),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage(
+      "Проверить маршрут",
+    ),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "Необязательно; оставьте пустым, если неизвестен",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Домен или IP-адрес",
+    ),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent напрямую",
     ),
@@ -1779,8 +1819,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("Порт SOCKS"),
     "softStyle": MessageLookupByLibrary.simpleMessage("Мягкий"),
     "sort": MessageLookupByLibrary.simpleMessage("Сортировка"),
+    "sortAsc": MessageLookupByLibrary.simpleMessage("По возрастанию"),
+    "sortBy": MessageLookupByLibrary.simpleMessage("Сортировать по"),
+    "sortDesc": MessageLookupByLibrary.simpleMessage("По убыванию"),
+    "sortDirection": MessageLookupByLibrary.simpleMessage(
+      "Направление сортировки",
+    ),
     "source": MessageLookupByLibrary.simpleMessage("Источник"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP источника"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("Порт источника"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Специальный прокси"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Специальные правила"),
     "spectrum": MessageLookupByLibrary.simpleMessage("Спектр"),
@@ -1908,6 +1955,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "update": MessageLookupByLibrary.simpleMessage("Обновить"),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("Скорость загрузки"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m80,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),

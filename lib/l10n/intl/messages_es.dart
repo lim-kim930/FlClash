@@ -329,9 +329,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Control de acceso de apps",
     ),
-    "appIconDesign": MessageLookupByLibrary.simpleMessage(
-      "Diseño del icono de la app",
-    ),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage(
       "No hay proxies locales",
     ),
@@ -473,6 +470,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Esto elimina todos los perfiles, ajustes y datos locales, y luego cierra la app. Ábrela de nuevo para empezar de cero.",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
+      "Borrar consultas DNS",
+    ),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("Borrar solicitudes"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Borrar búsqueda"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Huella del cliente",
@@ -625,6 +626,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "destinationIPASN": MessageLookupByLibrary.simpleMessage(
       "ASN de la IP de destino",
     ),
+    "destinationPort": MessageLookupByLibrary.simpleMessage(
+      "Puerto de destino",
+    ),
     "details": m21,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "Depende de una API de terceros; solo con fines informativos",
@@ -759,6 +763,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Ancho de banda de descarga",
     ),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage(
+      "Velocidad de descarga",
+    ),
     "duration": MessageLookupByLibrary.simpleMessage("Duración"),
     "edit": MessageLookupByLibrary.simpleMessage("Editar"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("Editar panel"),
@@ -892,6 +899,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fr": MessageLookupByLibrary.simpleMessage("Francés"),
     "general": MessageLookupByLibrary.simpleMessage("General"),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "No se pudieron sincronizar los ajustes Geo. Int?ntalo de nuevo.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m27,
     "geoUpdated": m28,
@@ -1344,9 +1354,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "optional": MessageLookupByLibrary.simpleMessage("Opcional"),
     "options": MessageLookupByLibrary.simpleMessage("Opciones"),
     "other": MessageLookupByLibrary.simpleMessage("Otros"),
-    "otherContributors": MessageLookupByLibrary.simpleMessage(
-      "Otros colaboradores",
-    ),
     "outbound": MessageLookupByLibrary.simpleMessage("Salida"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("Salida"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("IP de salida"),
@@ -1666,6 +1673,41 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "Las reglas deben ser una lista YAML con una regla por elemento, por ejemplo - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage(
+      "Consulta de enrutamiento",
+    ),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Conecta el n?cleo antes de comprobar una ruta",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "Comprobar qu? regla y pol?tica usar?a un dominio o una direcci?n IP",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("Destino"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "No se pudo comprobar la ruta. Revisa el n?cleo y el DNS e int?ntalo de nuevo",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Introduce un puerto entre 1 y 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Introduce un dominio o una direcci?n IP v?lidos, sin URL ni puerto",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "Ninguna regla coincide; se aplica el modo actual o la pol?tica predeterminada",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Usa la configuraci?n cargada sin conectarse al destino. Las reglas IP pueden generar consultas DNS. Las reglas de proceso, origen, entrada y detecci?n pueden dar una ruta distinta a las conexiones reales. El nodo mostrado es la selecci?n actual del grupo; el balanceo de carga puede elegir otro. Comprueba de nuevo tras cambiar la configuraci?n o la pol?tica.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage(
+      "Valor coincidente",
+    ),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("Comprobar ruta"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "Opcional; d?jalo vac?o si lo desconoces",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Dominio o direcci?n IP",
+    ),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent directo",
     ),
@@ -1827,8 +1869,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("Puerto SOCKS"),
     "softStyle": MessageLookupByLibrary.simpleMessage("Suave"),
     "sort": MessageLookupByLibrary.simpleMessage("Ordenar"),
+    "sortAsc": MessageLookupByLibrary.simpleMessage("Ascendente"),
+    "sortBy": MessageLookupByLibrary.simpleMessage("Ordenar por"),
+    "sortDesc": MessageLookupByLibrary.simpleMessage("Descendente"),
+    "sortDirection": MessageLookupByLibrary.simpleMessage(
+      "Direcci?n de ordenaci?n",
+    ),
     "source": MessageLookupByLibrary.simpleMessage("Origen"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP de origen"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("Puerto de origen"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Proxy especial"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Reglas especiales"),
     "spectrum": MessageLookupByLibrary.simpleMessage("Espectro"),
@@ -1956,6 +2005,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Ancho de banda de subida",
     ),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("Velocidad de subida"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m80,
     "useHosts": MessageLookupByLibrary.simpleMessage("Usar hosts"),

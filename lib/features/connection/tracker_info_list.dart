@@ -164,6 +164,7 @@ Widget _buildTrackerInfoItem(
       table: table,
       striped: striped,
       detailTitle: detailTitle,
+      stateNotifier: stateNotifier,
     );
   }
   return TrackerInfoItem(

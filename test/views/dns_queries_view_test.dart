@@ -274,8 +274,8 @@ void main() {
   ) async {
     seedDnsQueries([_dnsQuery('alpha.test'), _dnsQuery('beta.test')]);
     await pumpDnsQueries(tester);
-    final scrollBox = tester.widget<ScrollToEndBox<DnsQuery>>(
-      find.byType(ScrollToEndBox<DnsQuery>),
+    final scrollBox = tester.widget<ScrollToEndBox>(
+      find.byType(ScrollToEndBox),
     );
     scrollBox.onCancelToEnd!();
     await tester.pump();

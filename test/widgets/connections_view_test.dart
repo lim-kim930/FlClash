@@ -67,18 +67,15 @@ void main() {
         ),
         findsNothing,
       );
-      final cards = find.byType(SettingInfoCard);
-      expect(
-        tester.getTopLeft(cards.at(ConnectionsSortType.values.length - 1)).dy,
-        greaterThan(tester.getTopLeft(cards.first).dy),
-      );
-      await tester.tap(find.widgetWithText(SettingInfoCard, 'Host'));
-      await tester.pump();
+      await tester.tap(find.text('Sort by'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Host'));
+      await tester.pumpAndSettle();
       expect(settings.value.sortType, ConnectionsSortType.host);
-      final ascending = find.widgetWithText(SettingInfoCard, 'Ascending');
-      await tester.ensureVisible(ascending);
-      await tester.tap(ascending);
-      await tester.pump();
+      await tester.tap(find.text('Sort direction'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Ascending'));
+      await tester.pumpAndSettle();
       expect(settings.value.sortDirection, SortDirection.asc);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
@@ -135,7 +132,7 @@ void main() {
     ];
     await pumpConnections(tester, connectionsReader: () async => snapshot);
     await tester.pump();
-    await tester.tap(find.byType(TrackerInfoItem).first);
+    await tester.tap(find.byType(TrackerInfoTableRow).first);
     await tester.pumpAndSettle();
     expect(find.byType(TrackerInfoDetailView), findsOneWidget);
     snapshot = [snapshot.single.copyWith(upload: 1124, download: 2248)];
@@ -158,7 +155,7 @@ void main() {
     await pumpConnections(tester, connectionsReader: () async => connections);
     await tester.pump(const Duration(seconds: 1));
 
-    final builtItems = find.byType(TrackerInfoItem).evaluate().length;
+    final builtItems = find.byType(TrackerInfoTableRow).evaluate().length;
     expect(builtItems, greaterThan(0));
     expect(builtItems, lessThan(connections.length));
     expect(find.textContaining('host-0.com'), findsOneWidget);

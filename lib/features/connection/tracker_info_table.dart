@@ -163,6 +163,7 @@ class TrackerInfoTableRow extends StatelessWidget {
   final RecordTable<TrackerInfo> table;
   final bool striped;
   final String detailTitle;
+  final ValueNotifier<TrackerInfosState>? stateNotifier;
 
   const TrackerInfoTableRow({
     super.key,
@@ -170,6 +171,7 @@ class TrackerInfoTableRow extends StatelessWidget {
     required this.table,
     required this.striped,
     required this.detailTitle,
+    this.stateNotifier,
   });
 
   @override
@@ -177,7 +179,12 @@ class TrackerInfoTableRow extends StatelessWidget {
     return RecordTableRow(
       table: table,
       striped: striped,
-      onTap: () => showTrackerInfoDetail(context, trackerInfo, detailTitle),
+      onTap: () => showTrackerInfoDetail(
+        context,
+        trackerInfo,
+        detailTitle,
+        stateNotifier: stateNotifier,
+      ),
       cells: table.cellsOf(context, trackerInfo),
     );
   }
