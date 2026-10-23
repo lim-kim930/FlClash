@@ -415,7 +415,7 @@ void main() {
       ),
     );
 
-    expect(await client.readiness(), HelperReadiness.notReady);
+    expect(await client.readiness(), HelperReadiness.incompatible);
   });
 
   test('ping rejects a Helper at the wrong path', () async {
@@ -432,7 +432,7 @@ void main() {
       ),
     );
 
-    expect(await client.readiness(), HelperReadiness.notReady);
+    expect(await client.readiness(), HelperReadiness.incompatible);
   });
 
   test(
@@ -447,7 +447,7 @@ void main() {
         ),
       );
 
-      expect(await client.readiness(), HelperReadiness.notReady);
+      expect(await client.readiness(), HelperReadiness.incompatible);
     },
   );
 
@@ -472,7 +472,7 @@ void main() {
   );
 
   test(
-    'ping reports notReady for a conflict with an unknown protocol',
+    'ping reports incompatible for a conflict with an unknown protocol',
     () async {
       final client = _client(
         _ResponseAdapter(
@@ -487,7 +487,7 @@ void main() {
         ),
       );
 
-      expect(await client.readiness(), HelperReadiness.notReady);
+      expect(await client.readiness(), HelperReadiness.incompatible);
     },
   );
 
@@ -602,6 +602,8 @@ void main() {
     expect(fallback.primary, same(helper));
     expect(fallback.fallback, same(direct));
     helperReadiness = HelperReadiness.notReady;
+    expect(await resolver.resolve(), same(direct));
+    helperReadiness = HelperReadiness.incompatible;
     expect(await resolver.resolve(), same(direct));
     helperReadiness = HelperReadiness.manifestMissing;
     expect(await resolver.resolve(), same(direct));

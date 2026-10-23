@@ -39,6 +39,7 @@ class SetupAction extends _$SetupAction {
   DateTime? _startTime;
   _SetupInputs? _appliedInputs;
   var _pendingForceApply = false;
+  bool _handingOffTun = false;
 
   bool get _isRunning => _startTime != null && _startTime!.isBeforeNow;
 
@@ -426,12 +427,27 @@ class SetupAction extends _$SetupAction {
   }
 
   Future<bool> _restartCoreAfterAuthorization() async {
+    final action = ref.read(coreActionProvider.notifier);
+    if (action.isRestarting) {
+      _failTunAuthorization();
+      return false;
+    }
+    _handingOffTun = true;
     try {
-      return await ref.read(coreActionProvider.notifier).restartCore();
+      final restarted = await action.restartCore();
+      if (restarted &&
+          requiresHelperOwnedCore &&
+          runningCoreOwner == CoreProcessOwner.direct) {
+        _failTunAuthorization();
+        return false;
+      }
+      return restarted;
     } catch (_) {
       ref.read(authorizedTunEnableProvider.notifier).value =
           TunAuthorizationState.none;
       rethrow;
+    } finally {
+      _handingOffTun = false;
     }
   }
 
@@ -629,22 +645,55 @@ class SetupAction extends _$SetupAction {
     return system.authorizeCore();
   }
 
+  @protected
+  bool get requiresHelperOwnedCore => system.hasHelperService;
+
+  @protected
+  CoreProcessOwner? get runningCoreOwner => _core.runningCoreOwner;
+
+  bool _canRunningCoreServeTun() {
+    return !requiresHelperOwnedCore ||
+        runningCoreOwner != CoreProcessOwner.direct ||
+        _handingOffTun;
+  }
+
+  void _failTunAuthorization() {
+    ref.read(authorizedTunEnableProvider.notifier).value =
+        TunAuthorizationState.none;
+    ref
+        .read(patchClashConfigProvider.notifier)
+        .update((state) => state.copyWith.tun(enable: false));
+    dialogs.showNotifier(
+      currentAppLocalizations.tunAuthorizationFailed,
+      level: MessageLevel.error,
+    );
+  }
+
   @visibleForTesting
   Future<bool> requestAdmin(bool enableTun) async {
     if (!enableTun || ref.read(safeModeProvider)) {
       return true;
     }
     final authorizationState = ref.read(authorizedTunEnableProvider);
-    if (authorizationState != TunAuthorizationState.none) {
-      return true;
-    }
-
     final authorizationNotifier = ref.read(
       authorizedTunEnableProvider.notifier,
     );
+    if (authorizationState == TunAuthorizationState.authorized) {
+      return _canRunningCoreServeTun();
+    }
+    if (authorizationState == TunAuthorizationState.unauthorized) {
+      return true;
+    }
+
     authorizationNotifier.value = TunAuthorizationState.unauthorized;
 
-    final code = await authorizeCore();
+    final AuthorizeCode code;
+    try {
+      code = await authorizeCore();
+    } catch (_) {
+      _failTunAuthorization();
+      rethrow;
+    }
 
     switch (code) {
       case AuthorizeCode.success:
@@ -652,16 +701,9 @@ class SetupAction extends _$SetupAction {
         return false;
       case AuthorizeCode.none:
         authorizationNotifier.value = TunAuthorizationState.authorized;
-        return true;
+        return _canRunningCoreServeTun();
       case AuthorizeCode.error:
-        authorizationNotifier.value = TunAuthorizationState.none;
-        ref
-            .read(patchClashConfigProvider.notifier)
-            .update((state) => state.copyWith.tun(enable: false));
-        dialogs.showNotifier(
-          currentAppLocalizations.tunAuthorizationFailed,
-          level: MessageLevel.error,
-        );
+        _failTunAuthorization();
         return true;
     }
   }

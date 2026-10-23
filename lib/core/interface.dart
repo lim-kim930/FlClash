@@ -8,6 +8,8 @@ import 'desktop/model.dart';
 import 'method.dart';
 
 mixin CoreInterface {
+  CoreProcessOwner? get runningCoreOwner => null;
+
   Future<CoreLifecycleResult> start();
 
   Future<CoreLifecycleResult> restart();
