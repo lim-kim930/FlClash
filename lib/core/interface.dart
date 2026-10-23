@@ -6,6 +6,7 @@ import 'package:fl_clash/models/models.dart';
 
 import 'desktop/model.dart';
 import 'method.dart';
+import 'rule_lookup.dart';
 
 /// A method answers its result or throws: a [CoreMethodException] for what the
 /// Core reports or a Core out of reach, a [TimeoutException] for no answer.
@@ -356,6 +357,25 @@ abstract class CoreHandlerInterface {
       _model(OutboundIpResult.fromJson),
       arguments: params.toJson(),
       timeout: coreGuardFor(params.timeout),
+    );
+  }
+
+  Future<RuleLookupResult> ruleLookup({
+    required String target,
+    required int sourcePort,
+    required int destinationPort,
+    required String network,
+  }) {
+    return _query(
+      CoreMethod.routeLookup,
+      _model(RuleLookupResult.fromJson),
+      arguments: {
+        'target': target,
+        'source-port': sourcePort,
+        'destination-port': destinationPort,
+        'network': network,
+      },
+      timeout: const Duration(seconds: 30),
     );
   }
 

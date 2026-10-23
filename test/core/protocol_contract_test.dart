@@ -44,6 +44,18 @@ class _RecordingCoreHandler extends CoreHandlerInterface {
         'url': 'https://example.com',
         'value': 42,
       },
+      CoreMethod.routeLookup => {
+        'target': 'example.com',
+        'source-port': 54321,
+        'destination-port': 443,
+        'network': 'tcp',
+        'mode': 'rule',
+        'rule': 'Domain',
+        'rule-payload': 'example.com',
+        'proxy': 'Proxy',
+        'chains': ['Proxy', 'node-a'],
+        'destination-ip': '',
+      },
       CoreMethod.connectionList => {
         'connections': [
           {
@@ -268,6 +280,20 @@ void main() {
     await handler.getTraffic(true);
     await handler.closeConnection('connection-1');
     await handler.updateGeoData('GeoIp');
+    final lookup = await handler.ruleLookup(
+      target: 'example.com',
+      sourcePort: 54321,
+      destinationPort: 443,
+      network: 'tcp',
+    );
+    expect(lookup.proxy, 'Proxy');
+    expect(lookup.chains, ['Proxy', 'node-a']);
+    expect(handler.calls[CoreMethod.routeLookup], {
+      'target': 'example.com',
+      'source-port': 54321,
+      'destination-port': 443,
+      'network': 'tcp',
+    });
 
     for (final method in CoreMethod.values) {
       if (handler.calls[method] case final Object arguments) {
