@@ -965,5 +965,9 @@
   "clearRequests": "Effacer les requ?tes",
   "clearDnsQueries": "Effacer les requ?tes DNS",
   "uploadSpeed": "D?bit montant",
-  "downloadSpeed": "D?bit descendant"
+  "downloadSpeed": "D?bit descendant",
+  "sortBy": "Trier par",
+  "sortDirection": "Ordre de tri",
+  "sortAsc": "Croissant",
+  "sortDesc": "D?croissant"
 }

@@ -965,5 +965,9 @@
   "clearRequests": "Очистить запросы",
   "clearDnsQueries": "Очистить DNS-запросы",
   "uploadSpeed": "Скорость загрузки",
-  "downloadSpeed": "Скорость скачивания"
+  "downloadSpeed": "Скорость скачивания",
+  "sortBy": "Сортировать по",
+  "sortDirection": "Направление сортировки",
+  "sortAsc": "По возрастанию",
+  "sortDesc": "По убыванию"
 }

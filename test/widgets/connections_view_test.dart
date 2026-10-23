@@ -6,6 +6,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/core.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/connection/connections.dart';
+import 'package:fl_clash/views/connection/setting.dart';
 import 'package:fl_clash/features/features.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,6 +28,72 @@ void main() {
   tearDown(() {
     container.dispose();
   });
+
+  for (final type in [SheetType.sideSheet, SheetType.bottomSheet]) {
+    testWidgets('connection settings clear the $type title bar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final settings = ValueNotifier<RecordSort?>((
+        columnId: 'downloadSpeed',
+        descending: true,
+      ));
+      addTearDown(settings.dispose);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: _TestApp(
+            child: SheetProvider(
+              type: type,
+              child: CommonScaffold(
+                title: 'Settings',
+                body: Builder(
+                  builder: (context) => ConnectionsSetting(
+                    sortController: settings,
+                    columns: trackerInfoColumns(
+                      context,
+                      width: double.infinity,
+                      isLive: true,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester.getTopLeft(find.byType(ListHeader).first).dy,
+        greaterThanOrEqualTo(tester.getBottomLeft(find.byType(AppBar)).dy),
+      );
+      expect(find.text('Sort by'), findsOneWidget);
+      expect(find.text('Sort direction'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Scrollable && widget.axis == Axis.horizontal,
+        ),
+        findsNothing,
+      );
+      await tester.tap(find.text('Sort by'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Target'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Target'));
+      await tester.pumpAndSettle();
+      expect(settings.value?.columnId, 'target');
+      await tester.tap(find.text('Sort direction'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Ascending'));
+      await tester.pumpAndSettle();
+      expect(settings.value?.descending, isFalse);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  }
 
   List<TrackerInfo> buildConnections(int count) {
     return List.generate(
@@ -211,6 +278,62 @@ void main() {
           .download,
       2048,
     );
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(commonDuration);
+  });
+
+  testWidgets('table, settings and narrow lists share the same sort', (
+    tester,
+  ) async {
+    final connections = buildConnections(2);
+    await pumpConnections(tester, connectionsReader: () async => connections);
+    tester.view.physicalSize = const Size(1400, 1000);
+    await tester.pump();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Download').first);
+    await tester.pump();
+    final controller = tester
+        .widget<RecordTableFrame<TrackerInfo>>(
+          find.byType(RecordTableFrame<TrackerInfo>),
+        )
+        .sortController!;
+    expect(controller.value, (columnId: 'downloadSpeed', descending: true));
+
+    await tester.tap(find.byTooltip('Settings'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sort by'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Target').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Target').last);
+    await tester.pumpAndSettle();
+    expect(controller.value?.columnId, 'target');
+    await tester.tap(find.text('Sort direction'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ascending').last);
+    await tester.pumpAndSettle();
+    expect(controller.value, (columnId: 'target', descending: false));
+    Navigator.of(tester.element(find.byType(ConnectionsSetting))).pop();
+    await tester.pumpAndSettle();
+
+    tester.view.physicalSize = const Size(600, 800);
+    await tester.pumpAndSettle();
+    final sorted = tester.widget<TrackerInfoAnimatedList>(
+      find.byType(TrackerInfoAnimatedList),
+    );
+    expect(sorted.trackerInfos.map((info) => info.id), ['0', '1']);
+    controller.value = (columnId: 'target', descending: true);
+    await tester.pump();
+    final reversed = tester.widget<TrackerInfoAnimatedList>(
+      find.byType(TrackerInfoAnimatedList),
+    );
+    expect(reversed.trackerInfos.map((info) => info.id), ['1', '0']);
+    controller.value = null;
+    await tester.pump();
+    final restored = tester.widget<TrackerInfoAnimatedList>(
+      find.byType(TrackerInfoAnimatedList),
+    );
+    expect(restored.trackerInfos.map((info) => info.id), ['0', '1']);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(commonDuration);
   });
