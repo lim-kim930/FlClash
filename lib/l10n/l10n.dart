@@ -1556,26 +1556,6 @@ class AppLocalizations {
     );
   }
 
-  /// `Other contributors`
-  String get otherContributors {
-    return Intl.message(
-      'Other contributors',
-      name: 'otherContributors',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `App icon design`
-  String get appIconDesign {
-    return Intl.message(
-      'App icon design',
-      name: 'appIconDesign',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Auto close connections`
   String get autoCloseConnections {
     return Intl.message(
