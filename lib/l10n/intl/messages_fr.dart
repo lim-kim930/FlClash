@@ -826,6 +826,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante de réception",
     ),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage("D?bit descendant"),
     "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
       "Téléchargement de la mise à jour",
     ),
@@ -2298,6 +2299,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante d’envoi",
     ),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("D?bit montant"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlRewrite": MessageLookupByLibrary.simpleMessage("Réécriture d’URL"),
     "urlTip": m98,

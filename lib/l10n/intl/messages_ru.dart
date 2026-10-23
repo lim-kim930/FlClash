@@ -807,6 +807,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Скорость загрузки",
     ),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage(
+      "Скорость скачивания",
+    ),
     "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
       "Загрузка обновления",
     ),
@@ -2231,6 +2234,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("Скорость загрузки"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlRewrite": MessageLookupByLibrary.simpleMessage("Перезапись URL"),
     "urlTip": m98,

@@ -159,6 +159,7 @@ class TrackerInfoTableRow extends StatelessWidget {
   final bool striped;
   final String detailTitle;
   final ValueChanged<TrackerInfo>? onClose;
+  final ValueChanged<TrackerInfo>? onShowDetails;
 
   const TrackerInfoTableRow({
     super.key,
@@ -167,6 +168,7 @@ class TrackerInfoTableRow extends StatelessWidget {
     required this.striped,
     required this.detailTitle,
     this.onClose,
+    this.onShowDetails,
   });
 
   @override
@@ -176,7 +178,14 @@ class TrackerInfoTableRow extends StatelessWidget {
       child: RecordTableRow(
         table: table,
         striped: striped,
-        onTap: () => showTrackerInfoDetail(context, trackerInfo, detailTitle),
+        onTap: () {
+          final showDetails = onShowDetails;
+          if (showDetails != null) {
+            showDetails(trackerInfo);
+          } else {
+            showTrackerInfoDetail(context, trackerInfo, detailTitle);
+          }
+        },
         cells: table.cellsOf(context, trackerInfo),
       ),
     );

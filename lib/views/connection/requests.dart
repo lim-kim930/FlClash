@@ -346,6 +346,7 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
   final _speedRanker = TrackerSpeedRanker();
   late final ScrollController _scrollController;
   var _loaded = false;
+  var _showingDetails = false;
   // A sheet's one controller opens where the recent feed reads, its far end.
   late var _startsAtFarEnd = widget.scrollController != null;
 
@@ -358,6 +359,26 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
 
   @override
   Duration get pollInterval => const Duration(seconds: 1);
+
+  @override
+  bool get canPoll => super.canPoll && !_showingDetails;
+
+  Future<void> _showDetails(TrackerInfo trackerInfo) async {
+    if (_showingDetails) return;
+    _showingDetails = true;
+    stopPolling();
+    try {
+      await showTrackerInfoDetail(
+        context,
+        trackerInfo,
+        context.appLocalizations.details(context.appLocalizations.connection),
+        connectionsReader: _readConnections,
+      );
+    } finally {
+      _showingDetails = false;
+      if (mounted) restartPolling();
+    }
+  }
 
   Future<void> closeAll() => _close(_core.closeConnections);
 
@@ -485,6 +506,7 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
                   table: table,
                   detailTitle: detailTitle,
                   onClose: _closeConnection,
+                  onShowDetails: _showDetails,
                 );
               }
               return TrackerInfoAnimatedList(
@@ -494,6 +516,7 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
                 table: table,
                 detailTitle: detailTitle,
                 onClose: _closeConnection,
+                onShowDetails: _showDetails,
               );
             },
           ),

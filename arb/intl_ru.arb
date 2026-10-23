@@ -1076,5 +1076,7 @@
   "fallbackFilterIpcidrDesc": "Если Nameserver возвращает IP из этих диапазонов, используется ответ Fallback.",
   "fallbackFilterDomainDesc": "Эти домены сразу разрешаются через Fallback.",
   "clearRequests": "Очистить запросы",
-  "clearDnsQueries": "Очистить DNS-запросы"
+  "clearDnsQueries": "Очистить DNS-запросы",
+  "uploadSpeed": "Скорость загрузки",
+  "downloadSpeed": "Скорость скачивания"
 }

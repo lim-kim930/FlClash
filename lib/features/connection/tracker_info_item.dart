@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'detail_tabs.dart';
 import 'mitm_exchanges.dart';
+import 'tracker_speed_ranker.dart';
 
 String _endpointText(String ip, String port) {
   if (ip.isEmpty) {
@@ -21,21 +22,89 @@ String _endpointText(String ip, String port) {
   return ip;
 }
 
-void showTrackerInfoDetail(
+Future<void> showTrackerInfoDetail(
   BuildContext context,
   TrackerInfo trackerInfo,
-  String title,
-) {
-  showSheet<void>(
+  String title, {
+  Future<List<TrackerInfo>?> Function()? connectionsReader,
+}) async {
+  await showSheet<void>(
     context: context,
     props: nestedPagedSheetProps,
     builder: (_) => NestedPagedSheet(
       builder: (_) => Scaffold(
-        body: TrackerInfoDetailView(trackerInfo: trackerInfo),
+        body: connectionsReader == null
+            ? TrackerInfoDetailView(trackerInfo: trackerInfo)
+            : _LiveTrackerInfoDetailView(
+                trackerInfo: trackerInfo,
+                connectionsReader: connectionsReader,
+              ),
         title: title,
       ),
     ),
   );
+}
+
+class _LiveTrackerInfoDetailView extends StatefulWidget {
+  const _LiveTrackerInfoDetailView({
+    required this.trackerInfo,
+    required this.connectionsReader,
+  });
+
+  final TrackerInfo trackerInfo;
+  final Future<List<TrackerInfo>?> Function() connectionsReader;
+
+  @override
+  State<_LiveTrackerInfoDetailView> createState() =>
+      _LiveTrackerInfoDetailViewState();
+}
+
+class _LiveTrackerInfoDetailViewState extends State<_LiveTrackerInfoDetailView>
+    with
+        WidgetsBindingObserver,
+        ActivePollingMixin<_LiveTrackerInfoDetailView> {
+  final _speedRanker = TrackerSpeedRanker();
+  late TrackerInfo _trackerInfo;
+  bool _closed = false;
+
+  @override
+  Duration get pollInterval => const Duration(seconds: 1);
+
+  @override
+  bool get pollOnStart => false;
+
+  @override
+  bool get canPoll => super.canPoll && !_closed;
+
+  @override
+  void initState() {
+    super.initState();
+    _trackerInfo = widget.trackerInfo;
+    _speedRanker.rank([_trackerInfo], DateTime.now());
+  }
+
+  @override
+  Future<void> poll(PollGuard isCurrent) async {
+    final infos = await widget.connectionsReader();
+    if (!isCurrent() || infos == null) return;
+    final current = infos
+        .where((info) => info.id == _trackerInfo.id)
+        .firstOrNull;
+    if (current == null) {
+      setState(() {
+        _closed = true;
+        _trackerInfo = _trackerInfo.copyWith(uploadSpeed: 0, downloadSpeed: 0);
+      });
+      stopPolling();
+      return;
+    }
+    final next = _speedRanker.rank([current], DateTime.now()).single;
+    setState(() => _trackerInfo = next);
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      TrackerInfoDetailView(trackerInfo: _trackerInfo);
 }
 
 List<PopupMenuItem> trackerInfoMenuItems(
@@ -82,6 +151,7 @@ class TrackerInfoItem extends ConsumerWidget {
   final bool isLive;
   final ValueChanged<TrackerInfo>? onClose;
   final String detailTitle;
+  final ValueChanged<TrackerInfo>? onShowDetails;
 
   /// What the detail opens on, where a memoized row outlives its traffic.
   final ValueGetter<TrackerInfo>? latest;
@@ -93,6 +163,7 @@ class TrackerInfoItem extends ConsumerWidget {
     this.onClose,
     required this.detailTitle,
     this.latest,
+    this.onShowDetails,
   });
 
   @override
@@ -106,11 +177,15 @@ class TrackerInfoItem extends ConsumerWidget {
     return ContextMenuRegion(
       menuItems: trackerInfoMenuItems(context, trackerInfo, onClose: onClose),
       child: RecordListItem(
-        onTap: () => showTrackerInfoDetail(
-          context,
-          latest?.call() ?? trackerInfo,
-          detailTitle,
-        ),
+        onTap: () {
+          final current = latest?.call() ?? trackerInfo;
+          final showDetails = onShowDetails;
+          if (showDetails != null) {
+            showDetails(current);
+          } else {
+            showTrackerInfoDetail(context, current, detailTitle);
+          }
+        },
         header: _buildHeader(context),
         body: _TrackerInfoBody(trackerInfo: trackerInfo, showIcon: showIcon),
       ),
@@ -374,6 +449,16 @@ class TrackerInfoDetailView extends ConsumerWidget {
             (appLocalizations.rule, trackerInfo.ruleText),
             (appLocalizations.upload, trackerInfo.upload.traffic.show),
             (appLocalizations.download, trackerInfo.download.traffic.show),
+            if (trackerInfo.uploadSpeed != null)
+              (
+                appLocalizations.uploadSpeed,
+                '${trackerInfo.uploadSpeed!.traffic.show}/s',
+              ),
+            if (trackerInfo.downloadSpeed != null)
+              (
+                appLocalizations.downloadSpeed,
+                '${trackerInfo.downloadSpeed!.traffic.show}/s',
+              ),
           ]),
         ),
         generateSection(

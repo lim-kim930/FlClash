@@ -64,6 +64,7 @@ class TrackerInfoList extends StatelessWidget {
   final ScrollPhysics? physics;
   final EdgeInsetsGeometry? padding;
   final ValueChanged<TrackerInfo>? onClose;
+  final ValueChanged<TrackerInfo>? onShowDetails;
 
   const TrackerInfoList({
     super.key,
@@ -76,6 +77,7 @@ class TrackerInfoList extends StatelessWidget {
     this.physics,
     this.padding,
     this.onClose,
+    this.onShowDetails,
   });
 
   @override
@@ -102,6 +104,7 @@ class TrackerInfoList extends StatelessWidget {
           table: table,
           striped: striped,
           onClose: onClose,
+          onShowDetails: onShowDetails,
           latest: latest,
         ),
       ),
@@ -128,6 +131,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
   final ScrollController? controller;
   final EdgeInsetsGeometry? padding;
   final ValueChanged<TrackerInfo>? onClose;
+  final ValueChanged<TrackerInfo>? onShowDetails;
 
   const TrackerInfoAnimatedList({
     super.key,
@@ -137,6 +141,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
     this.controller,
     this.padding,
     this.onClose,
+    this.onShowDetails,
   });
 
   @override
@@ -181,6 +186,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
               table: table,
               striped: striped,
               onClose: onClose,
+              onShowDetails: onShowDetails,
             ),
           );
         },
@@ -198,6 +204,7 @@ class TrackerInfoGroupedList extends ConsumerStatefulWidget {
   final ScrollController? controller;
   final EdgeInsetsGeometry? padding;
   final ValueChanged<TrackerInfo>? onClose;
+  final ValueChanged<TrackerInfo>? onShowDetails;
 
   const TrackerInfoGroupedList({
     super.key,
@@ -209,6 +216,7 @@ class TrackerInfoGroupedList extends ConsumerStatefulWidget {
     this.controller,
     this.padding,
     this.onClose,
+    this.onShowDetails,
   });
 
   @override
@@ -243,6 +251,7 @@ class _TrackerInfoGroupedListState
       :detailTitle,
       :table,
       :onClose,
+      :onShowDetails,
     ) = widget;
     final showIcon =
         grouping == RecordGrouping.app &&
@@ -284,6 +293,7 @@ class _TrackerInfoGroupedListState
               table: table,
               striped: striped,
               onClose: onClose,
+              onShowDetails: onShowDetails,
               latest: () => _latest(trackerInfo),
             );
             return table == null
@@ -330,6 +340,7 @@ Widget _buildTrackerInfoItem(
   required RecordTable<TrackerInfo>? table,
   required bool striped,
   ValueChanged<TrackerInfo>? onClose,
+  ValueChanged<TrackerInfo>? onShowDetails,
   ValueGetter<TrackerInfo>? latest,
 }) {
   if (table != null) {
@@ -340,6 +351,7 @@ Widget _buildTrackerInfoItem(
       striped: striped,
       detailTitle: detailTitle,
       onClose: onClose,
+      onShowDetails: onShowDetails,
     );
   }
   return TrackerInfoItem(
@@ -347,6 +359,7 @@ Widget _buildTrackerInfoItem(
     trackerInfo: trackerInfo,
     isLive: isLive,
     onClose: onClose,
+    onShowDetails: onShowDetails,
     detailTitle: detailTitle,
     latest: latest,
   );

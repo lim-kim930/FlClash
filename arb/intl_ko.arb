@@ -1076,5 +1076,7 @@
   "fallbackFilterIpcidrDesc": "Nameserver가 이 범위의 IP를 반환하면 Fallback 결과를 사용합니다.",
   "fallbackFilterDomainDesc": "이 도메인은 바로 Fallback으로 확인합니다.",
   "clearRequests": "?? ???",
-  "clearDnsQueries": "DNS ?? ???"
+  "clearDnsQueries": "DNS ?? ???",
+  "uploadSpeed": "??? ??",
+  "downloadSpeed": "???? ??"
 }

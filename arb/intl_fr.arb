@@ -1076,5 +1076,7 @@
   "fallbackFilterIpcidrDesc": "Si Nameserver renvoie une IP de ces plages, la réponse de Fallback est utilisée.",
   "fallbackFilterDomainDesc": "Ces domaines sont résolus directement par Fallback.",
   "clearRequests": "Effacer les requ?tes",
-  "clearDnsQueries": "Effacer les requ?tes DNS"
+  "clearDnsQueries": "Effacer les requ?tes DNS",
+  "uploadSpeed": "D?bit montant",
+  "downloadSpeed": "D?bit descendant"
 }
