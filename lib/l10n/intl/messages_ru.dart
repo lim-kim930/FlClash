@@ -493,6 +493,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearDnsCacheFailed": MessageLookupByLibrary.simpleMessage(
       "Не удалось очистить кэш DNS",
     ),
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
+      "Очистить DNS-запросы",
+    ),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("Очистить запросы"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Очистить поиск"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Отпечаток клиента",
