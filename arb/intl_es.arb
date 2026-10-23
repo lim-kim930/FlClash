@@ -192,8 +192,6 @@
   "proxyGroup": "Grupo de proxies",
   "go": "Ir",
   "externalLink": "Enlace externo",
-  "otherContributors": "Otros colaboradores",
-  "appIconDesign": "Diseño del icono de la app",
   "autoCloseConnections": "Cerrar conexiones automáticamente",
   "autoCloseConnectionsDesc": "Cerrar conexiones automáticamente corta las conexiones abiertas al cambiar de proxy.",
   "onlyStatisticsProxy": "Contar solo el tráfico del proxy",
