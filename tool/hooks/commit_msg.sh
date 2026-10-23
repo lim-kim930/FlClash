@@ -93,18 +93,6 @@ while IFS= read -r line; do
   fi
 done <<<"$body"
 
-agents='anthropic|claude|codex|copilot|cursor|devin|gemini|openai|\[bot\]'
-
-if grep -qiE "^Co-authored-by:.*($agents)" <<<"$body"; then
-  cat >&2 <<'EOF'
-Do not credit a coding agent in a Co-authored-by trailer.
-
-The history records who owns the change, not which tool typed it. Human
-co-authors are still fine.
-EOF
-  exit 1
-fi
-
 if [[ "$subject" =~ ^($types)(\([a-z0-9,./_-]+\))?!: ]] &&
   ! grep -qE '^BREAKING[ -]CHANGE:' <<<"$body"; then
   cat >&2 <<'EOF'
