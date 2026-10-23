@@ -701,6 +701,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fr": MessageLookupByLibrary.simpleMessage("프랑스어"),
     "general": MessageLookupByLibrary.simpleMessage("일반"),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "Geo ??? ????? ?????. ?? ?????.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m27,
     "geoUpdated": m28,
