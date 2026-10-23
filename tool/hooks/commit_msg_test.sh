@@ -99,11 +99,12 @@ expect_fail 'an unknown changelog type' 'Changelog-Type' \
 expect_fail 'a breaking marker with no footer' 'BREAKING CHANGE' \
   'feat(core)!: drop the legacy socket'
 for trailer in \
+  'Co-Authored-By: Codex <noreply@openai.com>' \
   'co-authored-by: Devin <devin@example.com>' \
   'Co-authored-by: Review Helper <helper@openai.com>' \
   'Co-authored-by: Cursor Agent <cursoragent@cursor.com>' \
   'Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'; do
-  expect_fail "an agent co-author ($trailer)" 'coding agent' \
+  expect_pass "an agent co-author ($trailer)" \
     "$subject" '' "$trailer"
 done
 expect_pass 'a human co-author' \
