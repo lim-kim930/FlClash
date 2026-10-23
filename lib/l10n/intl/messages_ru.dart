@@ -746,6 +746,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Скорость загрузки",
     ),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage(
+      "Скорость скачивания",
+    ),
     "duration": MessageLookupByLibrary.simpleMessage("Длительность"),
     "edit": MessageLookupByLibrary.simpleMessage("Редактировать"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("Изменить панель"),
@@ -1906,6 +1909,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "update": MessageLookupByLibrary.simpleMessage("Обновить"),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("Скорость загрузки"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m80,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),

@@ -939,5 +939,7 @@
   "allReferencedProxies": "Tous les proxys référencés",
   "allReferencedProxyProviders": "Tous les fournisseurs de proxys référencés",
   "clearRequests": "Effacer les requ?tes",
-  "clearDnsQueries": "Effacer les requ?tes DNS"
+  "clearDnsQueries": "Effacer les requ?tes DNS",
+  "uploadSpeed": "D?bit montant",
+  "downloadSpeed": "D?bit descendant"
 }

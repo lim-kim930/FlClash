@@ -7,6 +7,8 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'tracker_speed_ranker.dart';
+
 String _ruleText(TrackerInfo trackerInfo) {
   final rule = trackerInfo.rule;
   final rulePayload = trackerInfo.rulePayload;
@@ -26,20 +28,86 @@ String _endpointText(String ip, String port) {
   return ip;
 }
 
-void showTrackerInfoDetail(
+Future<void> showTrackerInfoDetail(
   BuildContext context,
   TrackerInfo trackerInfo,
-  String title,
-) {
-  showInSheet<void>(
+  String title, {
+  Future<List<TrackerInfo>?> Function()? connectionsReader,
+}) async {
+  await showInSheet<void>(
     context,
-    builder: (_) {
-      return CommonScaffold(
-        body: TrackerInfoDetailView(trackerInfo: trackerInfo),
-        title: title,
-      );
-    },
+    builder: (_) => CommonScaffold(
+      title: title,
+      body: connectionsReader == null
+          ? TrackerInfoDetailView(trackerInfo: trackerInfo)
+          : _LiveTrackerInfoDetailView(
+              trackerInfo: trackerInfo,
+              connectionsReader: connectionsReader,
+            ),
+    ),
   );
+}
+
+class _LiveTrackerInfoDetailView extends StatefulWidget {
+  const _LiveTrackerInfoDetailView({
+    required this.trackerInfo,
+    required this.connectionsReader,
+  });
+
+  final TrackerInfo trackerInfo;
+  final Future<List<TrackerInfo>?> Function() connectionsReader;
+
+  @override
+  State<_LiveTrackerInfoDetailView> createState() =>
+      _LiveTrackerInfoDetailViewState();
+}
+
+class _LiveTrackerInfoDetailViewState extends State<_LiveTrackerInfoDetailView>
+    with
+        WidgetsBindingObserver,
+        ActivePollingMixin<_LiveTrackerInfoDetailView> {
+  final _speedRanker = TrackerSpeedRanker();
+  late TrackerInfo _trackerInfo;
+  bool _closed = false;
+
+  @override
+  Duration get pollInterval => const Duration(seconds: 1);
+
+  @override
+  bool get pollOnStart => false;
+
+  @override
+  bool get canPoll => super.canPoll && !_closed;
+
+  @override
+  void initState() {
+    super.initState();
+    _trackerInfo = widget.trackerInfo;
+    _speedRanker.rank([_trackerInfo], DateTime.now());
+  }
+
+  @override
+  Future<void> poll(PollGuard isCurrent) async {
+    final infos = await widget.connectionsReader();
+    if (!isCurrent() || infos == null) return;
+    final current = infos
+        .where((info) => info.id == _trackerInfo.id)
+        .firstOrNull;
+    if (current == null) {
+      setState(() {
+        _closed = true;
+        _trackerInfo = _trackerInfo.copyWith(uploadSpeed: 0, downloadSpeed: 0);
+      });
+      stopPolling();
+      return;
+    }
+    final next = _speedRanker.rank([current], DateTime.now()).single;
+    setState(() => _trackerInfo = next);
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      TrackerInfoDetailView(trackerInfo: _trackerInfo);
 }
 
 class TrackerInfoItem extends ConsumerWidget {
@@ -48,6 +116,7 @@ class TrackerInfoItem extends ConsumerWidget {
   final Function(String)? onClickKeyword;
   final Widget? action;
   final String detailTitle;
+  final ValueChanged<TrackerInfo>? onShowDetails;
 
   const TrackerInfoItem({
     super.key,
@@ -56,6 +125,7 @@ class TrackerInfoItem extends ConsumerWidget {
     this.onClickKeyword,
     this.action,
     required this.detailTitle,
+    this.onShowDetails,
   });
 
   @override
@@ -67,7 +137,14 @@ class TrackerInfoItem extends ConsumerWidget {
       ),
     );
     return RecordListItem(
-      onTap: () => showTrackerInfoDetail(context, trackerInfo, detailTitle),
+      onTap: () {
+        final showDetails = onShowDetails;
+        if (showDetails != null) {
+          showDetails(trackerInfo);
+        } else {
+          showTrackerInfoDetail(context, trackerInfo, detailTitle);
+        }
+      },
       header: _buildHeader(context),
       body: _TrackerInfoBody(
         trackerInfo: trackerInfo,
@@ -267,6 +344,16 @@ class TrackerInfoDetailView extends StatelessWidget {
             (appLocalizations.rule, _ruleText(trackerInfo)),
             (appLocalizations.upload, trackerInfo.upload.traffic.show),
             (appLocalizations.download, trackerInfo.download.traffic.show),
+            if (trackerInfo.uploadSpeed != null)
+              (
+                appLocalizations.uploadSpeed,
+                '${trackerInfo.uploadSpeed!.traffic.show}/s',
+              ),
+            if (trackerInfo.downloadSpeed != null)
+              (
+                appLocalizations.downloadSpeed,
+                '${trackerInfo.downloadSpeed!.traffic.show}/s',
+              ),
           ]),
         ),
         generateSection(

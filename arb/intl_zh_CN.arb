@@ -939,5 +939,7 @@
   "allReferencedProxies": "全部被引用的代理",
   "allReferencedProxyProviders": "全部被引用的代理集",
   "clearRequests": "清除请求",
-  "clearDnsQueries": "清空 DNS 查询"
+  "clearDnsQueries": "清空 DNS 查询",
+  "uploadSpeed": "上传速度",
+  "downloadSpeed": "下载速度"
 }

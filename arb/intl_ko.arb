@@ -939,5 +939,7 @@
   "allReferencedProxies": "참조된 모든 프록시",
   "allReferencedProxyProviders": "참조된 모든 프록시 공급자",
   "clearRequests": "?? ???",
-  "clearDnsQueries": "DNS ?? ???"
+  "clearDnsQueries": "DNS ?? ???",
+  "uploadSpeed": "??? ??",
+  "downloadSpeed": "???? ??"
 }

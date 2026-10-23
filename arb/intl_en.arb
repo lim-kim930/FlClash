@@ -939,5 +939,7 @@
   "allReferencedProxies": "All referenced proxies",
   "allReferencedProxyProviders": "All referenced proxy providers",
   "clearRequests": "Clear requests",
-  "clearDnsQueries": "Clear DNS queries"
+  "clearDnsQueries": "Clear DNS queries",
+  "uploadSpeed": "Upload speed",
+  "downloadSpeed": "Download speed"
 }

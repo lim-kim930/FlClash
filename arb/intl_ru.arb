@@ -939,5 +939,7 @@
   "allReferencedProxies": "Все используемые прокси",
   "allReferencedProxyProviders": "Все используемые провайдеры прокси",
   "clearRequests": "Очистить запросы",
-  "clearDnsQueries": "Очистить DNS-запросы"
+  "clearDnsQueries": "Очистить DNS-запросы",
+  "uploadSpeed": "Скорость загрузки",
+  "downloadSpeed": "Скорость скачивания"
 }

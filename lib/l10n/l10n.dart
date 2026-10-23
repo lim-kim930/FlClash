@@ -7836,6 +7836,26 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Upload speed`
+  String get uploadSpeed {
+    return Intl.message(
+      'Upload speed',
+      name: 'uploadSpeed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download speed`
+  String get downloadSpeed {
+    return Intl.message(
+      'Download speed',
+      name: 'downloadSpeed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
