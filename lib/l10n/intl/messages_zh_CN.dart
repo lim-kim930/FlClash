@@ -653,6 +653,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "forceRestartCoreTip": MessageLookupByLibrary.simpleMessage("您确定要强制重启核心吗？"),
     "fr": MessageLookupByLibrary.simpleMessage("法语"),
     "general": MessageLookupByLibrary.simpleMessage("常规"),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "Geo 设置同步失败，请重试。",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m27,
     "geoUpdated": m28,

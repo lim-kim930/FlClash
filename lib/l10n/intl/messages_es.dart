@@ -896,6 +896,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fr": MessageLookupByLibrary.simpleMessage("Francés"),
     "general": MessageLookupByLibrary.simpleMessage("General"),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "No se pudieron sincronizar los ajustes Geo. Int?ntalo de nuevo.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m27,
     "geoUpdated": m28,
