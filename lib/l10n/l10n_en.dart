@@ -3978,4 +3978,51 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get geoConfigSyncFailed =>
       'Failed to sync Geo settings. Please try again.';
+
+  @override
+  String get ruleLookup => 'Routing lookup';
+
+  @override
+  String get ruleLookupTarget => 'Domain or IP address';
+
+  @override
+  String get ruleLookupDestination => 'Destination';
+
+  @override
+  String get ruleLookupQuery => 'Check route';
+
+  @override
+  String get ruleLookupInvalidTarget =>
+      'Enter a valid domain or IP address without a URL or port';
+
+  @override
+  String get ruleLookupInvalidPort => 'Enter a port between 1 and 65535';
+
+  @override
+  String get ruleLookupCoreRequired =>
+      'Connect the core before checking a route';
+
+  @override
+  String get ruleLookupFailed =>
+      'Couldn\'t check the route. Check the core and DNS, then try again';
+
+  @override
+  String get ruleLookupNoRule =>
+      'No rule matched; the current mode or default policy applies';
+
+  @override
+  String get ruleLookupNote =>
+      'Uses the currently loaded configuration to check which rule and policy a domain or IP address would use, without connecting to the target. DNS may be queried for IP rules. Process, source, inbound and sniffing rules may give actual app connections a different route. The node shown is the current group choice; load balancing may choose another node. Check again after changing the configuration or policy.';
+
+  @override
+  String get ruleLookupPayload => 'Matched value';
+
+  @override
+  String get sourcePort => 'Source port';
+
+  @override
+  String get destinationPort => 'Destination port';
+
+  @override
+  String get ruleLookupSourcePortHint => 'Optional; leave blank if unknown';
 }

@@ -68,6 +68,7 @@ const (
 	listenerStopMethod  CoreMethod = "listener.stop"
 	routeWatchMethod    CoreMethod = "route.watch"
 	routeCheckMethod    CoreMethod = "route.check"
+	routeLookupMethod   CoreMethod = "route.lookup"
 
 	probeOutboundIPMethod CoreMethod = "probe.outboundIp"
 	probeServicesMethod   CoreMethod = "probe.services"

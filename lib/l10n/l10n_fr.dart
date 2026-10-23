@@ -3999,16 +3999,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get vpnServiceStartFailed => 'Le service VPN n\'a pas pu démarrer.';
 
   @override
-  String get clearRequests => 'Effacer les requ?tes';
+  String get clearRequests => 'Effacer les requêtes';
 
   @override
-  String get clearDnsQueries => 'Effacer les requ?tes DNS';
+  String get clearDnsQueries => 'Effacer les requêtes DNS';
 
   @override
-  String get uploadSpeed => 'D?bit montant';
+  String get uploadSpeed => 'Débit montant';
 
   @override
-  String get downloadSpeed => 'D?bit descendant';
+  String get downloadSpeed => 'Débit descendant';
 
   @override
   String get sortBy => 'Trier par';
@@ -4020,9 +4020,56 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sortAsc => 'Croissant';
 
   @override
-  String get sortDesc => 'D?croissant';
+  String get sortDesc => 'Décroissant';
 
   @override
   String get geoConfigSyncFailed =>
-      '?chec de la synchronisation des param?tres Geo. R?essayez.';
+      'Échec de la synchronisation des paramètres Geo. Réessayez.';
+
+  @override
+  String get ruleLookup => 'Recherche de routage';
+
+  @override
+  String get ruleLookupTarget => 'Domaine ou adresse IP';
+
+  @override
+  String get ruleLookupDestination => 'Destination';
+
+  @override
+  String get ruleLookupQuery => 'Vérifier la route';
+
+  @override
+  String get ruleLookupInvalidTarget =>
+      'Saisissez un domaine ou une adresse IP valide, sans URL ni port';
+
+  @override
+  String get ruleLookupInvalidPort => 'Saisissez un port entre 1 et 65535';
+
+  @override
+  String get ruleLookupCoreRequired =>
+      'Connectez le cœur avant de vérifier une route';
+
+  @override
+  String get ruleLookupFailed =>
+      'Impossible de vérifier la route. Vérifiez le cœur et le DNS, puis réessayez';
+
+  @override
+  String get ruleLookupNoRule =>
+      'Aucune règle ne correspond ; le mode actuel ou la politique par défaut s’applique';
+
+  @override
+  String get ruleLookupNote =>
+      'Utilise la configuration actuellement chargée pour vérifier quelle règle et quelle politique s’appliquent à un domaine ou à une adresse IP, sans se connecter à la destination. Les règles IP peuvent déclencher une requête DNS. Les règles de processus, de source, d’entrée et de détection peuvent donner une route différente aux connexions réelles. Le nœud affiché est le choix actuel du groupe ; l’équilibrage de charge peut en choisir un autre. Vérifiez à nouveau après avoir modifié la configuration ou la politique.';
+
+  @override
+  String get ruleLookupPayload => 'Valeur correspondante';
+
+  @override
+  String get sourcePort => 'Port source';
+
+  @override
+  String get destinationPort => 'Port de destination';
+
+  @override
+  String get ruleLookupSourcePortHint => 'Facultatif ; laissez vide si inconnu';
 }

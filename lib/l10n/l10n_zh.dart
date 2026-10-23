@@ -3749,4 +3749,47 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get geoConfigSyncFailed => 'Geo 设置同步失败，请重试。';
+
+  @override
+  String get ruleLookup => '分流查询';
+
+  @override
+  String get ruleLookupTarget => '域名或 IP 地址';
+
+  @override
+  String get ruleLookupDestination => '目标';
+
+  @override
+  String get ruleLookupQuery => '查询分流';
+
+  @override
+  String get ruleLookupInvalidTarget => '请输入有效的域名或 IP 地址，不要包含网址或端口';
+
+  @override
+  String get ruleLookupInvalidPort => '请输入 1 到 65535 之间的端口';
+
+  @override
+  String get ruleLookupCoreRequired => '请先连接内核，再查询分流';
+
+  @override
+  String get ruleLookupFailed => '分流查询失败，请检查内核与 DNS 后重试';
+
+  @override
+  String get ruleLookupNoRule => '未命中规则，使用当前模式或默认策略';
+
+  @override
+  String get ruleLookupNote =>
+      '根据当前已加载配置，查询域名或 IP 会命中哪条规则、使用哪个策略，不连接目标；匹配 IP 规则时可能查询 DNS。实际应用连接还可能受进程、来源、入站和嗅探规则影响。显示的节点为策略组当前选择，负载均衡可能选择其他节点。修改配置或策略后，请重新查询。';
+
+  @override
+  String get ruleLookupPayload => '匹配内容';
+
+  @override
+  String get sourcePort => '源端口';
+
+  @override
+  String get destinationPort => '目标端口';
+
+  @override
+  String get ruleLookupSourcePortHint => '可选，不确定时可留空';
 }

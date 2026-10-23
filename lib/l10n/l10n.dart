@@ -6983,6 +6983,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to sync Geo settings. Please try again.'**
   String get geoConfigSyncFailed;
+
+  /// No description provided for @ruleLookup.
+  ///
+  /// In en, this message translates to:
+  /// **'Routing lookup'**
+  String get ruleLookup;
+
+  /// No description provided for @ruleLookupTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Domain or IP address'**
+  String get ruleLookupTarget;
+
+  /// No description provided for @ruleLookupDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination'**
+  String get ruleLookupDestination;
+
+  /// No description provided for @ruleLookupQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'Check route'**
+  String get ruleLookupQuery;
+
+  /// No description provided for @ruleLookupInvalidTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid domain or IP address without a URL or port'**
+  String get ruleLookupInvalidTarget;
+
+  /// No description provided for @ruleLookupInvalidPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a port between 1 and 65535'**
+  String get ruleLookupInvalidPort;
+
+  /// No description provided for @ruleLookupCoreRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the core before checking a route'**
+  String get ruleLookupCoreRequired;
+
+  /// No description provided for @ruleLookupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t check the route. Check the core and DNS, then try again'**
+  String get ruleLookupFailed;
+
+  /// No description provided for @ruleLookupNoRule.
+  ///
+  /// In en, this message translates to:
+  /// **'No rule matched; the current mode or default policy applies'**
+  String get ruleLookupNoRule;
+
+  /// No description provided for @ruleLookupNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses the currently loaded configuration to check which rule and policy a domain or IP address would use, without connecting to the target. DNS may be queried for IP rules. Process, source, inbound and sniffing rules may give actual app connections a different route. The node shown is the current group choice; load balancing may choose another node. Check again after changing the configuration or policy.'**
+  String get ruleLookupNote;
+
+  /// No description provided for @ruleLookupPayload.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched value'**
+  String get ruleLookupPayload;
+
+  /// No description provided for @sourcePort.
+  ///
+  /// In en, this message translates to:
+  /// **'Source port'**
+  String get sourcePort;
+
+  /// No description provided for @destinationPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination port'**
+  String get destinationPort;
+
+  /// No description provided for @ruleLookupSourcePortHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional; leave blank if unknown'**
+  String get ruleLookupSourcePortHint;
 }
 
 class _AppLocalizationsDelegate

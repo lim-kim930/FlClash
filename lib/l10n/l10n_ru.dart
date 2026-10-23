@@ -3972,4 +3972,52 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get geoConfigSyncFailed =>
       'Не удалось синхронизировать настройки Geo. Повторите попытку.';
+
+  @override
+  String get ruleLookup => 'Проверка маршрута';
+
+  @override
+  String get ruleLookupTarget => 'Домен или IP-адрес';
+
+  @override
+  String get ruleLookupDestination => 'Назначение';
+
+  @override
+  String get ruleLookupQuery => 'Проверить маршрут';
+
+  @override
+  String get ruleLookupInvalidTarget =>
+      'Введите корректный домен или IP-адрес без URL и порта';
+
+  @override
+  String get ruleLookupInvalidPort => 'Введите порт от 1 до 65535';
+
+  @override
+  String get ruleLookupCoreRequired =>
+      'Подключите ядро перед проверкой маршрута';
+
+  @override
+  String get ruleLookupFailed =>
+      'Не удалось проверить маршрут. Проверьте ядро и DNS и повторите попытку';
+
+  @override
+  String get ruleLookupNoRule =>
+      'Нет совпавшего правила; применяется текущий режим или политика по умолчанию';
+
+  @override
+  String get ruleLookupNote =>
+      'Проверка определяет, какое правило и политика применяются к домену или IP, используя загруженную конфигурацию и не подключаясь к цели. Для правил IP возможен запрос DNS. Правила процессов, источника, входящих подключений и анализа трафика могут изменить маршрут реального приложения. Показан текущий выбор группы; балансировка нагрузки может выбрать другой узел. После изменения настроек или политики повторите проверку.';
+
+  @override
+  String get ruleLookupPayload => 'Совпавшее значение';
+
+  @override
+  String get sourcePort => 'Порт источника';
+
+  @override
+  String get destinationPort => 'Порт назначения';
+
+  @override
+  String get ruleLookupSourcePortHint =>
+      'Необязательно; оставьте пустым, если неизвестен';
 }

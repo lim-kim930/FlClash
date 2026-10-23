@@ -50,6 +50,7 @@ enum CoreMethod {
   listenerStop('listener.stop'),
   routeWatch('route.watch'),
   routeCheck('route.check'),
+  routeLookup('route.lookup'),
   probeOutboundIp('probe.outboundIp'),
   probeServices('probe.services'),
   mitmCertificate('mitm.certificate'),

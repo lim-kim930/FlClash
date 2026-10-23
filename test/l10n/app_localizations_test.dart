@@ -10,6 +10,15 @@ void main() {
 
       expect(currentAppLocalizations.localeName, appLocalizations.localeName);
       expect(appLocalizations.dashboard, isNotEmpty);
+      expect(appLocalizations.sortAsc, isNotEmpty);
+      expect(appLocalizations.sortDesc, isNotEmpty);
+      expect(appLocalizations.downloadSpeed, isNotEmpty);
+      expect(appLocalizations.uploadSpeed, isNotEmpty);
+      expect(appLocalizations.clearRequests, isNotEmpty);
+      expect(appLocalizations.clearDnsQueries, isNotEmpty);
+      expect(appLocalizations.geoConfigSyncFailed, isNotEmpty);
+      expect(appLocalizations.ruleLookup, isNotEmpty);
+      expect(appLocalizations.ruleLookupNote, isNotEmpty);
       expect(appLocalizations.proxies, isNotEmpty);
       expect(appLocalizations.settings, isNotEmpty);
       expect(appLocalizations.secondsCount(30), contains('30'));
