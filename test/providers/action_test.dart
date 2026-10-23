@@ -238,6 +238,7 @@ void main() {
       when(() => core.updateGeoData('MMDB')).thenAnswer((_) async {});
       final container = ProviderContainer(
         overrides: [
+          setupActionProvider.overrideWith(_TestSetupAction.new),
           coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
         ],
       );
@@ -256,6 +257,7 @@ void main() {
       ).thenThrow(StateError('disconnected'));
       final container = ProviderContainer(
         overrides: [
+          setupActionProvider.overrideWith(_TestSetupAction.new),
           coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
         ],
       );
@@ -270,7 +272,9 @@ void main() {
     });
 
     test('updates valid resource URLs and rejects malformed URLs', () {
-      final container = ProviderContainer();
+      final container = ProviderContainer(
+        overrides: [setupActionProvider.overrideWith(_TestSetupAction.new)],
+      );
       addTearDown(container.dispose);
       final action = container.read(geoResourceActionProvider.notifier);
 
@@ -285,6 +289,23 @@ void main() {
         container.read(patchClashConfigProvider).geoXUrl[GeoResource.MMDB],
         url,
       );
+    });
+
+    test('saving a URL does not reapply the profile', () {
+      final container = ProviderContainer(
+        overrides: [setupActionProvider.overrideWith(_TestSetupAction.new)],
+      );
+      addTearDown(container.dispose);
+      final action = container.read(geoResourceActionProvider.notifier);
+      final setupAction =
+          container.read(setupActionProvider.notifier) as _TestSetupAction;
+
+      action.updateGeoResourceUrl(
+        GeoResource.GEOSITE,
+        'https://example.com/geosite.dat',
+      );
+
+      expect(setupAction.applyProfileCount, 0);
     });
   });
 
@@ -843,12 +864,36 @@ void main() {
         container.read(setupActionProvider);
         container.read(coreActionProvider);
 
-        await setupAction.updateConfig();
+        expect(await setupAction.updateConfig(), isTrue);
 
         expect(setupAction.authorizationRequestCount, 1);
         expect(
           container.read(authorizedTunEnableProvider),
           TunAuthorizationState.authorized,
+        );
+        expect(coreAction.restartCount, 1);
+      },
+    );
+
+    test(
+      'a failed authorization restart reports a failed config update',
+      () async {
+        final setupAction = _AuthorizationSetupAction([AuthorizeCode.success]);
+        final coreAction = _RestartRecordingCoreAction()..restartResult = false;
+        final container = ProviderContainer(
+          overrides: [
+            setupActionProvider.overrideWith(() => setupAction),
+            coreActionProvider.overrideWith(() => coreAction),
+          ],
+        );
+        addTearDown(container.dispose);
+        container
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith.tun(enable: true));
+
+        expect(
+          await container.read(setupActionProvider.notifier).updateConfig(),
+          isFalse,
         );
         expect(coreAction.restartCount, 1);
       },
@@ -1062,6 +1107,9 @@ class _TestSetupAction extends SetupAction {
   bool setRunningResult = true;
   Completer<void>? firstApplyStarted;
   Completer<void>? firstApplyCompleter;
+
+  @override
+  Future<bool> updateConfig() async => true;
 
   @override
   Future<bool> setRunning(bool running, {bool initialize = false}) async {

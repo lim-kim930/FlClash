@@ -14,6 +14,11 @@ import 'package:riverpod/riverpod.dart';
 
 class _MockCoreHandlerInterface extends Mock implements CoreHandlerInterface {}
 
+class _TestSetupAction extends SetupAction {
+  @override
+  Future<bool> updateConfig() async => true;
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -40,6 +45,7 @@ void main() {
     });
     container = ProviderContainer(
       overrides: [
+        setupActionProvider.overrideWith(_TestSetupAction.new),
         coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
       ],
     );

@@ -1419,5 +1419,6 @@
       }
     }
   },
-  "httpConditionTip": "Conditions on one field match any of them, on different fields all."
+  "httpConditionTip": "Conditions on one field match any of them, on different fields all.",
+  "geoConfigSyncFailed": "Failed to sync Geo settings. Please try again."
 }

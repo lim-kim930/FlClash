@@ -1233,5 +1233,6 @@
   "selectHttpRequestHint": "Sa requête, sa réponse et ses temps s’affichent ici",
   "httpConditionShows": "Requêtes affichées : {count}",
   "httpConditionValuesIn": "{field} dans la liste",
-  "httpConditionTip": "Les conditions d’un même champ en demandent une seule, celles de champs différents toutes."
+  "httpConditionTip": "Les conditions d’un même champ en demandent une seule, celles de champs différents toutes.",
+  "geoConfigSyncFailed": "?chec de la synchronisation des param?tres Geo. R?essayez."
 }

@@ -1233,5 +1233,6 @@
   "selectHttpRequestHint": "요청, 응답, 소요 시간이 여기에 표시됩니다",
   "httpConditionShows": "요청 {count}개로 좁혀집니다",
   "httpConditionValuesIn": "현재 요청의 {field}",
-  "httpConditionTip": "같은 필드의 조건은 하나만 맞으면 되고, 다른 필드의 조건은 모두 맞아야 합니다."
+  "httpConditionTip": "같은 필드의 조건은 하나만 맞으면 되고, 다른 필드의 조건은 모두 맞아야 합니다.",
+  "geoConfigSyncFailed": "Geo ??? ????? ?????. ?? ?????."
 }

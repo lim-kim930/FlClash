@@ -1233,5 +1233,6 @@
   "selectHttpRequestHint": "这里会显示它的请求、响应和耗时",
   "httpConditionShows": "将筛出 {count} 个请求",
   "httpConditionValuesIn": "当前请求里的{field}",
-  "httpConditionTip": "同一字段的条件满足其一即可，不同字段的都要满足。"
+  "httpConditionTip": "同一字段的条件满足其一即可，不同字段的都要满足。",
+  "geoConfigSyncFailed": "Geo 设置同步失败，请重试。"
 }

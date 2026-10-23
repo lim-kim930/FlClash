@@ -1233,5 +1233,6 @@
   "selectHttpRequestHint": "リクエスト、レスポンス、所要時間がここに表示されます",
   "httpConditionShows": "{count} 件のリクエストに絞り込みます",
   "httpConditionValuesIn": "現在のリクエストの{field}",
-  "httpConditionTip": "同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。"
+  "httpConditionTip": "同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。",
+  "geoConfigSyncFailed": "Geo 設定の同期に失敗しました。もう一度お試しください。"
 }
