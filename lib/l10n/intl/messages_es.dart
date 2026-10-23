@@ -1828,6 +1828,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "socksPort": MessageLookupByLibrary.simpleMessage("Puerto SOCKS"),
     "softStyle": MessageLookupByLibrary.simpleMessage("Suave"),
     "sort": MessageLookupByLibrary.simpleMessage("Ordenar"),
+    "sortAsc": MessageLookupByLibrary.simpleMessage("Ascendente"),
+    "sortBy": MessageLookupByLibrary.simpleMessage("Ordenar por"),
+    "sortDesc": MessageLookupByLibrary.simpleMessage("Descendente"),
+    "sortDirection": MessageLookupByLibrary.simpleMessage(
+      "Direcci?n de ordenaci?n",
+    ),
     "source": MessageLookupByLibrary.simpleMessage("Origen"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP de origen"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Proxy especial"),

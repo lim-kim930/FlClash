@@ -12,6 +12,8 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'setting.dart';
+
 class ConnectionsView extends ConsumerStatefulWidget {
   final ScrollController? scrollController;
   final Future<List<TrackerInfo>> Function()? connectionsReader;
@@ -35,6 +37,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
 
   final _listController = TrackerInfoListController();
   final _speedRanker = TrackerSpeedRanker();
+  final _sortController = ValueNotifier<RecordSort?>(null);
   late final ScrollController _scrollController;
   var _loaded = false;
   var _showingDetails = false;
@@ -78,6 +81,26 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
         onPressed: () async {
           unawaited(_core.closeConnections());
           await _refreshConnections();
+        },
+      ),
+      IconButtonData(
+        glyph: AppGlyphs.settings,
+        tooltip: context.appLocalizations.settings,
+        onPressed: () {
+          showSheet(
+            context: context,
+            builder: (_) => CommonScaffold(
+              title: context.appLocalizations.settings,
+              body: ConnectionsSetting(
+                sortController: _sortController,
+                columns: trackerInfoColumns(
+                  context,
+                  width: double.infinity,
+                  isLive: true,
+                ),
+              ),
+            ),
+          );
         },
       ),
     ];
@@ -140,6 +163,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
   @override
   void dispose() {
     _listController.dispose();
+    _sortController.dispose();
     if (widget.scrollController == null) {
       _scrollController.dispose();
     }
@@ -177,6 +201,12 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
             child: RecordTableFrame<TrackerInfo>(
               tableId: 'connections',
               items: connections,
+              sortController: _sortController,
+              sortColumns: trackerInfoColumns(
+                context,
+                width: double.infinity,
+                isLive: true,
+              ),
               columnsOf: (width) => trackerInfoColumns(
                 context,
                 width: width,

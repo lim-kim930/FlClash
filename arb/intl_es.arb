@@ -941,5 +941,9 @@
   "clearRequests": "Borrar solicitudes",
   "clearDnsQueries": "Borrar consultas DNS",
   "uploadSpeed": "Velocidad de subida",
-  "downloadSpeed": "Velocidad de descarga"
+  "downloadSpeed": "Velocidad de descarga",
+  "sortBy": "Ordenar por",
+  "sortDirection": "Direcci?n de ordenaci?n",
+  "sortAsc": "Ascendente",
+  "sortDesc": "Descendente"
 }
