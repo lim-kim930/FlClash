@@ -21,6 +21,7 @@ void main() {
 
       final start = lifecycle.start();
       expect(lifecycle.state, isA<DesktopCoreStarting>());
+      expect(lifecycle.runningOwner, isNull);
       transport.ready();
       await launcher.started;
       expect(lifecycle.state, isNot(isA<DesktopCoreRunning>()));
@@ -30,7 +31,9 @@ void main() {
       expect(result.session?.owner, CoreProcessOwner.direct);
       expect(result.session?.connectionGeneration, 1);
       expect(lifecycle.state, isA<DesktopCoreRunning>());
+      expect(lifecycle.runningOwner, CoreProcessOwner.direct);
       await _closeRunning(lifecycle, transport, launcher.lease, 1);
+      expect(lifecycle.runningOwner, isNull);
     },
   );
 
@@ -46,11 +49,13 @@ void main() {
         resolver: resolver,
       );
       await _startConnected(lifecycle, transport, direct, pid: 42);
+      expect(lifecycle.runningOwner, CoreProcessOwner.direct);
       resolver.launcher = helper;
 
       final restart = lifecycle.restart();
       await direct.lease.stopStarted;
       expect(helper.startCount, 0);
+      expect(lifecycle.runningOwner, isNull);
       transport.disconnect(1);
       await helper.started;
       transport.connect(pid: 84, generation: 2);
@@ -58,6 +63,7 @@ void main() {
       final result = await restart;
       expect(direct.lease.stopCount, 1);
       expect(result.session?.owner, CoreProcessOwner.helper);
+      expect(lifecycle.runningOwner, CoreProcessOwner.helper);
       expect(helper.lease.stopCount, 0);
       await _closeRunning(lifecycle, transport, helper.lease, 2);
     },

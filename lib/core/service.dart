@@ -79,6 +79,9 @@ class CoreService extends CoreHandlerInterface {
   }
 
   @override
+  CoreProcessOwner? get runningCoreOwner => _lifecycle.runningOwner;
+
+  @override
   Future<CoreLifecycleResult> start() => _lifecycle.start();
 
   @override

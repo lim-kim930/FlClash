@@ -75,6 +75,13 @@ void main() {
     );
   });
 
+  test('reads process ownership from the lifecycle controller', () {
+    when(() => lifecycle.runningOwner).thenReturn(CoreProcessOwner.helper);
+    expect(service.runningCoreOwner, CoreProcessOwner.helper);
+    when(() => lifecycle.runningOwner).thenReturn(null);
+    expect(service.runningCoreOwner, isNull);
+  });
+
   test('forwards a lost session once, in words, with its cause', () async {
     final listener = _CrashListener();
     coreEventManager.addListener(listener);

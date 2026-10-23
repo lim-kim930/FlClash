@@ -32,6 +32,7 @@ dependencies:
   freezed_annotation: ^3.1.0
   image_picker: ^1.2.4
   ffi: ^2.2.0
+  win32: ^6.4.0
 
   dio: ^5.11.1
   code_forge:
