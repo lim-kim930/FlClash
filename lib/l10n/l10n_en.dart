@@ -629,12 +629,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get externalLink => 'External link';
 
   @override
-  String get otherContributors => 'Other contributors';
-
-  @override
-  String get appIconDesign => 'App icon design';
-
-  @override
   String get autoCloseConnections => 'Auto close connections';
 
   @override

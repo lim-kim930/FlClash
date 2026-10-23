@@ -607,12 +607,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get externalLink => '外部链接';
 
   @override
-  String get otherContributors => '其他贡献者';
-
-  @override
-  String get appIconDesign => '应用图标设计';
-
-  @override
   String get autoCloseConnections => '自动关闭连接';
 
   @override

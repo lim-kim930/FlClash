@@ -637,12 +637,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get externalLink => 'Lien externe';
 
   @override
-  String get otherContributors => 'Autres contributeurs';
-
-  @override
-  String get appIconDesign => 'Conception de l’icône de l’app';
-
-  @override
   String get autoCloseConnections => 'Fermer les connexions automatiquement';
 
   @override

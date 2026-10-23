@@ -196,8 +196,6 @@
   "proxyGroup": "Proxy group",
   "go": "Go",
   "externalLink": "External link",
-  "otherContributors": "Other contributors",
-  "appIconDesign": "App icon design",
   "autoCloseConnections": "Auto close connections",
   "onlyStatisticsProxy": "Only count proxy traffic",
   "showNotificationStopAction": "Stop button in notification",

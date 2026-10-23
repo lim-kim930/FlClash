@@ -196,8 +196,6 @@
   "proxyGroup": "Grupo de proxies",
   "go": "Ir",
   "externalLink": "Enlace externo",
-  "otherContributors": "Otros colaboradores",
-  "appIconDesign": "Diseño del icono de la app",
   "autoCloseConnections": "Cerrar conexiones automáticamente",
   "onlyStatisticsProxy": "Contar solo el tráfico del proxy",
   "showNotificationStopAction": "Botón de detener en la notificación",
