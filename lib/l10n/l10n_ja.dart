@@ -3783,4 +3783,16 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get downloadSpeed => 'ダウンロード速度';
+
+  @override
+  String get sortBy => '並べ替え基準';
+
+  @override
+  String get sortDirection => '並べ替え順序';
+
+  @override
+  String get sortAsc => '昇順';
+
+  @override
+  String get sortDesc => '降順';
 }

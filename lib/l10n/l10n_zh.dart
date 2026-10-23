@@ -3734,4 +3734,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get downloadSpeed => '下载速度';
+
+  @override
+  String get sortBy => '排序依据';
+
+  @override
+  String get sortDirection => '排序方向';
+
+  @override
+  String get sortAsc => '升序';
+
+  @override
+  String get sortDesc => '降序';
 }

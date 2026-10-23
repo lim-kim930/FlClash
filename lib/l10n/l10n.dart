@@ -6953,6 +6953,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download speed'**
   String get downloadSpeed;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortBy;
+
+  /// No description provided for @sortDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort direction'**
+  String get sortDirection;
+
+  /// No description provided for @sortAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascending'**
+  String get sortAsc;
+
+  /// No description provided for @sortDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Descending'**
+  String get sortDesc;
 }
 
 class _AppLocalizationsDelegate

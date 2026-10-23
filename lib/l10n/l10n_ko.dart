@@ -3858,4 +3858,16 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get downloadSpeed => '???? ??';
+
+  @override
+  String get sortBy => '?? ??';
+
+  @override
+  String get sortDirection => '?? ??';
+
+  @override
+  String get sortAsc => '????';
+
+  @override
+  String get sortDesc => '????';
 }

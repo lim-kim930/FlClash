@@ -13,6 +13,8 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'setting.dart';
+
 List<TrackerInfo> Function(List<TrackerInfo>) _connectionFor(String id) {
   return (trackerInfos) {
     final trackerInfo = trackerInfos.where((info) => info.id == id).firstOrNull;
@@ -40,6 +42,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
     with RouteMotionHoldMixin<RequestsView> {
   final _recent = TrackerInfoListController();
   final _live = TrackerInfoListController();
+  final _sortController = ValueNotifier<RecordSort?>(null);
   final _liveFeed = GlobalKey<_LiveFeedState>();
   late final _filters = trackerInfoFilterController(ref, 'requests');
   late var _feed =
@@ -63,6 +66,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
   void dispose() {
     _recent.dispose();
     _live.dispose();
+    _sortController.dispose();
     _filters.dispose();
     super.dispose();
   }
@@ -128,6 +132,26 @@ class _RequestsViewState extends ConsumerState<RequestsView>
         tooltip: context.appLocalizations.closeConnections,
         onPressed: () => _liveFeed.currentState?.closeAll(),
       ),
+      IconButtonData(
+        glyph: AppGlyphs.settings,
+        tooltip: context.appLocalizations.settings,
+        onPressed: () {
+          showSheet<void>(
+            context: context,
+            builder: (_) => Scaffold(
+              title: context.appLocalizations.settings,
+              body: ConnectionsSetting(
+                sortController: _sortController,
+                columns: trackerInfoColumns(
+                  context,
+                  width: double.infinity,
+                  isLive: true,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     ];
   }
 
@@ -185,6 +209,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
       RequestFeed.live => _LiveFeed(
         key: _liveFeed,
         listController: _live,
+        sortController: _sortController,
         filters: _filters,
         scrollController: widget.scrollController,
         connectionsReader: widget.connectionsReader,
@@ -318,6 +343,7 @@ class _RecentFeedState extends State<_RecentFeed> {
 
 class _LiveFeed extends ConsumerStatefulWidget {
   final TrackerInfoListController listController;
+  final ValueNotifier<RecordSort?> sortController;
   final RecordFilterController<TrackerInfo> filters;
   final ScrollController? scrollController;
   final Future<List<TrackerInfo>> Function()? connectionsReader;
@@ -325,6 +351,7 @@ class _LiveFeed extends ConsumerStatefulWidget {
   const _LiveFeed({
     super.key,
     required this.listController,
+    required this.sortController,
     required this.filters,
     required this.scrollController,
     required this.connectionsReader,
@@ -486,6 +513,12 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
           child: RecordTableFrame<TrackerInfo>(
             tableId: 'connections',
             items: connections,
+            sortController: widget.sortController,
+            sortColumns: trackerInfoColumns(
+              context,
+              width: double.infinity,
+              isLive: true,
+            ),
             columnsOf: (width) =>
                 trackerInfoColumns(context, width: width, isLive: true),
             builder: (context, table, connections) {

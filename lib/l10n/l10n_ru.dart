@@ -3956,4 +3956,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get downloadSpeed => 'Скорость скачивания';
+
+  @override
+  String get sortBy => 'Сортировать по';
+
+  @override
+  String get sortDirection => 'Направление сортировки';
+
+  @override
+  String get sortAsc => 'По возрастанию';
+
+  @override
+  String get sortDesc => 'По убыванию';
 }

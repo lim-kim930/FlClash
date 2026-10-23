@@ -4004,4 +4004,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get downloadSpeed => 'Velocidad de descarga';
+
+  @override
+  String get sortBy => 'Ordenar por';
+
+  @override
+  String get sortDirection => 'Direcci?n de ordenaci?n';
+
+  @override
+  String get sortAsc => 'Ascendente';
+
+  @override
+  String get sortDesc => 'Descendente';
 }

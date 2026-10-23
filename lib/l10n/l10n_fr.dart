@@ -4009,4 +4009,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get downloadSpeed => 'D?bit descendant';
+
+  @override
+  String get sortBy => 'Trier par';
+
+  @override
+  String get sortDirection => 'Ordre de tri';
+
+  @override
+  String get sortAsc => 'Croissant';
+
+  @override
+  String get sortDesc => 'D?croissant';
 }
