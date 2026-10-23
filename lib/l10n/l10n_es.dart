@@ -885,12 +885,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get externalLink => 'Enlace externo';
 
   @override
-  String get otherContributors => 'Otros colaboradores';
-
-  @override
-  String get appIconDesign => 'Diseño del icono de la app';
-
-  @override
   String get autoCloseConnections => 'Cerrar conexiones automáticamente';
 
   @override

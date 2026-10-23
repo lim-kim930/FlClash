@@ -847,12 +847,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get externalLink => '外部リンク';
 
   @override
-  String get otherContributors => 'その他の貢献者';
-
-  @override
-  String get appIconDesign => 'アプリアイコンのデザイン';
-
-  @override
   String get autoCloseConnections => '接続を自動的に閉じる';
 
   @override

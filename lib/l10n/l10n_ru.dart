@@ -874,12 +874,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get externalLink => 'Внешняя ссылка';
 
   @override
-  String get otherContributors => 'Другие участники';
-
-  @override
-  String get appIconDesign => 'Дизайн значка приложения';
-
-  @override
   String get autoCloseConnections => 'Автозакрытие соединений';
 
   @override

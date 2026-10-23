@@ -1728,18 +1728,6 @@ abstract class AppLocalizations {
   /// **'External link'**
   String get externalLink;
 
-  /// No description provided for @otherContributors.
-  ///
-  /// In en, this message translates to:
-  /// **'Other contributors'**
-  String get otherContributors;
-
-  /// No description provided for @appIconDesign.
-  ///
-  /// In en, this message translates to:
-  /// **'App icon design'**
-  String get appIconDesign;
-
   /// No description provided for @autoCloseConnections.
   ///
   /// In en, this message translates to:

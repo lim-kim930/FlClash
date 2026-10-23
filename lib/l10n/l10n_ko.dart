@@ -847,12 +847,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get externalLink => '외부 링크';
 
   @override
-  String get otherContributors => '기타 기여자';
-
-  @override
-  String get appIconDesign => '앱 아이콘 디자인';
-
-  @override
   String get autoCloseConnections => '연결 자동 종료';
 
   @override
