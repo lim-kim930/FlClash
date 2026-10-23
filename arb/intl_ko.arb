@@ -963,5 +963,7 @@
   "addedToLocalProxies": "{name}을(를) 로컬 프록시에 추가했습니다",
   "alreadyInLocalProxies": "{name}은(는) 이미 로컬 프록시에 있습니다",
   "clearRequests": "?? ???",
-  "clearDnsQueries": "DNS ?? ???"
+  "clearDnsQueries": "DNS ?? ???",
+  "uploadSpeed": "??? ??",
+  "downloadSpeed": "???? ??"
 }

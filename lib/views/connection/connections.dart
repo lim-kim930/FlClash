@@ -37,6 +37,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
   final _speedRanker = TrackerSpeedRanker();
   late final ScrollController _scrollController;
   var _loaded = false;
+  var _showingDetails = false;
 
   @override
   void initState() {
@@ -47,6 +48,27 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
 
   @override
   Duration get pollInterval => const Duration(seconds: 1);
+
+  @override
+  bool get canPoll => super.canPoll && !_showingDetails;
+
+  Future<void> _showDetails(TrackerInfo trackerInfo) async {
+    if (_showingDetails) return;
+    final reader = widget.connectionsReader ?? _core.getConnections;
+    _showingDetails = true;
+    stopPolling();
+    try {
+      await showTrackerInfoDetail(
+        context,
+        trackerInfo,
+        context.appLocalizations.details(context.appLocalizations.connection),
+        connectionsReader: reader,
+      );
+    } finally {
+      _showingDetails = false;
+      if (mounted) restartPolling();
+    }
+  }
 
   List<IconButtonData> _buildActions() {
     return [
@@ -162,6 +184,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
                 actionBuilder: buildAction,
               ),
               builder: (context, table, connections) => TrackerInfoAnimatedList(
+                onShowDetails: _showDetails,
                 controller: _scrollController,
                 padding: EdgeInsets.only(
                   top: context.contentTopPadding,

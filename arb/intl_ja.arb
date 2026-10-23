@@ -963,5 +963,7 @@
   "addedToLocalProxies": "{name} をローカルプロキシに追加しました",
   "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります",
   "clearRequests": "リクエストを消去",
-  "clearDnsQueries": "DNS クエリを消去"
+  "clearDnsQueries": "DNS クエリを消去",
+  "uploadSpeed": "アップロード速度",
+  "downloadSpeed": "ダウンロード速度"
 }

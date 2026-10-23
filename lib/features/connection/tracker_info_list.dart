@@ -99,6 +99,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
   final List<TrackerInfo> trackerInfos;
   final String detailTitle;
   final RecordTable<TrackerInfo>? table;
+  final ValueChanged<TrackerInfo>? onShowDetails;
   final ScrollController? controller;
   final EdgeInsetsGeometry? padding;
   final Widget? Function(TrackerInfo trackerInfo)? actionBuilder;
@@ -108,6 +109,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
     required this.trackerInfos,
     required this.detailTitle,
     this.table,
+    this.onShowDetails,
     this.controller,
     this.padding,
     this.actionBuilder,
@@ -135,6 +137,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
         detailTitle: detailTitle,
         table: table,
         striped: positions[trackerInfo.id]?.isOdd ?? false,
+        onShowDetails: onShowDetails,
         actionBuilder: actionBuilder,
       ),
     );
@@ -144,6 +147,7 @@ class TrackerInfoAnimatedList extends StatelessWidget {
 Widget _buildTrackerInfoItem(
   BuildContext context,
   TrackerInfo trackerInfo, {
+  ValueChanged<TrackerInfo>? onShowDetails,
   required bool isLive,
   required String detailTitle,
   required RecordTable<TrackerInfo>? table,
@@ -157,6 +161,7 @@ Widget _buildTrackerInfoItem(
       table: table,
       striped: striped,
       detailTitle: detailTitle,
+      onShowDetails: onShowDetails,
     );
   }
   return TrackerInfoItem(
@@ -168,5 +173,6 @@ Widget _buildTrackerInfoItem(
     },
     action: actionBuilder?.call(trackerInfo),
     detailTitle: detailTitle,
+    onShowDetails: onShowDetails,
   );
 }

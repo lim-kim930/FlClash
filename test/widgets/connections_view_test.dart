@@ -50,6 +50,7 @@ void main() {
     WidgetTester tester, {
     required Future<List<TrackerInfo>> Function() connectionsReader,
     bool isPageActive = true,
+    bool inSheet = false,
   }) async {
     tester.view.physicalSize = const Size(600, 800);
     tester.view.devicePixelRatio = 1;
@@ -64,13 +65,155 @@ void main() {
         child: _TestApp(
           child: PageActivityScope(
             isActive: isPageActive,
-            child: ConnectionsView(connectionsReader: connectionsReader),
+            child: inSheet
+                ? SheetProvider(
+                    type: SheetType.page,
+                    child: NestedPagedSheet(
+                      builder: (_) =>
+                          ConnectionsView(connectionsReader: connectionsReader),
+                    ),
+                  )
+                : ConnectionsView(connectionsReader: connectionsReader),
           ),
         ),
       ),
     );
     await tester.pump();
   }
+
+  for (final inSheet in [false, true]) {
+    testWidgets('live details keep polling with inSheet=$inSheet', (
+      tester,
+    ) async {
+      var reads = 0;
+      var snapshot = [
+        buildConnections(1).single.copyWith(upload: 100, download: 200),
+      ];
+      await pumpConnections(
+        tester,
+        inSheet: inSheet,
+        connectionsReader: () async {
+          reads++;
+          return snapshot;
+        },
+      );
+      await tester.pump();
+      await tester.tap(find.byType(TrackerInfoItem).first);
+      await tester.pumpAndSettle();
+      final beforePoll = reads;
+      snapshot = [snapshot.single.copyWith(upload: 1124, download: 2248)];
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+      final detail = tester.widget<TrackerInfoDetailView>(
+        find.byType(TrackerInfoDetailView),
+      );
+      expect(detail.trackerInfo.upload, 1124);
+      expect(detail.trackerInfo.download, 2248);
+      expect(detail.trackerInfo.uploadSpeed, isNonNegative);
+      expect(reads, beforePoll + 1);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(commonDuration);
+    });
+  }
+
+  testWidgets('closed details retain the last totals and stop polling', (
+    tester,
+  ) async {
+    var snapshot = [buildConnections(1).single];
+    var reads = 0;
+    await pumpConnections(
+      tester,
+      connectionsReader: () async {
+        reads++;
+        return snapshot;
+      },
+    );
+    await tester.pump();
+    await tester.tap(find.byType(TrackerInfoItem).first);
+    await tester.pumpAndSettle();
+    snapshot = [snapshot.single.copyWith(upload: 2048, download: 4096)];
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    snapshot = [];
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    final detail = tester.widget<TrackerInfoDetailView>(
+      find.byType(TrackerInfoDetailView),
+    );
+    expect(detail.trackerInfo.upload, 2048);
+    expect(detail.trackerInfo.download, 4096);
+    expect(detail.trackerInfo.uploadSpeed, 0);
+    expect(detail.trackerInfo.downloadSpeed, 0);
+    final afterClose = reads;
+    await tester.pump(const Duration(seconds: 3));
+    expect(reads, afterClose);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(commonDuration);
+  });
+
+  testWidgets('closing details resumes polling the connection list', (
+    tester,
+  ) async {
+    var reads = 0;
+    await pumpConnections(
+      tester,
+      connectionsReader: () async {
+        reads++;
+        return buildConnections(1);
+      },
+    );
+    await tester.pump();
+    await tester.tap(find.byType(TrackerInfoItem).first);
+    await tester.pumpAndSettle();
+    final beforeClose = reads;
+    Navigator.of(tester.element(find.byType(TrackerInfoDetailView))).pop();
+    await tester.pumpAndSettle();
+    expect(reads, greaterThan(beforeClose));
+    expect(find.byType(TrackerInfoDetailView), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(commonDuration);
+  });
+
+  testWidgets('details retry a failed read without losing the last snapshot', (
+    tester,
+  ) async {
+    var fail = false;
+    var snapshot = [buildConnections(1).single.copyWith(download: 1024)];
+    await pumpConnections(
+      tester,
+      connectionsReader: () async {
+        if (fail) throw StateError('temporary read failure');
+        return snapshot;
+      },
+    );
+    await tester.pump();
+    await tester.tap(find.byType(TrackerInfoItem).first);
+    await tester.pumpAndSettle();
+    fail = true;
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(
+      tester
+          .widget<TrackerInfoDetailView>(find.byType(TrackerInfoDetailView))
+          .trackerInfo
+          .download,
+      1024,
+    );
+    expect(tester.takeException(), isNull);
+    fail = false;
+    snapshot = [snapshot.single.copyWith(download: 2048)];
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(
+      tester
+          .widget<TrackerInfoDetailView>(find.byType(TrackerInfoDetailView))
+          .trackerInfo
+          .download,
+      2048,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(commonDuration);
+  });
 
   testWidgets('ConnectionsView lazily builds every connection', (tester) async {
     final connections = buildConnections(100);

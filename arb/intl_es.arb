@@ -963,5 +963,7 @@
   "addedToLocalProxies": "{name} añadido a proxies locales",
   "alreadyInLocalProxies": "{name} ya está en proxies locales",
   "clearRequests": "Borrar solicitudes",
-  "clearDnsQueries": "Borrar consultas DNS"
+  "clearDnsQueries": "Borrar consultas DNS",
+  "uploadSpeed": "Velocidad de subida",
+  "downloadSpeed": "Velocidad de descarga"
 }

@@ -784,6 +784,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Ancho de banda de descarga",
     ),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage(
+      "Velocidad de descarga",
+    ),
     "duration": MessageLookupByLibrary.simpleMessage("Duración"),
     "edit": MessageLookupByLibrary.simpleMessage("Editar"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("Editar panel"),
@@ -2016,6 +2019,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Ancho de banda de subida",
     ),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("Velocidad de subida"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m83,
     "useHosts": MessageLookupByLibrary.simpleMessage("Usar hosts"),
