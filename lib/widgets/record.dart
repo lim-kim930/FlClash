@@ -223,3 +223,35 @@ class DetailRow extends StatelessWidget {
     );
   }
 }
+
+class ProxyChainsRow extends StatelessWidget {
+  final Iterable<String> chains;
+  final String? copyText;
+
+  const ProxyChainsRow({super.key, required this.chains, this.copyText});
+
+  @override
+  Widget build(BuildContext context) {
+    return DetailRow(
+      title: context.appLocalizations.proxyChains,
+      copyText: copyText,
+      value: Wrap(
+        spacing: 6,
+        runSpacing: 4,
+        alignment: WrapAlignment.end,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          for (final (index, chain) in chains.indexed)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 6,
+              children: [
+                if (index > 0) const RecordArrow(),
+                Flexible(child: MetaChip(label: chain)),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}

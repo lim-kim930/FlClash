@@ -7891,6 +7891,141 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Routing lookup`
+  String get ruleLookup {
+    return Intl.message(
+      'Routing lookup',
+      name: 'ruleLookup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Domain or IP address`
+  String get ruleLookupTarget {
+    return Intl.message(
+      'Domain or IP address',
+      name: 'ruleLookupTarget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Destination`
+  String get ruleLookupDestination {
+    return Intl.message(
+      'Destination',
+      name: 'ruleLookupDestination',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check route`
+  String get ruleLookupQuery {
+    return Intl.message(
+      'Check route',
+      name: 'ruleLookupQuery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a valid domain or IP address without a URL or port`
+  String get ruleLookupInvalidTarget {
+    return Intl.message(
+      'Enter a valid domain or IP address without a URL or port',
+      name: 'ruleLookupInvalidTarget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a port between 1 and 65535`
+  String get ruleLookupInvalidPort {
+    return Intl.message(
+      'Enter a port between 1 and 65535',
+      name: 'ruleLookupInvalidPort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connect the core before checking a route`
+  String get ruleLookupCoreRequired {
+    return Intl.message(
+      'Connect the core before checking a route',
+      name: 'ruleLookupCoreRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't check the route. Check the core and DNS, then try again`
+  String get ruleLookupFailed {
+    return Intl.message(
+      'Couldn\'t check the route. Check the core and DNS, then try again',
+      name: 'ruleLookupFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No rule matched; the current mode or default policy applies`
+  String get ruleLookupNoRule {
+    return Intl.message(
+      'No rule matched; the current mode or default policy applies',
+      name: 'ruleLookupNoRule',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Uses the currently loaded configuration to check which rule and policy a domain or IP address would use, without connecting to the target. DNS may be queried for IP rules. Process, source, inbound and sniffing rules may give actual app connections a different route. The node shown is the current group choice; load balancing may choose another node. Check again after changing the configuration or policy.`
+  String get ruleLookupNote {
+    return Intl.message(
+      'Uses the currently loaded configuration to check which rule and policy a domain or IP address would use, without connecting to the target. DNS may be queried for IP rules. Process, source, inbound and sniffing rules may give actual app connections a different route. The node shown is the current group choice; load balancing may choose another node. Check again after changing the configuration or policy.',
+      name: 'ruleLookupNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Matched value`
+  String get ruleLookupPayload {
+    return Intl.message(
+      'Matched value',
+      name: 'ruleLookupPayload',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Source port`
+  String get sourcePort {
+    return Intl.message('Source port', name: 'sourcePort', desc: '', args: []);
+  }
+
+  /// `Destination port`
+  String get destinationPort {
+    return Intl.message(
+      'Destination port',
+      name: 'destinationPort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional; leave blank if unknown`
+  String get ruleLookupSourcePortHint {
+    return Intl.message(
+      'Optional; leave blank if unknown',
+      name: 'ruleLookupSourcePortHint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

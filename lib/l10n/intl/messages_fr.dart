@@ -474,10 +474,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "clearDataFailed": m1,
     "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
-      "Effacer les requ?tes DNS",
+      "Effacer les requêtes DNS",
     ),
     "clearRequests": MessageLookupByLibrary.simpleMessage(
-      "Effacer les requ?tes",
+      "Effacer les requêtes",
     ),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Effacer la recherche"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
@@ -629,6 +629,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "destinationIPASN": MessageLookupByLibrary.simpleMessage(
       "ASN de l’IP de destination",
     ),
+    "destinationPort": MessageLookupByLibrary.simpleMessage(
+      "Port de destination",
+    ),
     "details": m21,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "Repose sur une API tierce ; à titre indicatif uniquement",
@@ -765,7 +768,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante de réception",
     ),
-    "downloadSpeed": MessageLookupByLibrary.simpleMessage("D?bit descendant"),
+    "downloadSpeed": MessageLookupByLibrary.simpleMessage("Débit descendant"),
     "duration": MessageLookupByLibrary.simpleMessage("Durée"),
     "edit": MessageLookupByLibrary.simpleMessage("Modifier"),
     "editDashboard": MessageLookupByLibrary.simpleMessage(
@@ -898,7 +901,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fr": MessageLookupByLibrary.simpleMessage("Français"),
     "general": MessageLookupByLibrary.simpleMessage("Général"),
     "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
-      "?chec de la synchronisation des param?tres Geo. R?essayez.",
+      "Échec de la synchronisation des paramètres Geo. Réessayez.",
     ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m27,
@@ -1675,6 +1678,40 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "Les règles doivent former une liste YAML avec une règle par élément, par exemple - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("Recherche de routage"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Connectez le cœur avant de vérifier une route",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage(
+      "Destination",
+    ),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible de vérifier la route. Vérifiez le cœur et le DNS, puis réessayez",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Saisissez un port entre 1 et 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Saisissez un domaine ou une adresse IP valide, sans URL ni port",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "Aucune règle ne correspond ; le mode actuel ou la politique par défaut s’applique",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Utilise la configuration actuellement chargée pour vérifier quelle règle et quelle politique s’appliquent à un domaine ou à une adresse IP, sans se connecter à la destination. Les règles IP peuvent déclencher une requête DNS. Les règles de processus, de source, d’entrée et de détection peuvent donner une route différente aux connexions réelles. Le nœud affiché est le choix actuel du groupe ; l’équilibrage de charge peut en choisir un autre. Vérifiez à nouveau après avoir modifié la configuration ou la politique.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage(
+      "Valeur correspondante",
+    ),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage(
+      "Vérifier la route",
+    ),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "Facultatif ; laissez vide si inconnu",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Domaine ou adresse IP",
+    ),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent en direct",
     ),
@@ -1838,10 +1875,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "sort": MessageLookupByLibrary.simpleMessage("Trier"),
     "sortAsc": MessageLookupByLibrary.simpleMessage("Croissant"),
     "sortBy": MessageLookupByLibrary.simpleMessage("Trier par"),
-    "sortDesc": MessageLookupByLibrary.simpleMessage("D?croissant"),
+    "sortDesc": MessageLookupByLibrary.simpleMessage("Décroissant"),
     "sortDirection": MessageLookupByLibrary.simpleMessage("Ordre de tri"),
     "source": MessageLookupByLibrary.simpleMessage("Source"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP source"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("Port source"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Proxy spécial"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Règles spéciales"),
     "spectrum": MessageLookupByLibrary.simpleMessage("Spectre"),
@@ -1969,7 +2007,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante d’envoi",
     ),
-    "uploadSpeed": MessageLookupByLibrary.simpleMessage("D?bit montant"),
+    "uploadSpeed": MessageLookupByLibrary.simpleMessage("Débit montant"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlTip": m80,
     "useHosts": MessageLookupByLibrary.simpleMessage("Utiliser hosts"),

@@ -52,6 +52,18 @@ class _RecordingCoreHandler extends CoreHandlerInterface {
         'rule': 'Match',
         'rule-payload': '',
       },
+      CoreMethod.ruleLookup => {
+        'target': 'example.com',
+        'source-port': 54321,
+        'destination-port': 443,
+        'network': 'tcp',
+        'mode': 'rule',
+        'rule': 'Domain',
+        'rule-payload': 'example.com',
+        'proxy': 'Proxy',
+        'chains': ['Proxy', 'node-a'],
+        'destination-ip': '',
+      },
       CoreMethod.getConnections => {
         'connections': [
           {
@@ -164,6 +176,31 @@ class _EmptyConfigCoreHandler extends _RecordingCoreHandler {
 }
 
 void main() {
+  test(
+    'routing lookup keeps parameters and decodes policy and chain',
+    () async {
+      final handler = _RecordingCoreHandler();
+      final result = await handler.ruleLookup(
+        target: 'example.com',
+        sourcePort: 54321,
+        destinationPort: 443,
+        network: 'tcp',
+      );
+      expect(handler.calls[CoreMethod.ruleLookup], {
+        'target': 'example.com',
+        'source-port': 54321,
+        'destination-port': 443,
+        'network': 'tcp',
+      });
+      expect(result.sourcePort, 54321);
+      expect(result.destinationPort, 443);
+      expect(result.rule, 'Domain');
+      expect(result.rulePayload, 'example.com');
+      expect(result.proxy, 'Proxy');
+      expect(result.chains, ['Proxy', 'node-a']);
+    },
+  );
+
   test('method call keeps structured arguments', () async {
     final fixture =
         json.decode(

@@ -296,29 +296,6 @@ class TrackerInfoDetailView extends StatelessWidget {
 
   const TrackerInfoDetailView({super.key, required this.trackerInfo});
 
-  Widget _buildChains(BuildContext context) {
-    return DetailRow(
-      title: context.appLocalizations.proxyChains,
-      value: Wrap(
-        spacing: 6,
-        runSpacing: 4,
-        alignment: WrapAlignment.end,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          for (final (index, chain) in trackerInfo.chains.reversed.indexed)
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 6,
-              children: [
-                if (index > 0) const RecordArrow(),
-                Flexible(child: MetaChip(label: chain)),
-              ],
-            ),
-        ],
-      ),
-    );
-  }
-
   List<Widget> _buildRows(List<(String, String)> entries) {
     return [
       for (final (title, value) in entries)
@@ -384,7 +361,7 @@ class TrackerInfoDetailView extends StatelessWidget {
               (appLocalizations.specialRules, metadata.specialRules),
               (appLocalizations.dnsMode, metadata.dnsMode?.name ?? ''),
             ]),
-            _buildChains(context),
+            ProxyChainsRow(chains: trackerInfo.chains.reversed),
           ],
         ),
       ],

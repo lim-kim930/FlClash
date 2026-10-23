@@ -461,6 +461,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destination": MessageLookupByLibrary.simpleMessage("目标地址"),
     "destinationGeoIP": MessageLookupByLibrary.simpleMessage("目标地理定位"),
     "destinationIPASN": MessageLookupByLibrary.simpleMessage("目标IP ASN"),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("目标端口"),
     "details": m21,
     "detectionTip": MessageLookupByLibrary.simpleMessage("依赖第三方api，仅供参考"),
     "developerMode": MessageLookupByLibrary.simpleMessage("开发者模式"),
@@ -1216,6 +1217,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "规则必须是 YAML 列表，每项一条规则，例如 - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("分流查询"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "请先连接内核，再查询分流",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("目标"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "分流查询失败，请检查内核与 DNS 后重试",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "请输入 1 到 65535 之间的端口",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "请输入有效的域名或 IP 地址，不要包含网址或端口",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "未命中规则，使用当前模式或默认策略",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "根据当前已加载配置，查询域名或 IP 会命中哪条规则、使用哪个策略，不连接目标；匹配 IP 规则时可能查询 DNS。实际应用连接还可能受进程、来源、入站和嗅探规则影响。显示的节点为策略组当前选择，负载均衡可能选择其他节点。修改配置或策略后，请重新查询。",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("匹配内容"),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("查询分流"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "可选，不确定时可留空",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage("域名或 IP 地址"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BT 下载直连",
     ),
@@ -1325,6 +1352,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sortDirection": MessageLookupByLibrary.simpleMessage("排序方向"),
     "source": MessageLookupByLibrary.simpleMessage("来源"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("源IP"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("源端口"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("特殊代理"),
     "specialRules": MessageLookupByLibrary.simpleMessage("特殊规则"),
     "spectrum": MessageLookupByLibrary.simpleMessage("光谱"),
