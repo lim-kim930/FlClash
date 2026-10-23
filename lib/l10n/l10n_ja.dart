@@ -3777,4 +3777,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get clearDnsQueries => 'DNS クエリを消去';
+
+  @override
+  String get uploadSpeed => 'アップロード速度';
+
+  @override
+  String get downloadSpeed => 'ダウンロード速度';
 }

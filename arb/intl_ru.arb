@@ -1137,5 +1137,7 @@
   "vpnPermissionNotGranted": "Разрешение на VPN не выдано, поэтому VPN не запущен. Постоянная VPN, заданная для другого приложения, тоже мешает запуску.",
   "vpnServiceStartFailed": "Не удалось запустить службу VPN.",
   "clearRequests": "Очистить запросы",
-  "clearDnsQueries": "Очистить DNS-запросы"
+  "clearDnsQueries": "Очистить DNS-запросы",
+  "uploadSpeed": "Скорость загрузки",
+  "downloadSpeed": "Скорость скачивания"
 }

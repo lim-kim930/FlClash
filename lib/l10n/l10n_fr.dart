@@ -4003,4 +4003,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get clearDnsQueries => 'Effacer les requ?tes DNS';
+
+  @override
+  String get uploadSpeed => 'D?bit montant';
+
+  @override
+  String get downloadSpeed => 'D?bit descendant';
 }

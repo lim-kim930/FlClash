@@ -3998,4 +3998,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get clearDnsQueries => 'Borrar consultas DNS';
+
+  @override
+  String get uploadSpeed => 'Velocidad de subida';
+
+  @override
+  String get downloadSpeed => 'Velocidad de descarga';
 }

@@ -13,6 +13,13 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+List<TrackerInfo> Function(List<TrackerInfo>) _connectionFor(String id) {
+  return (trackerInfos) {
+    final trackerInfo = trackerInfos.where((info) => info.id == id).firstOrNull;
+    return trackerInfo == null ? const [] : [trackerInfo];
+  };
+}
+
 class RequestsView extends ConsumerStatefulWidget {
   final ScrollController? scrollController;
   final RequestFeed? initialFeed;
@@ -339,6 +346,7 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
   var _shownRead = 0;
   late final ScrollController _scrollController;
   var _loaded = false;
+  var _showingDetails = false;
 
   @override
   void initState() {
@@ -349,6 +357,27 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
 
   @override
   Duration get pollInterval => const Duration(seconds: 1);
+
+  @override
+  bool get canPoll => super.canPoll && !_showingDetails;
+
+  Future<void> _showDetails(TrackerInfo trackerInfo) async {
+    if (_showingDetails) return;
+    _showingDetails = true;
+    stopPolling();
+    final connection = _connectionFor(trackerInfo.id);
+    try {
+      await showTrackerInfoDetail(
+        context,
+        trackerInfo,
+        context.appLocalizations.details(context.appLocalizations.connection),
+        connectionsReader: () => _readConnectionsWith(connection),
+      );
+    } finally {
+      _showingDetails = false;
+      if (mounted) restartPolling();
+    }
+  }
 
   Future<void> closeAll() => _close(_core.closeConnections);
 
@@ -371,21 +400,26 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
 
   Future<List<TrackerInfo>?> _readConnections() async {
     final read = ++_reads;
-    final rank = rankAfter(_ranking);
+    final ranked = await _readConnectionsWith(rankAfter(_ranking));
+    // A refresh after closing a connection can overlap a poll.
+    if (ranked == null || read < _shownRead) {
+      return null;
+    }
+    _shownRead = read;
+    _ranking = ranked.ranking;
+    return ranked.trackerInfos;
+  }
+
+  Future<R?> _readConnectionsWith<R>(
+    R Function(List<TrackerInfo>) present,
+  ) async {
     try {
       final connectionsReader = widget.connectionsReader;
-      final ranked = connectionsReader != null
-          ? rank(await connectionsReader())
+      return connectionsReader != null
+          ? present(await connectionsReader())
           : ref.read(coreStatusProvider) == CoreStatus.connected
-          ? await _core.getConnectionsWith(rank)
-          : rank(const []);
-      // A refresh after closing a connection can overlap a poll.
-      if (read < _shownRead) {
-        return null;
-      }
-      _shownRead = read;
-      _ranking = ranked.ranking;
-      return ranked.trackerInfos;
+          ? await _core.getConnectionsWith<R>(present)
+          : present(const []);
     } catch (error) {
       commonPrint.log(
         'updateConnections error: $error',
@@ -473,6 +507,7 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
                   table: table,
                   detailTitle: detailTitle,
                   onClose: _closeConnection,
+                  onShowDetails: _showDetails,
                 );
               }
               return TrackerInfoAnimatedList(
@@ -482,6 +517,7 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
                 table: table,
                 detailTitle: detailTitle,
                 onClose: _closeConnection,
+                onShowDetails: _showDetails,
               );
             },
           ),

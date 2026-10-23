@@ -3852,4 +3852,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get clearDnsQueries => 'DNS ?? ???';
+
+  @override
+  String get uploadSpeed => '??? ??';
+
+  @override
+  String get downloadSpeed => '???? ??';
 }

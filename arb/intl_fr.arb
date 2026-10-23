@@ -1137,5 +1137,7 @@
   "vpnPermissionNotGranted": "L'autorisation VPN n'a pas été accordée, le VPN n'a donc pas démarré. Un VPN permanent défini pour une autre application l'empêche aussi.",
   "vpnServiceStartFailed": "Le service VPN n'a pas pu démarrer.",
   "clearRequests": "Effacer les requ?tes",
-  "clearDnsQueries": "Effacer les requ?tes DNS"
+  "clearDnsQueries": "Effacer les requ?tes DNS",
+  "uploadSpeed": "D?bit montant",
+  "downloadSpeed": "D?bit descendant"
 }

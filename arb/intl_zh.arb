@@ -1137,5 +1137,7 @@
   "vpnPermissionNotGranted": "未获得 VPN 权限，VPN 没有启动。其他应用设为始终开启的 VPN 时也会如此。",
   "vpnServiceStartFailed": "VPN 服务无法启动。",
   "clearRequests": "清除请求",
-  "clearDnsQueries": "清空 DNS 查询"
+  "clearDnsQueries": "清空 DNS 查询",
+  "uploadSpeed": "上传速度",
+  "downloadSpeed": "下载速度"
 }

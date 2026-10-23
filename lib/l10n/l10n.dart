@@ -6941,6 +6941,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear DNS queries'**
   String get clearDnsQueries;
+
+  /// No description provided for @uploadSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload speed'**
+  String get uploadSpeed;
+
+  /// No description provided for @downloadSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Download speed'**
+  String get downloadSpeed;
 }
 
 class _AppLocalizationsDelegate

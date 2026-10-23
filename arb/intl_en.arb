@@ -1252,5 +1252,7 @@
   "vpnPermissionNotGranted": "VPN permission was not granted, so the VPN did not start. An always-on VPN set for another app also blocks it.",
   "vpnServiceStartFailed": "The VPN service could not start.",
   "clearRequests": "Clear requests",
-  "clearDnsQueries": "Clear DNS queries"
+  "clearDnsQueries": "Clear DNS queries",
+  "uploadSpeed": "Upload speed",
+  "downloadSpeed": "Download speed"
 }

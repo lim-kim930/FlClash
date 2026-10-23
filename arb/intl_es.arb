@@ -1137,5 +1137,7 @@
   "vpnPermissionNotGranted": "No se concedió el permiso de VPN, así que la VPN no se inició. Una VPN siempre activa configurada en otra app también lo impide.",
   "vpnServiceStartFailed": "No se pudo iniciar el servicio VPN.",
   "clearRequests": "Borrar solicitudes",
-  "clearDnsQueries": "Borrar consultas DNS"
+  "clearDnsQueries": "Borrar consultas DNS",
+  "uploadSpeed": "Velocidad de subida",
+  "downloadSpeed": "Velocidad de descarga"
 }

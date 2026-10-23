@@ -3956,4 +3956,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clearDnsQueries => 'Clear DNS queries';
+
+  @override
+  String get uploadSpeed => 'Upload speed';
+
+  @override
+  String get downloadSpeed => 'Download speed';
 }

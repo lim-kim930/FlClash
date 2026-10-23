@@ -3,19 +3,21 @@ import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/features/features.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/app.dart' show coreStatusProvider;
 import 'package:fl_clash/providers/core.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/connection/requests.dart';
 import 'package:fl_clash/widgets/widgets.dart';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-
-import '../helpers/test_app.dart';
 import 'package:prism_ui/prism_ui.dart';
+
 import '../helpers/core_connections.dart';
+import '../helpers/test_app.dart';
 
 void main() {
   late ProviderContainer container;
@@ -49,8 +51,9 @@ void main() {
 
   Future<void> pumpConnections(
     WidgetTester tester, {
-    required Future<List<TrackerInfo>> Function() connectionsReader,
+    Future<List<TrackerInfo>> Function()? connectionsReader,
     bool isPageActive = true,
+    bool inSheet = false,
   }) async {
     tester.view.physicalSize = const Size(600, 800);
     tester.view.devicePixelRatio = 1;
@@ -65,10 +68,20 @@ void main() {
         child: _TestApp(
           child: PageActivityScope(
             isActive: isPageActive,
-            child: RequestsView(
-              initialFeed: RequestFeed.live,
-              connectionsReader: connectionsReader,
-            ),
+            child: inSheet
+                ? SheetProvider(
+                    type: SheetType.page,
+                    child: NestedPagedSheet(
+                      builder: (_) => RequestsView(
+                        initialFeed: RequestFeed.live,
+                        connectionsReader: connectionsReader,
+                      ),
+                    ),
+                  )
+                : RequestsView(
+                    initialFeed: RequestFeed.live,
+                    connectionsReader: connectionsReader,
+                  ),
           ),
         ),
       ),
@@ -76,7 +89,191 @@ void main() {
     await tester.pump();
   }
 
-  testWidgets('the live feed lazily builds every connection', (tester) async {
+  for (final inSheet in [false, true]) {
+    testWidgets('live details keep polling with inSheet=$inSheet', (
+      tester,
+    ) async {
+      var reads = 0;
+      var snapshot = [
+        buildConnections(1).single.copyWith(upload: 100, download: 200),
+      ];
+      await pumpConnections(
+        tester,
+        inSheet: inSheet,
+        connectionsReader: () async {
+          reads++;
+          return snapshot;
+        },
+      );
+      await tester.pump();
+      await tester.tap(find.byType(TrackerInfoItem).first);
+      await tester.pumpAndSettle();
+      final beforePoll = reads;
+      snapshot = [snapshot.single.copyWith(upload: 1124, download: 2248)];
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+      final detail = tester.widget<TrackerInfoDetailView>(
+        find.byType(TrackerInfoDetailView),
+      );
+      expect(detail.trackerInfo.upload, 1124);
+      expect(detail.trackerInfo.download, 2248);
+      expect(detail.trackerInfo.uploadSpeed, isNonNegative);
+      expect(reads, beforePoll + 1);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(commonDuration);
+    });
+  }
+
+  testWidgets(
+    'details project one of 20000 connections through a sendable presenter',
+    (tester) async {
+      final connections = buildConnections(20000);
+      final selected = connections[19000];
+      final core = _MockCoreHandlerInterface();
+      whenConnections<RankedTrackerInfos>(core, () async => [selected]);
+      registerConnectionsPresenter<List<TrackerInfo>>();
+      ConnectionsPresenter<List<TrackerInfo>>? detailPresenter;
+      when(() => core.getConnectionsWith<List<TrackerInfo>>(any())).thenAnswer((
+        invocation,
+      ) async {
+        final present =
+            invocation.positionalArguments.single
+                as ConnectionsPresenter<List<TrackerInfo>>;
+        detailPresenter = present;
+        return present(connections);
+      });
+      container.dispose();
+      container = ProviderContainer(
+        overrides: [
+          coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+        ],
+      );
+      globalState.container = container;
+      container.read(coreStatusProvider.notifier).value = CoreStatus.connected;
+
+      await pumpConnections(tester);
+      await tester.pump();
+      await tester.tap(find.byType(TrackerInfoItem).first);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+      expect(detailPresenter, isNotNull);
+      final projected = await tester.runAsync(
+        () => compute(detailPresenter!, connections),
+      );
+      expect(projected, hasLength(1));
+      expect(projected!.single.id, selected.id);
+      final closed = await tester.runAsync(
+        () => compute(detailPresenter!, <TrackerInfo>[]),
+      );
+      expect(closed, isEmpty);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(commonDuration);
+    },
+  );
+
+  testWidgets('closed details retain the last totals and stop polling', (
+    tester,
+  ) async {
+    var snapshot = [buildConnections(1).single];
+    var reads = 0;
+    await pumpConnections(
+      tester,
+      connectionsReader: () async {
+        reads++;
+        return snapshot;
+      },
+    );
+    await tester.pump();
+    await tester.tap(find.byType(TrackerInfoItem).first);
+    await tester.pumpAndSettle();
+    snapshot = [snapshot.single.copyWith(upload: 2048, download: 4096)];
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    snapshot = [];
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    final detail = tester.widget<TrackerInfoDetailView>(
+      find.byType(TrackerInfoDetailView),
+    );
+    expect(detail.trackerInfo.upload, 2048);
+    expect(detail.trackerInfo.download, 4096);
+    expect(detail.trackerInfo.uploadSpeed, 0);
+    expect(detail.trackerInfo.downloadSpeed, 0);
+    final afterClose = reads;
+    await tester.pump(const Duration(seconds: 3));
+    expect(reads, afterClose);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(commonDuration);
+  });
+
+  testWidgets('closing details resumes polling the connection list', (
+    tester,
+  ) async {
+    var reads = 0;
+    await pumpConnections(
+      tester,
+      connectionsReader: () async {
+        reads++;
+        return buildConnections(1);
+      },
+    );
+    await tester.pump();
+    await tester.tap(find.byType(TrackerInfoItem).first);
+    await tester.pumpAndSettle();
+    final beforeClose = reads;
+    SheetProvider.of(
+      tester.element(find.byType(TrackerInfoDetailView)),
+    )!.onClose!();
+    await tester.pumpAndSettle();
+    expect(reads, greaterThan(beforeClose));
+    expect(find.byType(TrackerInfoDetailView), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(commonDuration);
+  });
+
+  testWidgets('details retry a failed read without losing the last snapshot', (
+    tester,
+  ) async {
+    var fail = false;
+    var snapshot = [buildConnections(1).single.copyWith(download: 1024)];
+    await pumpConnections(
+      tester,
+      connectionsReader: () async {
+        if (fail) throw StateError('temporary read failure');
+        return snapshot;
+      },
+    );
+    await tester.pump();
+    await tester.tap(find.byType(TrackerInfoItem).first);
+    await tester.pumpAndSettle();
+    fail = true;
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(
+      tester
+          .widget<TrackerInfoDetailView>(find.byType(TrackerInfoDetailView))
+          .trackerInfo
+          .download,
+      1024,
+    );
+    expect(tester.takeException(), isNull);
+    fail = false;
+    snapshot = [snapshot.single.copyWith(download: 2048)];
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(
+      tester
+          .widget<TrackerInfoDetailView>(find.byType(TrackerInfoDetailView))
+          .trackerInfo
+          .download,
+      2048,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(commonDuration);
+  });
+
+  testWidgets('ConnectionsView lazily builds every connection', (tester) async {
     final connections = buildConnections(100);
 
     await pumpConnections(tester, connectionsReader: () async => connections);

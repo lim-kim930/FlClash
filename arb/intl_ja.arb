@@ -1137,5 +1137,7 @@
   "vpnPermissionNotGranted": "VPN の権限が許可されなかったため、VPN は起動しませんでした。ほかのアプリが常時接続 VPN に設定されている場合も起動できません。",
   "vpnServiceStartFailed": "VPN サービスを起動できませんでした。",
   "clearRequests": "リクエストを消去",
-  "clearDnsQueries": "DNS クエリを消去"
+  "clearDnsQueries": "DNS クエリを消去",
+  "uploadSpeed": "アップロード速度",
+  "downloadSpeed": "ダウンロード速度"
 }
