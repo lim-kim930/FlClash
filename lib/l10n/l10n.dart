@@ -6977,6 +6977,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Descending'**
   String get sortDesc;
+
+  /// No description provided for @geoConfigSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to sync Geo settings. Please try again.'**
+  String get geoConfigSyncFailed;
 }
 
 class _AppLocalizationsDelegate

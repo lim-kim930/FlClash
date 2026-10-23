@@ -4016,4 +4016,8 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sortDesc => 'Descendente';
+
+  @override
+  String get geoConfigSyncFailed =>
+      'No se pudieron sincronizar los ajustes Geo. Int?ntalo de nuevo.';
 }

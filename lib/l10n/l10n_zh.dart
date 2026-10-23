@@ -3746,4 +3746,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sortDesc => '降序';
+
+  @override
+  String get geoConfigSyncFailed => 'Geo 设置同步失败，请重试。';
 }

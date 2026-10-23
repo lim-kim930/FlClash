@@ -1,0 +1,15 @@
+mixed-port: 7890
+port: 0
+socks-port: 0
+redir-port: 0
+tproxy-port: 0
+allow-lan: false
+authentication: []
+skip-auth-prefixes: []
+geox-url:
+  mmdb: http://geo.test/geoip.metadb
+  asn: http://geo.test/asn.mmdb
+  geoip: http://geo.test/geoip.dat
+  geosite: http://geo.test/first/geosite.dat
+geo-auto-update: false
+geo-update-interval: 48

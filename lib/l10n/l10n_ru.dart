@@ -3968,4 +3968,8 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sortDesc => 'По убыванию';
+
+  @override
+  String get geoConfigSyncFailed =>
+      'Не удалось синхронизировать настройки Geo. Повторите попытку.';
 }

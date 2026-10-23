@@ -3974,4 +3974,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sortDesc => 'Descending';
+
+  @override
+  String get geoConfigSyncFailed =>
+      'Failed to sync Geo settings. Please try again.';
 }

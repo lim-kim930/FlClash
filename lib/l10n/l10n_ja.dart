@@ -3795,4 +3795,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get sortDesc => '降順';
+
+  @override
+  String get geoConfigSyncFailed => 'Geo 設定の同期に失敗しました。もう一度お試しください。';
 }
