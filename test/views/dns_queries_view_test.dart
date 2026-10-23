@@ -286,6 +286,37 @@ void main() {
     await teardownView(tester);
   });
 
+  testWidgets('clears paused queries and keeps receiving new records', (
+    tester,
+  ) async {
+    seedDnsQueries([_dnsQuery('alpha.test'), _dnsQuery('beta.test')]);
+    await pumpDnsQueries(tester);
+    final scrollBox = tester.widget<ScrollToEndBox>(
+      find.byType(ScrollToEndBox),
+    );
+    scrollBox.onCancelToEnd!();
+    await tester.pump();
+
+    await tester.tap(find.byTooltip('Clear DNS queries'));
+    await tester.pump();
+    expect(container.read(dnsQueriesProvider).list, isEmpty);
+    await tester.pump(renderThrottleDuration);
+    await tester.pumpAndSettle();
+    expect(find.byType(DnsQueryItem), findsNothing);
+    expect(find.text('No DNS queries yet'), findsOneWidget);
+
+    container
+        .read(dnsQueriesProvider.notifier)
+        .addQuery(_dnsQuery('gamma.test'));
+    await tester.pump();
+    await tester.pump(renderThrottleDuration);
+    await tester.pumpAndSettle();
+    expect(find.text('gamma.test'), findsOneWidget);
+    expect(find.text('alpha.test'), findsNothing);
+    expect(find.text('beta.test'), findsNothing);
+    await teardownView(tester);
+  });
+
   testWidgets('tapping a chip keeps only the queries carrying it', (
     tester,
   ) async {

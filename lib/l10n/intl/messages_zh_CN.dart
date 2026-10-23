@@ -365,6 +365,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearDataFailed": m4,
     "clearDnsCache": MessageLookupByLibrary.simpleMessage("清除DNS缓存"),
     "clearDnsCacheFailed": MessageLookupByLibrary.simpleMessage("清除DNS缓存失败"),
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage("清空 DNS 查询"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("清除请求"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("清除搜索"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("客户端指纹"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("导出剪贴板"),

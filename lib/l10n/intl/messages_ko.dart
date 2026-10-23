@@ -381,6 +381,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearDnsCacheFailed": MessageLookupByLibrary.simpleMessage(
       "DNS 캐시를 지우지 못했습니다",
     ),
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage("DNS ?? ???"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("?? ???"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("검색 지우기"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("클라이언트 핑거프린트"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("클립보드로 내보내기"),

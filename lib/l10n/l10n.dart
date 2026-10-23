@@ -7923,8 +7923,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -8030,6 +8029,26 @@ class AppLocalizations {
       name: 'alreadyInLocalProxies',
       desc: '',
       args: [name],
+    );
+  }
+
+  /// `Clear requests`
+  String get clearRequests {
+    return Intl.message(
+      'Clear requests',
+      name: 'clearRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear DNS queries`
+  String get clearDnsQueries {
+    return Intl.message(
+      'Clear DNS queries',
+      name: 'clearDnsQueries',
+      desc: '',
+      args: [],
     );
   }
 }

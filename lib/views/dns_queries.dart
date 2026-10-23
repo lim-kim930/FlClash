@@ -132,6 +132,15 @@ class _DnsQueriesViewState extends ConsumerState<DnsQueriesView>
           tooltip: appLocalizations.clearDnsCache,
           onPressed: _clearDnsCache,
         ),
+        IconButtonData(
+          glyph: AppGlyphs.clearAll,
+          tooltip: appLocalizations.clearDnsQueries,
+          onPressed: () {
+            final notifier = ref.read(dnsQueriesProvider.notifier);
+            notifier.value = notifier.value.cleared();
+            _listController.setDnsQueries(const []);
+          },
+        ),
       ],
       body: ValueListenableBuilder<DnsQueriesState>(
         valueListenable: _listController,
