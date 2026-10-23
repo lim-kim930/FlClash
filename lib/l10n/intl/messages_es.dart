@@ -626,6 +626,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "destinationIPASN": MessageLookupByLibrary.simpleMessage(
       "ASN de la IP de destino",
     ),
+    "destinationPort": MessageLookupByLibrary.simpleMessage(
+      "Puerto de destino",
+    ),
     "details": m21,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "Depende de una API de terceros; solo con fines informativos",
@@ -1670,6 +1673,41 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "Las reglas deben ser una lista YAML con una regla por elemento, por ejemplo - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage(
+      "Consulta de enrutamiento",
+    ),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Conecta el n?cleo antes de comprobar una ruta",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "Comprobar qu? regla y pol?tica usar?a un dominio o una direcci?n IP",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("Destino"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "No se pudo comprobar la ruta. Revisa el n?cleo y el DNS e int?ntalo de nuevo",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Introduce un puerto entre 1 y 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Introduce un dominio o una direcci?n IP v?lidos, sin URL ni puerto",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "Ninguna regla coincide; se aplica el modo actual o la pol?tica predeterminada",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Usa la configuraci?n cargada sin conectarse al destino. Las reglas IP pueden generar consultas DNS. Las reglas de proceso, origen, entrada y detecci?n pueden dar una ruta distinta a las conexiones reales. El nodo mostrado es la selecci?n actual del grupo; el balanceo de carga puede elegir otro. Comprueba de nuevo tras cambiar la configuraci?n o la pol?tica.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage(
+      "Valor coincidente",
+    ),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("Comprobar ruta"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "Opcional; d?jalo vac?o si lo desconoces",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Dominio o direcci?n IP",
+    ),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent directo",
     ),
@@ -1839,6 +1877,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "source": MessageLookupByLibrary.simpleMessage("Origen"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP de origen"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("Puerto de origen"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Proxy especial"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Reglas especiales"),
     "spectrum": MessageLookupByLibrary.simpleMessage("Espectro"),

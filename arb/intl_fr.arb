@@ -946,5 +946,20 @@
   "sortDirection": "Ordre de tri",
   "sortAsc": "Croissant",
   "sortDesc": "D?croissant",
-  "geoConfigSyncFailed": "?chec de la synchronisation des param?tres Geo. R?essayez."
+  "geoConfigSyncFailed": "?chec de la synchronisation des param?tres Geo. R?essayez.",
+  "ruleLookup": "Recherche de routage",
+  "ruleLookupDesc": "V?rifier la r?gle et la politique utilis?es pour un domaine ou une adresse IP",
+  "ruleLookupTarget": "Domaine ou adresse IP",
+  "ruleLookupDestination": "Destination",
+  "ruleLookupQuery": "V?rifier la route",
+  "ruleLookupInvalidTarget": "Saisissez un domaine ou une adresse IP valide, sans URL ni port",
+  "ruleLookupInvalidPort": "Saisissez un port entre 1 et 65535",
+  "ruleLookupCoreRequired": "Connectez le c?ur avant de v?rifier une route",
+  "ruleLookupFailed": "Impossible de v?rifier la route. V?rifiez le c?ur et le DNS, puis r?essayez",
+  "ruleLookupNoRule": "Aucune r?gle ne correspond ; le mode actuel ou la politique par d?faut s?applique",
+  "ruleLookupNote": "Utilise la configuration actuellement charg?e sans se connecter ? la destination. Les r?gles IP peuvent d?clencher une requ?te DNS. Les r?gles de processus, de source, d?entr?e et de d?tection peuvent donner une route diff?rente aux connexions r?elles. Le n?ud affich? est le choix actuel du groupe ; l??quilibrage de charge peut en choisir un autre. V?rifiez ? nouveau apr?s avoir modifi? la configuration ou la politique.",
+  "ruleLookupPayload": "Valeur correspondante",
+  "sourcePort": "Port source",
+  "destinationPort": "Port de destination",
+  "ruleLookupSourcePortHint": "Facultatif ; laissez vide si inconnu"
 }

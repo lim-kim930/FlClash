@@ -946,5 +946,20 @@
   "sortDirection": "Direcci?n de ordenaci?n",
   "sortAsc": "Ascendente",
   "sortDesc": "Descendente",
-  "geoConfigSyncFailed": "No se pudieron sincronizar los ajustes Geo. Int?ntalo de nuevo."
+  "geoConfigSyncFailed": "No se pudieron sincronizar los ajustes Geo. Int?ntalo de nuevo.",
+  "ruleLookup": "Consulta de enrutamiento",
+  "ruleLookupDesc": "Comprobar qu? regla y pol?tica usar?a un dominio o una direcci?n IP",
+  "ruleLookupTarget": "Dominio o direcci?n IP",
+  "ruleLookupDestination": "Destino",
+  "ruleLookupQuery": "Comprobar ruta",
+  "ruleLookupInvalidTarget": "Introduce un dominio o una direcci?n IP v?lidos, sin URL ni puerto",
+  "ruleLookupInvalidPort": "Introduce un puerto entre 1 y 65535",
+  "ruleLookupCoreRequired": "Conecta el n?cleo antes de comprobar una ruta",
+  "ruleLookupFailed": "No se pudo comprobar la ruta. Revisa el n?cleo y el DNS e int?ntalo de nuevo",
+  "ruleLookupNoRule": "Ninguna regla coincide; se aplica el modo actual o la pol?tica predeterminada",
+  "ruleLookupNote": "Usa la configuraci?n cargada sin conectarse al destino. Las reglas IP pueden generar consultas DNS. Las reglas de proceso, origen, entrada y detecci?n pueden dar una ruta distinta a las conexiones reales. El nodo mostrado es la selecci?n actual del grupo; el balanceo de carga puede elegir otro. Comprueba de nuevo tras cambiar la configuraci?n o la pol?tica.",
+  "ruleLookupPayload": "Valor coincidente",
+  "sourcePort": "Puerto de origen",
+  "destinationPort": "Puerto de destino",
+  "ruleLookupSourcePortHint": "Opcional; d?jalo vac?o si lo desconoces"
 }

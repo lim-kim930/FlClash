@@ -606,6 +606,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destinationIPASN": MessageLookupByLibrary.simpleMessage(
       "ASN IP назначения",
     ),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("Порт назначения"),
     "details": m21,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "Использует сторонний API; только для справки",
@@ -1630,6 +1631,41 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "Правила должны быть YAML-списком, по одному правилу в элементе, например - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("Проверка маршрута"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Подключите ядро перед проверкой маршрута",
+    ),
+    "ruleLookupDesc": MessageLookupByLibrary.simpleMessage(
+      "Узнайте, какое правило и политика применяются к домену или IP",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("Назначение"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось проверить маршрут. Проверьте ядро и DNS и повторите попытку",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Введите порт от 1 до 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Введите корректный домен или IP-адрес без URL и порта",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "Нет совпавшего правила; применяется текущий режим или политика по умолчанию",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Проверка использует загруженную конфигурацию без подключения к цели. Для правил IP возможен запрос DNS. Правила процессов, источника, входящих подключений и анализа трафика могут изменить маршрут реального приложения. Показан текущий выбор группы; балансировка нагрузки может выбрать другой узел. После изменения настроек или политики повторите проверку.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage(
+      "Совпавшее значение",
+    ),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage(
+      "Проверить маршрут",
+    ),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "Необязательно; оставьте пустым, если неизвестен",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Домен или IP-адрес",
+    ),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent напрямую",
     ),
@@ -1791,6 +1827,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "source": MessageLookupByLibrary.simpleMessage("Источник"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP источника"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("Порт источника"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Специальный прокси"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Специальные правила"),
     "spectrum": MessageLookupByLibrary.simpleMessage("Спектр"),
