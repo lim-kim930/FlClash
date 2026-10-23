@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
+import 'package:fl_clash/core/desktop/model.dart';
 import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/core/method.dart';
 import 'package:fl_clash/core/spill.dart';
@@ -75,6 +76,9 @@ class TestSetupAction extends SetupAction {
   final Set<bool> unansweredCoreCalls = {};
   int authorizeCalls = 0;
   AuthorizeCode authorizeResult = AuthorizeCode.none;
+
+  @override
+  CoreProcessOwner? get runningCoreOwner => null;
 
   @override
   Future<AuthorizeCode> authorizeCore() async {

@@ -901,6 +901,240 @@ void main() {
       );
       expect(setupAction.authorizationRequestCount, 1);
     });
+    test('retries authorization when the user re-enables tun', () async {
+      late _AuthorizationSetupAction setupAction;
+      final container = ProviderContainer(
+        overrides: [
+          setupActionProvider.overrideWith(() {
+            setupAction = _AuthorizationSetupAction([
+              AuthorizeCode.error,
+              AuthorizeCode.none,
+            ]);
+            return setupAction;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update((state) => state.copyWith.tun(enable: true));
+      container.read(setupActionProvider);
+
+      expect(await setupAction.requestAdmin(true), isTrue);
+      expect(
+        container.read(authorizedTunEnableProvider),
+        TunAuthorizationState.none,
+      );
+      expect(container.read(shouldPatchSystemDnsProvider), isFalse);
+
+      expect(container.read(patchClashConfigProvider).tun.enable, isFalse);
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update((state) => state.copyWith.tun(enable: true));
+
+      expect(await setupAction.requestAdmin(true), isTrue);
+      expect(setupAction.authorizationRequestCount, 2);
+      expect(
+        container.read(authorizedTunEnableProvider),
+        TunAuthorizationState.authorized,
+      );
+    });
+
+    test(
+      'an authorization exception clears pending state and disables TUN',
+      () async {
+        TestWidgetsFlutterBinding.ensureInitialized();
+        await AppLocalizations.load(const Locale('en'));
+        final pending = Completer<AuthorizeCode>();
+        final setup = _AuthorizationSetupAction([], pending: pending);
+        final container = ProviderContainer(
+          overrides: [setupActionProvider.overrideWith(() => setup)],
+        );
+        addTearDown(container.dispose);
+        container
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith.tun(enable: true));
+        final request = container
+            .read(setupActionProvider.notifier)
+            .requestAdmin(true);
+        final failure = expectLater(request, throwsA(isA<StateError>()));
+        pending.completeError(StateError('installer failed'));
+        await failure;
+        expect(
+          container.read(authorizedTunEnableProvider),
+          TunAuthorizationState.none,
+        );
+        expect(container.read(patchClashConfigProvider).tun.enable, isFalse);
+      },
+    );
+
+    test('does not request authorization again once authorized', () async {
+      late _AuthorizationSetupAction setupAction;
+      final container = ProviderContainer(
+        overrides: [
+          setupActionProvider.overrideWith(() {
+            setupAction = _AuthorizationSetupAction([AuthorizeCode.none]);
+            return setupAction;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(setupActionProvider);
+
+      expect(await setupAction.requestAdmin(true), isTrue);
+      expect(await setupAction.requestAdmin(true), isTrue);
+
+      expect(setupAction.authorizationRequestCount, 1);
+    });
+
+    test(
+      'hands off to a core restart when the core is not helper owned',
+      () async {
+        late _AuthorizationSetupAction setupAction;
+        final container = ProviderContainer(
+          overrides: [
+            setupActionProvider.overrideWith(() {
+              setupAction = _AuthorizationSetupAction([AuthorizeCode.none])
+                ..coreOwner = CoreProcessOwner.direct;
+              return setupAction;
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+        container.read(setupActionProvider);
+
+        expect(await setupAction.requestAdmin(true), isFalse);
+        expect(
+          container.read(authorizedTunEnableProvider),
+          TunAuthorizationState.authorized,
+        );
+      },
+    );
+
+    test(
+      'successful handoffs permit recovery in a later Core session',
+      () async {
+        final setup = _AuthorizationSetupAction([AuthorizeCode.none])
+          ..coreOwner = CoreProcessOwner.direct;
+        final action = _RestartRecordingCoreAction();
+        final container = ProviderContainer(
+          overrides: [
+            setupActionProvider.overrideWith(() => setup),
+            coreActionProvider.overrideWith(() => action),
+          ],
+        );
+        addTearDown(container.dispose);
+        container
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith.tun(enable: true));
+        action.onRestart = () async {
+          expect(await setup.requestAdmin(true), isTrue);
+          setup.coreOwner = CoreProcessOwner.helper;
+          return true;
+        };
+        expect(
+          await container.read(setupActionProvider.notifier).updateConfig(),
+          isTrue,
+        );
+        setup.coreOwner = CoreProcessOwner.direct;
+        expect(await setup.updateConfig(), isTrue);
+        expect(action.restartCount, 2);
+        expect(setup.authorizationRequestCount, 1);
+      },
+    );
+
+    test(
+      'a direct fallback fails the handoff and allows an explicit retry',
+      () async {
+        TestWidgetsFlutterBinding.ensureInitialized();
+        await AppLocalizations.load(const Locale('en'));
+        final setup = _AuthorizationSetupAction([
+          AuthorizeCode.none,
+          AuthorizeCode.none,
+        ])..coreOwner = CoreProcessOwner.direct;
+        final action = _RestartRecordingCoreAction();
+        final container = ProviderContainer(
+          overrides: [
+            setupActionProvider.overrideWith(() => setup),
+            coreActionProvider.overrideWith(() => action),
+          ],
+        );
+        addTearDown(container.dispose);
+        container
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith.tun(enable: true));
+        expect(
+          await container.read(setupActionProvider.notifier).updateConfig(),
+          isFalse,
+        );
+        expect(container.read(patchClashConfigProvider).tun.enable, isFalse);
+        expect(
+          container.read(authorizedTunEnableProvider),
+          TunAuthorizationState.none,
+        );
+        action.onRestart = () async {
+          setup.coreOwner = CoreProcessOwner.helper;
+          return true;
+        };
+        container
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith.tun(enable: true));
+        expect(await setup.updateConfig(), isTrue);
+        expect(action.restartCount, 2);
+      },
+    );
+
+    test(
+      'authorization handoffs never await an already active restart',
+      () async {
+        TestWidgetsFlutterBinding.ensureInitialized();
+        await AppLocalizations.load(const Locale('en'));
+        final setup = _AuthorizationSetupAction([AuthorizeCode.none])
+          ..coreOwner = CoreProcessOwner.direct;
+        final action = _RestartRecordingCoreAction()..restarting = true;
+        final container = ProviderContainer(
+          overrides: [
+            setupActionProvider.overrideWith(() => setup),
+            coreActionProvider.overrideWith(() => action),
+          ],
+        );
+        addTearDown(container.dispose);
+        container
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith.tun(enable: true));
+        expect(
+          await container.read(setupActionProvider.notifier).updateConfig(),
+          isFalse,
+        );
+        expect(action.restartCount, 0);
+        expect(container.read(patchClashConfigProvider).tun.enable, isFalse);
+      },
+    );
+
+    test(
+      'keeps a direct core when the platform does not need a helper',
+      () async {
+        late _AuthorizationSetupAction setupAction;
+        final container = ProviderContainer(
+          overrides: [
+            setupActionProvider.overrideWith(() {
+              setupAction = _AuthorizationSetupAction([AuthorizeCode.none])
+                ..coreOwner = CoreProcessOwner.direct
+                ..helperOwnedCoreRequired = false;
+              return setupAction;
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+        container.read(setupActionProvider);
+
+        expect(await setupAction.requestAdmin(true), isTrue);
+        expect(
+          container.read(authorizedTunEnableProvider),
+          TunAuthorizationState.authorized,
+        );
+      },
+    );
   });
 }
 
@@ -986,11 +1220,16 @@ const _restartResult = CoreLifecycleResult(
 class _RestartRecordingCoreAction extends CoreAction {
   int restartCount = 0;
   bool restartResult = true;
+  bool restarting = false;
+  Future<bool> Function()? onRestart;
+
+  @override
+  bool get isRestarting => restarting;
 
   @override
   Future<bool> restartCore() async {
     restartCount++;
-    return restartResult;
+    return onRestart == null ? restartResult : await onRestart!();
   }
 }
 
@@ -1006,6 +1245,8 @@ final _restartFailure = Exception('restart failed');
 class _AuthorizationSetupAction extends SetupAction {
   final List<AuthorizeCode> authorizationResults;
   final Completer<AuthorizeCode>? pending;
+  bool helperOwnedCoreRequired = true;
+  CoreProcessOwner? coreOwner = CoreProcessOwner.helper;
   int authorizationRequestCount = 0;
 
   _AuthorizationSetupAction(this.authorizationResults, {this.pending});
@@ -1019,6 +1260,12 @@ class _AuthorizationSetupAction extends SetupAction {
     }
     return authorizationResults[index];
   }
+
+  @override
+  bool get requiresHelperOwnedCore => helperOwnedCoreRequired;
+
+  @override
+  CoreProcessOwner? get runningCoreOwner => coreOwner;
 }
 
 class _RaceSetupAction extends SetupAction {
