@@ -376,9 +376,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Contrôle d’accès des apps",
     ),
-    "appIconDesign": MessageLookupByLibrary.simpleMessage(
-      "Conception de l’icône de l’app",
-    ),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage(
       "Aucun proxy local",
     ),
@@ -1600,9 +1597,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "options": MessageLookupByLibrary.simpleMessage("Options"),
     "originalUrl": MessageLookupByLibrary.simpleMessage("URL d\'origine"),
     "other": MessageLookupByLibrary.simpleMessage("Autre"),
-    "otherContributors": MessageLookupByLibrary.simpleMessage(
-      "Autres contributeurs",
-    ),
     "outbound": MessageLookupByLibrary.simpleMessage("Sortant"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("Sortie"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("IP sortante"),

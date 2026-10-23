@@ -357,7 +357,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "App access control",
     ),
-    "appIconDesign": MessageLookupByLibrary.simpleMessage("App icon design"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("No local proxies"),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Append system DNS",
@@ -1489,9 +1488,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "options": MessageLookupByLibrary.simpleMessage("Options"),
     "originalUrl": MessageLookupByLibrary.simpleMessage("Original URL"),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
-    "otherContributors": MessageLookupByLibrary.simpleMessage(
-      "Other contributors",
-    ),
     "outbound": MessageLookupByLibrary.simpleMessage("Outbound"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("Exit"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("Outbound IP"),
