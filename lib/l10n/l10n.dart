@@ -7816,6 +7816,26 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Clear requests`
+  String get clearRequests {
+    return Intl.message(
+      'Clear requests',
+      name: 'clearRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear DNS queries`
+  String get clearDnsQueries {
+    return Intl.message(
+      'Clear DNS queries',
+      name: 'clearDnsQueries',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

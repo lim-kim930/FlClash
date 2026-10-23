@@ -473,6 +473,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Cela supprime tous les profils, réglages et données locales, puis ferme l’app. Rouvrez-la pour repartir de zéro.",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
+      "Effacer les requ?tes DNS",
+    ),
+    "clearRequests": MessageLookupByLibrary.simpleMessage(
+      "Effacer les requ?tes",
+    ),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Effacer la recherche"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Empreinte client",

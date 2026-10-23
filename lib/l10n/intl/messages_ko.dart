@@ -365,6 +365,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "모든 프로필, 설정, 로컬 데이터를 삭제한 후 앱을 종료합니다. 앱을 다시 열면 처음부터 시작합니다.",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage("DNS ?? ???"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("?? ???"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("검색 지우기"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("클라이언트 핑거프린트"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("클립보드로 내보내기"),

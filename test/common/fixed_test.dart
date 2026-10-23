@@ -37,6 +37,20 @@ void main() {
       expect(copy.list, [2, 3, 4]);
     });
 
+    test('cleared advances revisions without changing previous snapshots', () {
+      final original = FixedList<int>(3).append(1);
+      final snapshot = original.list;
+      final cleared = original.cleared();
+      final next = cleared.append(2);
+
+      expect(snapshot, [1]);
+      expect(original.list, [1]);
+      expect(cleared.revision, original.revision + 1);
+      expect(next.revision, cleared.revision + 1);
+      expect(next.list, [2]);
+      expect(next.maxLength, 3);
+    });
+
     test('operator [] returns correct element', () {
       final list = FixedList(5, list: [10, 20, 30]);
       expect(list[0], 10);

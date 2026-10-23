@@ -27,6 +27,8 @@ class FixedList<T> {
     _snapshot = null;
   }
 
+  FixedList<T> cleared() => FixedList._(maxLength, [], _revision + 1);
+
   FixedList<T> append(T item) {
     add(item);
     return FixedList._(maxLength, _list, _revision + 1);

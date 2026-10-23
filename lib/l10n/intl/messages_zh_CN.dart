@@ -351,6 +351,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "将删除所有配置、设置和本地数据，随后关闭应用。重新打开即可从头开始。",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage("清空 DNS 查询"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("清除请求"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("清除搜索"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("客户端指纹"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("导出剪贴板"),

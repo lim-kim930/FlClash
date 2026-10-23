@@ -437,6 +437,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "This deletes all profiles, settings, and local data, then closes the app. Open it again to start fresh.",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
+      "Clear DNS queries",
+    ),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("Clear requests"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Clear search"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Client fingerprint",

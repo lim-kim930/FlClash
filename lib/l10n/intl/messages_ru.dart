@@ -454,6 +454,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Все профили, настройки и локальные данные будут удалены, после чего приложение закроется. Откройте его снова, чтобы начать заново.",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
+      "Очистить DNS-запросы",
+    ),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("Очистить запросы"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Очистить поиск"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Отпечаток клиента",

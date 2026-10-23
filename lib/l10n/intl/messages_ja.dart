@@ -374,6 +374,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "すべてのプロファイル、設定、ローカルデータを削除してアプリを終了します。もう一度開くと最初から始められます。",
     ),
     "clearDataFailed": m1,
+    "clearDnsQueries": MessageLookupByLibrary.simpleMessage("DNS クエリを消去"),
+    "clearRequests": MessageLookupByLibrary.simpleMessage("リクエストを消去"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("検索をクリア"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "クライアントフィンガープリント",
