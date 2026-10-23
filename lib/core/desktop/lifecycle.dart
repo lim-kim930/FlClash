@@ -8,6 +8,8 @@ import 'model.dart';
 import 'transport.dart';
 
 abstract interface class DesktopCoreLifecycleController {
+  CoreProcessOwner? get runningOwner;
+
   Stream<DesktopCoreFailure> get crashEvents;
 
   Future<CoreLifecycleResult> start();
@@ -104,6 +106,12 @@ final class DesktopCoreLifecycle implements DesktopCoreLifecycleController {
   DesktopCoreState get state => _state;
 
   Stream<DesktopCoreState> get states => _states.stream;
+
+  @override
+  CoreProcessOwner? get runningOwner => switch (_core) {
+    _Live(:final session) => session.owner,
+    _ => null,
+  };
 
   @override
   Stream<DesktopCoreFailure> get crashEvents => _crashes.stream;
