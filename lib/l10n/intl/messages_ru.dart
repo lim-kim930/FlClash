@@ -895,6 +895,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "Добавленные здесь параметры заменяют соответствующие настройки всех профилей; остальные остаются такими, как в профиле, а если профиль их не задаёт, действуют значения ядра по умолчанию.",
     ),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось синхронизировать настройки Geo. Повторите попытку.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m30,
     "geoUpdated": m31,

@@ -861,6 +861,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "Entries added here replace the setting of every profile; anything not added keeps the profile\'s own setting, or the core default when the profile has none.",
     ),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to sync Geo settings. Please try again.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m30,
     "geoUpdated": m31,

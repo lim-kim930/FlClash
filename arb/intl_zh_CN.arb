@@ -969,5 +969,6 @@
   "sortBy": "排序依据",
   "sortDirection": "排序方向",
   "sortAsc": "升序",
-  "sortDesc": "降序"
+  "sortDesc": "降序",
+  "geoConfigSyncFailed": "Geo 设置同步失败，请重试。"
 }

@@ -969,5 +969,6 @@
   "sortBy": "Ordenar por",
   "sortDirection": "Direcci?n de ordenaci?n",
   "sortAsc": "Ascendente",
-  "sortDesc": "Descendente"
+  "sortDesc": "Descendente",
+  "geoConfigSyncFailed": "No se pudieron sincronizar los ajustes Geo. Int?ntalo de nuevo."
 }

@@ -969,5 +969,6 @@
   "sortBy": "Trier par",
   "sortDirection": "Ordre de tri",
   "sortAsc": "Croissant",
-  "sortDesc": "D?croissant"
+  "sortDesc": "D?croissant",
+  "geoConfigSyncFailed": "?chec de la synchronisation des param?tres Geo. R?essayez."
 }

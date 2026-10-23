@@ -969,5 +969,6 @@
   "sortBy": "並べ替え基準",
   "sortDirection": "並べ替え順序",
   "sortAsc": "昇順",
-  "sortDesc": "降順"
+  "sortDesc": "降順",
+  "geoConfigSyncFailed": "Geo 設定の同期に失敗しました。もう一度お試しください。"
 }

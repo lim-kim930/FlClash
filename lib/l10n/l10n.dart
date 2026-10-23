@@ -8096,6 +8096,16 @@ class AppLocalizations {
   String get sortDesc {
     return Intl.message('Descending', name: 'sortDesc', desc: '', args: []);
   }
+
+  /// `Failed to sync Geo settings. Please try again.`
+  String get geoConfigSyncFailed {
+    return Intl.message(
+      'Failed to sync Geo settings. Please try again.',
+      name: 'geoConfigSyncFailed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
