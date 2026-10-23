@@ -512,6 +512,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destination": MessageLookupByLibrary.simpleMessage("宛先"),
     "destinationGeoIP": MessageLookupByLibrary.simpleMessage("宛先GeoIP"),
     "destinationIPASN": MessageLookupByLibrary.simpleMessage("宛先IP ASN"),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("宛先ポート"),
     "details": m24,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "サードパーティAPIに依存しているため、参考値です",
@@ -1358,6 +1359,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "ルールは 1 項目に 1 つのルールを書いた YAML リストにしてください。例：- DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("ルーティング検索"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "ルートを確認する前にコアに接続してください",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("宛先"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "ルートを確認できません。コアと DNS を確認して再試行してください",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "1〜65535 のポートを入力してください",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "URL やポートを含まない有効なドメインまたは IP アドレスを入力してください",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "一致するルールなし。現在のモードまたは既定のポリシーを使用",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "現在読み込まれている設定で、ドメインまたは IP に適用されるルールとポリシーを検索し、対象には接続しません。IP ルールの照合時に DNS を問い合わせる場合があります。実際のアプリ接続は、プロセス、送信元、インバウンド、スニッフィングのルールで異なる経路になる場合があります。表示ノードはグループの現在の選択で、負荷分散では別のノードになる場合があります。設定やポリシー変更後は再検索してください。",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("一致した内容"),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("ルートを確認"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "任意。不明な場合は空欄にしてください",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage("ドメインまたは IP アドレス"),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent を直接接続",
     ),
@@ -1513,6 +1540,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sortDirection": MessageLookupByLibrary.simpleMessage("並べ替え順序"),
     "source": MessageLookupByLibrary.simpleMessage("ソース"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("送信元IP"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("送信元ポート"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("特殊プロキシ"),
     "specialRules": MessageLookupByLibrary.simpleMessage("特殊ルール"),
     "spectrum": MessageLookupByLibrary.simpleMessage("スペクトル"),

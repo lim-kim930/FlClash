@@ -604,6 +604,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "destinationIPASN": MessageLookupByLibrary.simpleMessage(
       "Destination IP ASN",
     ),
+    "destinationPort": MessageLookupByLibrary.simpleMessage("Destination port"),
     "details": m24,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "Relies on a third-party API; for reference only",
@@ -968,10 +969,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Enter the rule content",
     ),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1586,6 +1586,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "The rules must be a YAML list with one rule per item, such as - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage("Routing lookup"),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Connect the core before checking a route",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage(
+      "Destination",
+    ),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t check the route. Check the core and DNS, then try again",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Enter a port between 1 and 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Enter a valid domain or IP address without a URL or port",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "No rule matched; the current mode or default policy applies",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Uses the currently loaded configuration to check which rule and policy a domain or IP address would use, without connecting to the target. DNS may be queried for IP rules. Process, source, inbound and sniffing rules may give actual app connections a different route. The node shown is the current group choice; load balancing may choose another node. Check again after changing the configuration or policy.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage("Matched value"),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("Check route"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "Optional; leave blank if unknown",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Domain or IP address",
+    ),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent direct",
     ),
@@ -1759,6 +1789,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sortDirection": MessageLookupByLibrary.simpleMessage("Sort direction"),
     "source": MessageLookupByLibrary.simpleMessage("Source"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("Source IP"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("Source port"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Special proxy"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Special rules"),
     "spectrum": MessageLookupByLibrary.simpleMessage("Spectrum"),

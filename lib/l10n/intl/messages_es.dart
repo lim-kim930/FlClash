@@ -647,6 +647,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "destinationIPASN": MessageLookupByLibrary.simpleMessage(
       "ASN de la IP de destino",
     ),
+    "destinationPort": MessageLookupByLibrary.simpleMessage(
+      "Puerto de destino",
+    ),
     "details": m24,
     "detectionTip": MessageLookupByLibrary.simpleMessage(
       "Depende de una API de terceros; solo con fines informativos",
@@ -921,7 +924,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Las entradas añadidas aquí sustituyen el ajuste correspondiente de todos los perfiles; lo que no añadas conserva el ajuste del propio perfil, o el valor predeterminado del núcleo si el perfil no lo define.",
     ),
     "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
-      "No se pudieron sincronizar los ajustes Geo. Int?ntalo de nuevo.",
+      "No se pudieron sincronizar los ajustes Geo. Inténtalo de nuevo.",
     ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m30,
@@ -1035,10 +1038,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Introduce el contenido de la regla",
     ),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),
@@ -1707,6 +1709,38 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleListInvalid": MessageLookupByLibrary.simpleMessage(
       "Las reglas deben ser una lista YAML con una regla por elemento, por ejemplo - DOMAIN,example.com,DIRECT",
     ),
+    "ruleLookup": MessageLookupByLibrary.simpleMessage(
+      "Consulta de enrutamiento",
+    ),
+    "ruleLookupCoreRequired": MessageLookupByLibrary.simpleMessage(
+      "Conecta el núcleo antes de comprobar una ruta",
+    ),
+    "ruleLookupDestination": MessageLookupByLibrary.simpleMessage("Destino"),
+    "ruleLookupFailed": MessageLookupByLibrary.simpleMessage(
+      "No se pudo comprobar la ruta. Revisa el núcleo y el DNS e inténtalo de nuevo",
+    ),
+    "ruleLookupInvalidPort": MessageLookupByLibrary.simpleMessage(
+      "Introduce un puerto entre 1 y 65535",
+    ),
+    "ruleLookupInvalidTarget": MessageLookupByLibrary.simpleMessage(
+      "Introduce un dominio o una dirección IP válidos, sin URL ni puerto",
+    ),
+    "ruleLookupNoRule": MessageLookupByLibrary.simpleMessage(
+      "Ninguna regla coincide; se aplica el modo actual o la política predeterminada",
+    ),
+    "ruleLookupNote": MessageLookupByLibrary.simpleMessage(
+      "Usa la configuración cargada para comprobar qué regla y política usaría un dominio o una dirección IP, sin conectarse al destino. Las reglas IP pueden generar consultas DNS. Las reglas de proceso, origen, entrada y detección pueden dar una ruta distinta a las conexiones reales. El nodo mostrado es la selección actual del grupo; el balanceo de carga puede elegir otro. Comprueba de nuevo tras cambiar la configuración o la política.",
+    ),
+    "ruleLookupPayload": MessageLookupByLibrary.simpleMessage(
+      "Valor coincidente",
+    ),
+    "ruleLookupQuery": MessageLookupByLibrary.simpleMessage("Comprobar ruta"),
+    "ruleLookupSourcePortHint": MessageLookupByLibrary.simpleMessage(
+      "Opcional; déjalo vacío si lo desconoces",
+    ),
+    "ruleLookupTarget": MessageLookupByLibrary.simpleMessage(
+      "Dominio o dirección IP",
+    ),
     "rulePresetBittorrentDirect": MessageLookupByLibrary.simpleMessage(
       "BitTorrent directo",
     ),
@@ -1896,10 +1930,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "sortBy": MessageLookupByLibrary.simpleMessage("Ordenar por"),
     "sortDesc": MessageLookupByLibrary.simpleMessage("Descendente"),
     "sortDirection": MessageLookupByLibrary.simpleMessage(
-      "Direcci?n de ordenaci?n",
+      "Dirección de ordenación",
     ),
     "source": MessageLookupByLibrary.simpleMessage("Origen"),
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP de origen"),
+    "sourcePort": MessageLookupByLibrary.simpleMessage("Puerto de origen"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Proxy especial"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Reglas especiales"),
     "spectrum": MessageLookupByLibrary.simpleMessage("Espectro"),
