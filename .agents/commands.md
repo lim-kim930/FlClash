@@ -36,9 +36,9 @@ not rebuilt read `.dart_tool/setup_build_cache/hook.log`; each invocation starts
 with a `===` line carrying its timestamp and target.
 
 The hook runs for `flutter test` and for `dart run` of any root-package script
-too, so a pure Dart test run needs the Go toolchain, and on Linux and Windows
-also `cargo` and `rustc` — the Helper fingerprint shells out to both even on a
-cache hit. The hook protocol carries no build mode and no caller, so the only
+too, so even Dart-only tests invoke the Go toolchain, and on Linux and Windows
+also `cargo` and `rustc`, unless the hook is disabled — the Helper fingerprint
+shells out to both even on a cache hit. The hook protocol carries no build mode and no caller, so the only
 switch is the user-define in the root `pubspec.yaml`:
 
 ```yaml
@@ -57,11 +57,12 @@ test in `test/core/desktop/ipc_native_test.dart` load the Rust library the hook
 builds; the release-notes job, which runs no tests, flips both.
 Never commit `false`: a build with it set stages whatever `libclash/` already
 holds and bundles no Rust library, which is why `setup.dart` refuses to package
-while it is set. Locally, `false` is worth setting for a Dart-only test loop,
-but the hook cache keys on the user-define, so the first build afterwards runs
-the hooks again. The editor and IPC socket tests still need the Rust library: keep `rust_api`
-on, or point `FRB_DART_LOAD_EXTERNAL_LIBRARY_NATIVE_LIB_DIR` at a directory that
-holds a `rust_api` library built from the same sources.
+while it is set. For local tests without Go or Rust, temporarily disable both
+hooks using the [local preflight](#local-preflight-without-go-or-rust) below.
+The hook cache keys on the user-define, so the first build afterwards runs
+the hooks again. Native editor and IPC socket tests stay in CI: they need
+`rust_api` enabled, or `FRB_DART_LOAD_EXTERNAL_LIBRARY_NATIVE_LIB_DIR` pointing
+at a library built from the same sources for the runner's OS and architecture.
 
 ## Flutter Development
 
@@ -144,6 +145,66 @@ script's `statusIconNames`, nothing in `pubspec.yaml`.
 
 Tests use `package:test/test.dart` for pure Dart logic and `flutter_test` for provider and widget tests. `mocktail` is the mocking framework.
 
+### Local preflight without Go or Rust
+
+For code changes, run the format check, static analysis and focused tests covering the affected behavior. Use the
+Flutter version pinned in `.github/workflows/build.yaml` when available, and report any SDK difference. From the
+repository root:
+
+```powershell
+flutter pub get
+dart format --output=none --set-exit-if-changed lib test tool plugins setup.dart
+flutter analyze --no-fatal-infos
+```
+
+Run affected Dart, provider and widget tests, plus the applicable scans in `test/lint/` for UI changes. Static analysis
+alone does not catch widget assertions, missing or ambiguous finders, taps outside the viewport, or missing async mock
+returns. Documentation-only changes need no Flutter tests.
+
+Root `flutter test` and `dart run` still invoke native build hooks even when the selected tests use only a mock Core.
+Temporarily set both `hooks.user_defines.setup.build_assets` and `hooks.user_defines.rust_api.build_assets` to `false`
+before either command, and restore the original `pubspec.yaml` in `finally`. This PowerShell example needs no Go or Rust
+installation; replace `$testPaths` with the tests relevant to the change:
+
+```powershell
+$testPaths = @(
+    'test/widgets/rule_lookup_test.dart'
+    'test/widgets/connections_view_test.dart'
+    'test/providers/geo_config_test.dart'
+)
+$pubspecPath = (Resolve-Path pubspec.yaml).Path
+$pubspecBytes = [IO.File]::ReadAllBytes($pubspecPath)
+try {
+    $pubspecText = [Text.Encoding]::UTF8.GetString($pubspecBytes)
+    $pubspecText = $pubspecText.Replace('build_assets: true', 'build_assets: false')
+    [IO.File]::WriteAllText($pubspecPath, $pubspecText, [Text.UTF8Encoding]::new($false))
+    flutter test @testPaths --reporter expanded
+    if ($LASTEXITCODE -ne 0) { throw 'Focused Flutter tests failed.' }
+} finally {
+    [IO.File]::WriteAllBytes($pubspecPath, $pubspecBytes)
+}
+```
+
+Select files explicitly: `test/plugins/code_forge/`, editor pages, profile/provider previews and
+`test/core/desktop/ipc_native_test.dart` need the Rust library. Some broader files, such as
+`test/widgets/uncovered_views_test.dart`, also initialize it; check for `initEditorNative`, `RustLib.init` and actual native
+API calls before including a test. Importing Rust API types alone does not mean the test loads the library. Native-library
+tests, full suites, coverage gates and application builds remain in remote CI; report their status separately from local
+checks. A focused local pass does not establish a CI pass.
+
+Root analysis excludes `plugins/**`. For plugin Dart changes, run analysis from the affected package directory and select
+its tests explicitly; inspect that package's build hooks before running them. The root hook settings above do not apply
+when another package is the root. `tool/check_plugins.sh` is the full CI plugin gate.
+
+On Windows, compare path-related lint failures with the known host gaps in
+[AGENTS.md](../AGENTS.md#known-upstream-breakage-on-windows-checkouts). Report those failures separately without suppressing
+new failures. A test that fails only in a shared bundle also needs an isolated rerun; see the Shared Test Isolate section
+of `rules.md`.
+
+### Suite commands
+
+These commands are references for selecting tests; inspect native dependencies before running a directory locally.
+
 ```bash
 flutter test test/models/
 flutter test test/core/
@@ -156,7 +217,7 @@ flutter test test/setup_test.dart
 flutter test plugins/proxy/test/proxy_test.dart
 ```
 
-For the whole suite, or a directory of more than a few files, use `tool/test.dart`, which is also what CI runs:
+For the whole suite in CI, or a directory of more than a few files, use `tool/test.dart`:
 
 ```bash
 dart run tool/test.dart                                  # all of test/
