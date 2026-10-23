@@ -234,6 +234,7 @@ var methodHandlers = map[CoreMethod]methodHandler{
 	listenerStopMethod:  action(handleStopListener),
 	routeWatchMethod:    watchRouteHandler,
 	routeCheckMethod:    withArguments(handleCheckRoutes),
+	routeLookupMethod:   ruleLookupHandler,
 
 	probeOutboundIPMethod: withArguments(handleOutboundIp),
 	probeServicesMethod:   withArguments(handleServiceCheck),
