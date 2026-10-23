@@ -3722,4 +3722,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get vpnServiceStartFailed => 'VPN 服务无法启动。';
+
+  @override
+  String get clearRequests => '清除请求';
+
+  @override
+  String get clearDnsQueries => '清空 DNS 查询';
 }

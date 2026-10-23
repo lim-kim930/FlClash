@@ -3771,4 +3771,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get vpnServiceStartFailed => 'VPN サービスを起動できませんでした。';
+
+  @override
+  String get clearRequests => 'リクエストを消去';
+
+  @override
+  String get clearDnsQueries => 'DNS クエリを消去';
 }

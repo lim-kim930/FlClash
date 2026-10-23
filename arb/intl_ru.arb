@@ -1135,5 +1135,7 @@
   "coreRunningDesc": "Приложение подключено к ядру",
   "forceRestartCore": "Принудительный перезапуск",
   "vpnPermissionNotGranted": "Разрешение на VPN не выдано, поэтому VPN не запущен. Постоянная VPN, заданная для другого приложения, тоже мешает запуску.",
-  "vpnServiceStartFailed": "Не удалось запустить службу VPN."
+  "vpnServiceStartFailed": "Не удалось запустить службу VPN.",
+  "clearRequests": "Очистить запросы",
+  "clearDnsQueries": "Очистить DNS-запросы"
 }

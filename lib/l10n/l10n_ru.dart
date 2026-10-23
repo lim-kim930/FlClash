@@ -3944,4 +3944,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get vpnServiceStartFailed => 'Не удалось запустить службу VPN.';
+
+  @override
+  String get clearRequests => 'Очистить запросы';
+
+  @override
+  String get clearDnsQueries => 'Очистить DNS-запросы';
 }

@@ -3846,4 +3846,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get vpnServiceStartFailed => 'VPN 서비스를 시작하지 못했습니다.';
+
+  @override
+  String get clearRequests => '?? ???';
+
+  @override
+  String get clearDnsQueries => 'DNS ?? ???';
 }

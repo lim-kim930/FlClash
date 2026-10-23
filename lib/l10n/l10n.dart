@@ -6929,6 +6929,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The VPN service could not start.'**
   String get vpnServiceStartFailed;
+
+  /// No description provided for @clearRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear requests'**
+  String get clearRequests;
+
+  /// No description provided for @clearDnsQueries.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear DNS queries'**
+  String get clearDnsQueries;
 }
 
 class _AppLocalizationsDelegate

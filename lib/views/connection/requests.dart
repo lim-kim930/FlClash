@@ -104,7 +104,16 @@ class _RequestsViewState extends ConsumerState<RequestsView>
 
   List<IconButtonData> _buildActions() {
     if (_feed != RequestFeed.live) {
-      return const [];
+      return [
+        IconButtonData(
+          glyph: AppGlyphs.clearAll,
+          tooltip: context.appLocalizations.clearRequests,
+          onPressed: () {
+            ref.read(requestsProvider.notifier).clear();
+            _setRequests(const []);
+          },
+        ),
+      ];
     }
     return [
       IconButtonData(

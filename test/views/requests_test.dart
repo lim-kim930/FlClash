@@ -166,6 +166,47 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('clear empties paused requests and later requests still appear', (
+    tester,
+  ) async {
+    seedRequests([_tracker(id: 'old', host: 'old.test')]);
+    await pumpRequests(tester);
+    tester.widget<ScrollToEndBox>(find.byType(ScrollToEndBox)).onCancelToEnd!();
+    await tester.pump();
+    await tester.tap(find.byGlyph(AppGlyphs.clearAll));
+    await tester.pump();
+    await tester.pump(renderThrottleDuration);
+    await tester.pumpAndSettle();
+    expect(container.read(requestsProvider).list, isEmpty);
+    expect(find.textContaining('old.test'), findsNothing);
+    expect(find.byType(NullStatus), findsOneWidget);
+    addRequest(_tracker(id: 'new', host: 'new.test'));
+    await tester.pump();
+    await tester.pump(renderThrottleDuration);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('new.test'), findsWidgets);
+    await teardownView(tester);
+  });
+
+  testWidgets('clearing drops paused history before the next request arrives', (
+    tester,
+  ) async {
+    seedRequests([_tracker(id: 'old', host: 'old.test')]);
+    await pumpRequests(tester);
+    tester.widget<ScrollToEndBox>(find.byType(ScrollToEndBox)).onCancelToEnd!();
+    await tester.pump();
+
+    await tester.tap(find.byGlyph(AppGlyphs.clearAll));
+    addRequest(_tracker(id: 'new', host: 'new.test'));
+    await tester.pump();
+
+    await tester.pump(renderThrottleDuration);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('new.test'), findsWidgets);
+    expect(find.textContaining('old.test'), findsNothing);
+    await teardownView(tester);
+  });
+
   testWidgets('shows the empty state without any request', (tester) async {
     await pumpRequests(tester);
 
@@ -201,9 +242,9 @@ void main() {
     expect(find.textContaining('gamma.test'), findsNothing);
 
     addRequest(_tracker(id: 'c', host: 'gamma.test'));
-    await tester.pump(const Duration(seconds: 1));
     await tester.pump();
-    await tester.pump();
+    await tester.pump(renderThrottleDuration);
+    await tester.pumpAndSettle();
 
     expect(find.textContaining('gamma.test'), findsWidgets);
 

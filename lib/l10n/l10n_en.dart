@@ -3950,4 +3950,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vpnServiceStartFailed => 'The VPN service could not start.';
+
+  @override
+  String get clearRequests => 'Clear requests';
+
+  @override
+  String get clearDnsQueries => 'Clear DNS queries';
 }
