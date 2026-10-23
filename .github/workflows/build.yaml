@@ -23,9 +23,7 @@ env:
 jobs:
   dart:
     name: Dart
-    # A private copy pays for its Actions minutes, so it runs the checks only when
-    # started by hand.
-    if: &checks github.event_name == 'workflow_dispatch' || !github.event.repository.private
+    if: &checks github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,6 +34,11 @@ jobs:
 
       - name: Test git hooks
         run: bash tool/hooks/test.sh
+
+      - name: Test release scripts
+        run: |
+          bash .github/scripts/generate_release_notes_test.sh
+          bash .github/scripts/render_release_template_test.sh
 
       - name: Setup Rust cache
         uses: Swatinem/rust-cache@v2
@@ -71,10 +74,6 @@ jobs:
       - name: Skip the Go core build hook
         run: |
           yq -i '.hooks.user_defines.setup.build_assets = false' pubspec.yaml
-
-      - name: Verify changelog
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
-        run: dart run tool/changelog.dart verify
 
       - name: Run tests
         run: dart run tool/test.dart -- --reporter expanded --coverage
@@ -339,8 +338,7 @@ jobs:
 
   version:
     name: Version
-    # Releases publish where the release links point: the public repository.
-    if: &release github.repository == 'chen08209/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: &release github.repository == 'lim-kim930/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.tag.outputs.version }}
@@ -351,30 +349,30 @@ jobs:
           sparse-checkout: pubspec.yaml
           sparse-checkout-cone-mode: false
 
-      # Android refuses a lower versionCode, so the clock-based build number never drops below pubspec's.
       - name: Resolve the version from the tag
         id: tag
         env:
           TAG: ${{ github.ref_name }}
         run: |
-          if [[ ! "$TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-pre\.[0-9]+(\+[0-9]+)?)?$ ]]; then
-            echo "::error::$TAG is neither vX.Y.Z nor vX.Y.Z-pre.N[+M]"
+          if [[ ! "$TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-beta\.[0-9]+)?$ ]]; then
+            echo "::error::$TAG is neither vX.Y.Z nor vX.Y.Z-beta.N"
             exit 1
           fi
           name="${BASH_REMATCH[1]}"
-          committed="$(sed -n 's/^version: .*+\([0-9]*\)$/\1/p' pubspec.yaml)"
-          build="$(date -u +%Y%m%d%H)"
-          if ((build <= ${committed:-0})); then
-            build=$((committed + 1))
+          package="$(sed -nE 's/^version: *([^[:space:]]+).*/\1/p' pubspec.yaml)"
+          if [[ ! "$package" =~ ^([0-9]+\.[0-9]+\.[0-9]+)\+([0-9]+)$ || "${BASH_REMATCH[1]:-}" != "$name" ]]; then
+            echo '::error::Tag version must match the numeric pubspec version.'
+            exit 1
           fi
-          echo "version=$name+$build" >> "$GITHUB_OUTPUT"
-          echo "$TAG builds $name+$build"
+          echo "version=$package" >> "$GITHUB_OUTPUT"
+          echo "$TAG builds $package"
 
   build:
     if: *release
-    needs: version
+    needs: [ version, dart, plugins, go, android, rust, windows-helper-test ]
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - platform: android
@@ -427,6 +425,13 @@ jobs:
         if: startsWith(matrix.platform,'android')
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
+          keytool -list -keystore android/app/keystore.jks \
+            -storepass "${{ secrets.STORE_PASSWORD }}" >/dev/null || {
+            echo "::error::keystore.jks could not be opened \
+          ($(wc -c < android/app/keystore.jks) bytes). Check the KEYSTORE secret and STORE_PASSWORD."
+            exit 1
+          }
+
           {
             echo "keyAlias=${{ secrets.KEY_ALIAS }}"
             echo "storePassword=${{ secrets.STORE_PASSWORD }}"
@@ -509,14 +514,6 @@ jobs:
       contents: write
     needs: [ version, build, dart, plugins, go, android, rust, windows-helper-test ]
     runs-on: ubuntu-latest
-    services:
-      telegram-bot-api:
-        image: aiogram/telegram-bot-api:latest
-        env:
-          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-        ports:
-          - 8081:8081
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -555,35 +552,27 @@ jobs:
 
       - name: Generate release notes
         shell: bash
-        env:
-          IS_STABLE: ${{ env.IS_STABLE }}
-          TAG: ${{ github.ref_name }}
         run: |
-          target=()
-          if [[ "$IS_STABLE" == 'true' ]]; then
-            target=(--tag "$TAG")
-          else
-            dart run tool/changelog.dart build --unreleased
+          pre_tag=$(
+            curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest" |
+              sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p'
+          )
+          if [ -z "$pre_tag" ]; then
+            pre_tag=$(
+              git tag --list 'v100.*' --sort=-creatordate |
+                grep -vFx "${{ github.ref_name }}" | head -n1 || true
+            )
+            echo "::warning::No published release found; falling back to previous tag '$pre_tag'."
           fi
-          dart run tool/changelog.dart render release "${target[@]}" --out release.md
-          dart run tool/changelog.dart render telegram "${target[@]}" --out telegram.md
+          bash .github/scripts/generate_release_notes.sh "$pre_tag" release.md
 
-      - name: Push to telegram
+      - name: Append download links
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TAG: ${{ github.ref_name }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-          python release_telegram.py
-
-      - name: Patch release.md
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           line=$(jq -r '.artifacts[0].line' dist/manifest.json)
           version=$(jq -r '.artifacts[0].version' dist/manifest.json)
-          sed -e "s|TAG|${{ github.ref_name }}|g" -e "s|LINE|$line|g" -e "s|VERSION|$version|g" \
-            ./.github/release_template.md >> release.md
+          bash .github/scripts/render_release_template.sh "$RELEASE_TAG" "$version" "$line" >> release.md
 
       # Dev-line apps released before these names update from the old names; keep until the user says stop.
       - name: Copy the Windows installers and APKs under their old names
@@ -603,65 +592,14 @@ jobs:
               sha256sum "./$legacy" >> SHA256SUMS
             done
 
+      - name: Generate sha256
+        run: |
+          cd ./dist
+          find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+
       - name: Release
-        if: ${{ env.IS_STABLE == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
           files: ./dist/*
           body_path: './release.md'
-
-      - name: Create Homebrew Cask Source Dir
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          dmg() {
-            jq -er --arg arch "$1" '.artifacts[] | select(.os == "macos" and .arch == $arch)' dist/manifest.json
-          }
-          line=$(dmg arm64 | jq -r .line)
-          version=$(dmg arm64 | jq -r .version)
-          arm_sha=$(dmg arm64 | jq -r .sha256)
-          amd_sha=$(dmg amd64 | jq -r .sha256)
-
-          mkdir -p ./brew/Casks
-          sed \
-            -e "s|LINE|$line|g" \
-            -e "s|VERSION|$version|g" \
-            -e "s|ARM_SHA256|$arm_sha|g" \
-            -e "s|AMD_SHA256|$amd_sha|g" \
-            ./.github/homebrew_cask_template.rb > ./brew/Casks/flclash.rb
-
-      - name: Push to Homebrew tap
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: cpina/github-action-push-to-another-repository@v1.7.2
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.HOMEBREW_SSH_DEPLOY_KEY }}
-        with:
-          source-directory: ./brew/
-          destination-github-username: chen08209
-          destination-repository-name: homebrew-tap
-          user-name: 'chen08029'
-          user-email: 'chen08209@gmail.com'
-          target-branch: main
-          commit-message: Update Homebrew cask from ${{ github.ref_name }}
-          target-directory: /
-
-      - name: Create Fdroid Source Dir
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          mkdir -p ./tmp
-          apk=$(jq -er '.artifacts[] | select(.os == "android" and .arch == "arm64") | .name' dist/manifest.json)
-          cp "./dist/$apk" ./tmp/
-
-      - name: Push to fdroid repo
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: cpina/github-action-push-to-another-repository@v1.7.2
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-        with:
-          source-directory: ./tmp/
-          destination-github-username: chen08209
-          destination-repository-name: FlClash-fdroid-repo
-          user-name: 'chen08029'
-          user-email: 'chen08209@gmail.com'
-          target-branch: main
-          commit-message: Update from ${{ github.ref_name }}
-          target-directory: /tmp/
+          prerelease: ${{ env.IS_STABLE != 'true' }}

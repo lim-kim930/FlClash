@@ -13,7 +13,8 @@ enum ReleaseForm { setup, portable }
 /// `v0.9.4-rs.1+2` names its files `0.9.4-rs.1.2`.
 String releaseVersionOfTag(String tag) {
   final version = tag.startsWith('v') ? tag.substring(1) : tag;
-  return version.replaceAll('+', '.');
+  final beta = RegExp(r'^(\d+\.\d+\.\d+)-beta\.\d+$').firstMatch(version);
+  return (beta?.group(1) ?? version).replaceAll('+', '.');
 }
 
 String nightlyReleaseVersion(String base, DateTime commitDate, String commit) {
