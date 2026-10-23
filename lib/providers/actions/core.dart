@@ -7,6 +7,8 @@ class CoreAction extends _$CoreAction {
   int _requestedRestartRevision = 0;
   Future<bool>? _restartOperation;
 
+  bool get isRestarting => _restartOperation != null;
+
   @override
   void build() {}
 

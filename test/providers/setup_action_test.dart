@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
+import 'package:fl_clash/core/desktop/model.dart';
 import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/core/method.dart';
 import 'package:fl_clash/core/spill.dart';
@@ -93,6 +94,9 @@ class TestSetupAction extends SetupAction {
 
   @override
   Duration get minApplyDebounce => const Duration(milliseconds: 100);
+
+  @override
+  CoreProcessOwner? get runningCoreOwner => null;
 
   @override
   Future<AuthorizeCode> authorizeCore() async {
