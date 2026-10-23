@@ -10,6 +10,8 @@ import 'method.dart';
 /// A method answers its result or throws: a [CoreMethodException] for what the
 /// Core reports or a Core out of reach, a [TimeoutException] for no answer.
 abstract class CoreHandlerInterface {
+  CoreProcessOwner? get runningCoreOwner => null;
+
   Future<CoreLifecycleResult> start();
 
   Future<CoreLifecycleResult> restart();
