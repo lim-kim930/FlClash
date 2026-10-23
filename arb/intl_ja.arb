@@ -941,5 +941,9 @@
   "clearRequests": "リクエストを消去",
   "clearDnsQueries": "DNS クエリを消去",
   "uploadSpeed": "アップロード速度",
-  "downloadSpeed": "ダウンロード速度"
+  "downloadSpeed": "ダウンロード速度",
+  "sortBy": "並べ替え基準",
+  "sortDirection": "並べ替え順序",
+  "sortAsc": "昇順",
+  "sortDesc": "降順"
 }

@@ -7856,6 +7856,31 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Sort by`
+  String get sortBy {
+    return Intl.message('Sort by', name: 'sortBy', desc: '', args: []);
+  }
+
+  /// `Sort direction`
+  String get sortDirection {
+    return Intl.message(
+      'Sort direction',
+      name: 'sortDirection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ascending`
+  String get sortAsc {
+    return Intl.message('Ascending', name: 'sortAsc', desc: '', args: []);
+  }
+
+  /// `Descending`
+  String get sortDesc {
+    return Intl.message('Descending', name: 'sortDesc', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

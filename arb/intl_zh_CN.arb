@@ -941,5 +941,9 @@
   "clearRequests": "清除请求",
   "clearDnsQueries": "清空 DNS 查询",
   "uploadSpeed": "上传速度",
-  "downloadSpeed": "下载速度"
+  "downloadSpeed": "下载速度",
+  "sortBy": "排序依据",
+  "sortDirection": "排序方向",
+  "sortAsc": "升序",
+  "sortDesc": "降序"
 }

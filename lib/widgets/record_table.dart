@@ -161,6 +161,8 @@ class RecordTableFrame<T> extends ConsumerStatefulWidget {
   /// Whether the list shows [items] bottom up, its last item on top.
   final bool reverse;
   final List<RecordColumn<T>> Function(double width) columnsOf;
+  final ValueNotifier<RecordSort?>? sortController;
+  final List<RecordColumn<T>>? sortColumns;
   final Widget Function(
     BuildContext context,
     RecordTable<T>? table,
@@ -174,6 +176,8 @@ class RecordTableFrame<T> extends ConsumerStatefulWidget {
     required this.items,
     this.reverse = false,
     required this.columnsOf,
+    this.sortController,
+    this.sortColumns,
     required this.builder,
   });
 
@@ -212,18 +216,29 @@ class _RecordTableFrameState<T> extends ConsumerState<RecordTableFrame<T>>
 
   @override
   Widget build(BuildContext context) {
+    final controller = widget.sortController;
+    if (controller == null) return _buildTable(context);
+    return ValueListenableBuilder<RecordSort?>(
+      valueListenable: controller,
+      builder: (context, _, _) => _buildTable(context),
+    );
+  }
+
+  Widget _buildTable(BuildContext context) {
     return WidthBuilder(
       builder: (context, width) {
         final table = _tableOf(context, width);
-        if (table == null) {
-          return widget.builder(context, null, widget.items);
-        }
+        final controller = widget.sortController;
+        final sort = controller == null ? _sort : controller.value;
         final items = _sorter.sort(
           widget.items,
-          table.columns,
-          _sort,
+          widget.sortColumns ?? table?.columns ?? const [],
+          sort,
           reverse: widget.reverse,
         );
+        if (table == null) {
+          return widget.builder(context, null, items);
+        }
         return Padding(
           padding: EdgeInsets.only(top: context.contentTopPadding),
           child: MediaQuery.removePadding(
@@ -238,9 +253,15 @@ class _RecordTableFrameState<T> extends ConsumerState<RecordTableFrame<T>>
                   children: [
                     _RecordTableHeader(
                       table: table,
-                      sort: _sort,
-                      onSort: (column) =>
-                          setState(() => _sort = nextRecordSort(_sort, column)),
+                      sort: sort,
+                      onSort: (column) {
+                        final next = nextRecordSort(sort, column);
+                        if (controller == null) {
+                          setState(() => _sort = next);
+                        } else {
+                          controller.value = next;
+                        }
+                      },
                       onResize: (boundary, delta) => resizeColumn(
                         table.layouts,
                         table.widths,
