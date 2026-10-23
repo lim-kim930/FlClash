@@ -136,6 +136,20 @@ void main() {
     expect(isRsReleaseVersion('0.9.4-pre.rs'), isFalse);
   });
 
+  test('a fork beta uses the numeric package version for its files', () {
+    final version = releaseVersionOfTag('v100.2.3-beta.4');
+    expect(version, '100.2.3');
+    expect(
+      releaseAssetName(
+        version: version,
+        os: ReleaseOs.android,
+        arch: ReleaseArch.arm64,
+        extension: 'apk',
+      ),
+      'FlClash-100.2.3-android-arm64.apk',
+    );
+  });
+
   test('the checksum file is named by version', () {
     expect(
       releaseChecksumsName('0.9.4-pre.2'),

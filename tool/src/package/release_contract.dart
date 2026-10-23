@@ -43,10 +43,12 @@ List<String> siteAssetNames(String script, String version) {
 List<String> releaseNotesAssetNames(String template, String version) {
   return [
     for (final match in RegExp(
-      r'releases/download/TAG/([^"]+)"',
+      r'releases/download/TAG(?:_VERSION)?/([^"]+)"',
     ).allMatches(template))
       _placeholderFree(
-        match[1]!.replaceAll('VERSION', version),
+        match[1]!
+            .replaceAll('PACKAGE_VERSION', version)
+            .replaceAll('VERSION', version),
         releaseNotesTemplate,
       ),
   ];
