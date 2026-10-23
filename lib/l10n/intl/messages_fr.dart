@@ -968,6 +968,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "generateCertificate": MessageLookupByLibrary.simpleMessage(
       "Générer le certificat",
     ),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "?chec de la synchronisation des param?tres Geo. R?essayez.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m30,
     "geoUpdated": m31,

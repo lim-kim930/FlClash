@@ -328,23 +328,29 @@ class SetupAction extends _$SetupAction {
     _core.resetTraffic();
   }
 
-  @visibleForTesting
-  Future<void> updateConfig() async {
-    await globalState.safeRun(() async {
-      final patchConfig = ref.read(patchClashConfigProvider);
-      final shouldContinueSetup = await requestAdmin(patchConfig.tun.enable);
-      if (!shouldContinueSetup) {
-        await _restartCoreAfterAuthorization();
-        return;
+  Future<bool> updateConfig() async {
+    final updated = await globalState.safeRun(() async {
+      final result = await _setupScheduler.run(() async {
+        final patchConfig = ref.read(patchClashConfigProvider);
+        final shouldContinueSetup = await requestAdmin(patchConfig.tun.enable);
+        if (!shouldContinueSetup) {
+          return _SetupTaskResult.handoffToCoreRestart;
+        }
+        final networkSetting = ref.read(networkSettingProvider);
+        await _core.updateConfig(
+          _effectivePatchConfig(patchConfig).toUpdateParams(
+            authentication: networkSetting.authentication.credentials,
+            options: ref.read(coreOptionsProvider),
+          ),
+        );
+        return _SetupTaskResult.completed;
+      });
+      if (result == _SetupTaskResult.handoffToCoreRestart) {
+        return _restartCoreAfterAuthorization();
       }
-      final networkSetting = ref.read(networkSettingProvider);
-      await _core.updateConfig(
-        _effectivePatchConfig(patchConfig).toUpdateParams(
-          authentication: networkSetting.authentication.credentials,
-          options: ref.read(coreOptionsProvider),
-        ),
-      );
+      return true;
     });
+    return updated ?? false;
   }
 
   @protected
@@ -485,7 +491,18 @@ class SetupAction extends _$SetupAction {
   }) async {
     final profileId = setupState.profileId;
     if (profileId == null) {
-      return (yaml: '', md5: '', counts: configCountsOf(const {}), base: null);
+      final config = {
+        'geox-url': {...defaultGeoXUrl, ...patchConfig.geoXUrl}.raw,
+        'geo-auto-update': patchConfig.geoAutoUpdate,
+        'geo-update-interval': patchConfig.geoUpdateInterval,
+      };
+      final yamlString = yaml.encode(config);
+      return (
+        yaml: yamlString,
+        md5: yamlString.toMd5(),
+        counts: configCountsOf(config),
+        base: null,
+      );
     }
     final defaultUA = globalState.packageInfo.ua;
     final networkSetting = ref.read(

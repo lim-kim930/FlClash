@@ -970,6 +970,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "generateCertificate": MessageLookupByLibrary.simpleMessage(
       "Generar certificado",
     ),
+    "geoConfigSyncFailed": MessageLookupByLibrary.simpleMessage(
+      "No se pudieron sincronizar los ajustes Geo. Int?ntalo de nuevo.",
+    ),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
     "geoSkipped": m30,
     "geoUpdated": m31,
