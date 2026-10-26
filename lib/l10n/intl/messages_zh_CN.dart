@@ -387,6 +387,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearDnsCache": MessageLookupByLibrary.simpleMessage("清除DNS缓存"),
     "clearDnsCacheFailed": MessageLookupByLibrary.simpleMessage("清除DNS缓存失败"),
     "clearDnsQueries": MessageLookupByLibrary.simpleMessage("清空 DNS 查询"),
+    "clearLogs": MessageLookupByLibrary.simpleMessage("清空日志"),
     "clearRequests": MessageLookupByLibrary.simpleMessage("清除请求"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("清除搜索"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("客户端指纹"),

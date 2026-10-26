@@ -409,6 +409,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "DNSキャッシュのクリアに失敗しました",
     ),
     "clearDnsQueries": MessageLookupByLibrary.simpleMessage("DNS クエリを消去"),
+    "clearLogs": MessageLookupByLibrary.simpleMessage("ログを消去"),
     "clearRequests": MessageLookupByLibrary.simpleMessage("リクエストを消去"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("検索をクリア"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(

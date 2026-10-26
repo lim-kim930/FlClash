@@ -1077,6 +1077,7 @@
   "fallbackFilterDomainDesc": "이 도메인은 바로 Fallback으로 확인합니다.",
   "clearRequests": "요청 지우기",
   "clearDnsQueries": "DNS 쿼리 지우기",
+  "clearLogs": "로그 지우기",
   "uploadSpeed": "업로드 속도",
   "downloadSpeed": "다운로드 속도",
   "sortBy": "정렬 기준",

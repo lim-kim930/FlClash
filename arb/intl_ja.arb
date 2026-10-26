@@ -1077,6 +1077,7 @@
   "fallbackFilterDomainDesc": "これらのドメインは、直接 Fallback で解決します。",
   "clearRequests": "リクエストを消去",
   "clearDnsQueries": "DNS クエリを消去",
+  "clearLogs": "ログを消去",
   "uploadSpeed": "アップロード速度",
   "downloadSpeed": "ダウンロード速度",
   "sortBy": "並べ替え基準",

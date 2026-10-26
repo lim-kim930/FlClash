@@ -1077,6 +1077,7 @@
   "fallbackFilterDomainDesc": "Эти домены сразу разрешаются через Fallback.",
   "clearRequests": "Очистить запросы",
   "clearDnsQueries": "Очистить DNS-запросы",
+  "clearLogs": "Очистить журналы",
   "uploadSpeed": "Скорость загрузки",
   "downloadSpeed": "Скорость скачивания",
   "sortBy": "Сортировать по",

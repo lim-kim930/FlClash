@@ -496,6 +496,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
       "Очистить DNS-запросы",
     ),
+    "clearLogs": MessageLookupByLibrary.simpleMessage("Очистить журналы"),
     "clearRequests": MessageLookupByLibrary.simpleMessage("Очистить запросы"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Очистить поиск"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(

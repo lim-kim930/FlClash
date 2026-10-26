@@ -403,6 +403,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "DNS 캐시를 지우지 못했습니다",
     ),
     "clearDnsQueries": MessageLookupByLibrary.simpleMessage("DNS 쿼리 지우기"),
+    "clearLogs": MessageLookupByLibrary.simpleMessage("로그 지우기"),
     "clearRequests": MessageLookupByLibrary.simpleMessage("요청 지우기"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("검색 지우기"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("클라이언트 핑거프린트"),

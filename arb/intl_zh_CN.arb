@@ -1077,6 +1077,7 @@
   "fallbackFilterDomainDesc": "这些域名直接使用 Fallback 解析。",
   "clearRequests": "清除请求",
   "clearDnsQueries": "清空 DNS 查询",
+  "clearLogs": "清空日志",
   "uploadSpeed": "上传速度",
   "downloadSpeed": "下载速度",
   "sortBy": "排序依据",

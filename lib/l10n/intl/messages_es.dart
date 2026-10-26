@@ -517,6 +517,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
       "Borrar consultas DNS",
     ),
+    "clearLogs": MessageLookupByLibrary.simpleMessage("Borrar registros"),
     "clearRequests": MessageLookupByLibrary.simpleMessage("Borrar solicitudes"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("Borrar búsqueda"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(

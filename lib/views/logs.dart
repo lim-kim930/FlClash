@@ -73,6 +73,14 @@ class _LogsViewState extends ConsumerState<LogsView>
         tooltip: context.appLocalizations.exportLogs,
         onPressed: _handleExport,
       ),
+      IconButtonData(
+        glyph: AppGlyphs.clearAll,
+        tooltip: context.appLocalizations.clearLogs,
+        onPressed: () {
+          ref.read(logsProvider.notifier).clear();
+          _listController.setLogs(const []);
+        },
+      ),
     ];
   }
 

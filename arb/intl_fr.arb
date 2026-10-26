@@ -1077,6 +1077,7 @@
   "fallbackFilterDomainDesc": "Ces domaines sont résolus directement par Fallback.",
   "clearRequests": "Effacer les requêtes",
   "clearDnsQueries": "Effacer les requêtes DNS",
+  "clearLogs": "Effacer les journaux",
   "uploadSpeed": "Débit montant",
   "downloadSpeed": "Débit descendant",
   "sortBy": "Trier par",

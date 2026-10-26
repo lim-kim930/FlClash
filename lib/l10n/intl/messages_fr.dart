@@ -517,6 +517,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearDnsQueries": MessageLookupByLibrary.simpleMessage(
       "Effacer les requêtes DNS",
     ),
+    "clearLogs": MessageLookupByLibrary.simpleMessage("Effacer les journaux"),
     "clearRequests": MessageLookupByLibrary.simpleMessage(
       "Effacer les requêtes",
     ),

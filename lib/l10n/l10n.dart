@@ -9073,6 +9073,11 @@ class AppLocalizations {
     );
   }
 
+  /// `Clear logs`
+  String get clearLogs {
+    return Intl.message('Clear logs', name: 'clearLogs', desc: '', args: []);
+  }
+
   /// `Upload speed`
   String get uploadSpeed {
     return Intl.message(
