@@ -36,9 +36,9 @@ const defaultGeoXUrl = {
   GeoResource.ASN:
       'https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb',
   GeoResource.GEOIP:
-      'https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat',
+      'https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat',
   GeoResource.GEOSITE:
-      'https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat',
+      'https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat',
 };
 
 const defaultMixedPort = 7890;
