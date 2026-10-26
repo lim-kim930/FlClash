@@ -1138,6 +1138,7 @@
   "vpnServiceStartFailed": "Не удалось запустить службу VPN.",
   "clearRequests": "Очистить запросы",
   "clearDnsQueries": "Очистить DNS-запросы",
+  "clearLogs": "Очистить журналы",
   "uploadSpeed": "Скорость загрузки",
   "downloadSpeed": "Скорость скачивания",
   "sortBy": "Сортировать по",

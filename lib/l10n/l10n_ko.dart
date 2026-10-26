@@ -3854,6 +3854,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get clearDnsQueries => 'DNS 쿼리 지우기';
 
   @override
+  String get clearLogs => '로그 지우기';
+
+  @override
   String get uploadSpeed => '업로드 속도';
 
   @override

@@ -1253,6 +1253,7 @@
   "vpnServiceStartFailed": "The VPN service could not start.",
   "clearRequests": "Clear requests",
   "clearDnsQueries": "Clear DNS queries",
+  "clearLogs": "Clear logs",
   "uploadSpeed": "Upload speed",
   "downloadSpeed": "Download speed",
   "sortBy": "Sort by",

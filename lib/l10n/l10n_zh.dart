@@ -3730,6 +3730,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get clearDnsQueries => '清空 DNS 查询';
 
   @override
+  String get clearLogs => '清空日志';
+
+  @override
   String get uploadSpeed => '上传速度';
 
   @override

@@ -1138,6 +1138,7 @@
   "vpnServiceStartFailed": "Le service VPN n'a pas pu démarrer.",
   "clearRequests": "Effacer les requêtes",
   "clearDnsQueries": "Effacer les requêtes DNS",
+  "clearLogs": "Effacer les journaux",
   "uploadSpeed": "Débit montant",
   "downloadSpeed": "Débit descendant",
   "sortBy": "Trier par",

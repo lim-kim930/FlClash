@@ -3779,6 +3779,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get clearDnsQueries => 'DNS クエリを消去';
 
   @override
+  String get clearLogs => 'ログを消去';
+
+  @override
   String get uploadSpeed => 'アップロード速度';
 
   @override

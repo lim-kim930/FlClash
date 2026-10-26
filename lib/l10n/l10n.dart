@@ -6942,6 +6942,12 @@ abstract class AppLocalizations {
   /// **'Clear DNS queries'**
   String get clearDnsQueries;
 
+  /// No description provided for @clearLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear logs'**
+  String get clearLogs;
+
   /// No description provided for @uploadSpeed.
   ///
   /// In en, this message translates to:

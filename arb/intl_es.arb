@@ -1138,6 +1138,7 @@
   "vpnServiceStartFailed": "No se pudo iniciar el servicio VPN.",
   "clearRequests": "Borrar solicitudes",
   "clearDnsQueries": "Borrar consultas DNS",
+  "clearLogs": "Borrar registros",
   "uploadSpeed": "Velocidad de subida",
   "downloadSpeed": "Velocidad de descarga",
   "sortBy": "Ordenar por",

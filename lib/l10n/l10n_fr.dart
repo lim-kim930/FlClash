@@ -4005,6 +4005,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get clearDnsQueries => 'Effacer les requêtes DNS';
 
   @override
+  String get clearLogs => 'Effacer les journaux';
+
+  @override
   String get uploadSpeed => 'Débit montant';
 
   @override

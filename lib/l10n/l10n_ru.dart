@@ -3952,6 +3952,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get clearDnsQueries => 'Очистить DNS-запросы';
 
   @override
+  String get clearLogs => 'Очистить журналы';
+
+  @override
   String get uploadSpeed => 'Скорость загрузки';
 
   @override

@@ -4000,6 +4000,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get clearDnsQueries => 'Borrar consultas DNS';
 
   @override
+  String get clearLogs => 'Borrar registros';
+
+  @override
   String get uploadSpeed => 'Velocidad de subida';
 
   @override
