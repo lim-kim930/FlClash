@@ -1248,5 +1248,6 @@
   "ruleLookupPayload": "匹配内容",
   "sourcePort": "源端口",
   "destinationPort": "目标端口",
-  "ruleLookupSourcePortHint": "可选，不确定时可留空"
+  "ruleLookupSourcePortHint": "可选，不确定时可留空",
+  "clearLogs": "清空日志"
 }

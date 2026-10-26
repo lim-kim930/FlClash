@@ -1249,5 +1249,6 @@
   "ruleLookupPayload": "Valor coincidente",
   "sourcePort": "Puerto de origen",
   "destinationPort": "Puerto de destino",
-  "ruleLookupSourcePortHint": "Opcional; déjalo vacío si lo desconoces"
+  "ruleLookupSourcePortHint": "Opcional; déjalo vacío si lo desconoces",
+  "clearLogs": "Borrar registros"
 }

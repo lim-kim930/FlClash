@@ -1248,5 +1248,6 @@
   "ruleLookupPayload": "Совпавшее значение",
   "sourcePort": "Порт источника",
   "destinationPort": "Порт назначения",
-  "ruleLookupSourcePortHint": "Необязательно; оставьте пустым, если неизвестен"
+  "ruleLookupSourcePortHint": "Необязательно; оставьте пустым, если неизвестен",
+  "clearLogs": "Очистить журналы"
 }

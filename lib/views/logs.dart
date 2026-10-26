@@ -73,6 +73,14 @@ class _LogsViewState extends ConsumerState<LogsView>
         onPressed: _handleExport,
       ),
       PopupMenuItem(
+        glyph: AppGlyphs.clearAll,
+        label: appLocalizations.clearLogs,
+        onPressed: () {
+          ref.read(logsProvider.notifier).clear();
+          _setLogs(const []);
+        },
+      ),
+      PopupMenuItem(
         glyph: AppGlyphs.sliders,
         label: appLocalizations.logLevel,
         subtitle: logLevel.name,

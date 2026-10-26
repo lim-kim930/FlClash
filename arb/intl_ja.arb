@@ -1248,5 +1248,6 @@
   "ruleLookupPayload": "一致した内容",
   "sourcePort": "送信元ポート",
   "destinationPort": "宛先ポート",
-  "ruleLookupSourcePortHint": "任意。不明な場合は空欄にしてください"
+  "ruleLookupSourcePortHint": "任意。不明な場合は空欄にしてください",
+  "clearLogs": "ログを消去"
 }

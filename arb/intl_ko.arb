@@ -1256,5 +1256,6 @@
   "ruleLookupPayload": "일치한 내용",
   "sourcePort": "출발지 포트",
   "destinationPort": "대상 포트",
-  "ruleLookupSourcePortHint": "선택 사항이며, 모르면 비워 두세요"
+  "ruleLookupSourcePortHint": "선택 사항이며, 모르면 비워 두세요",
+  "clearLogs": "로그 지우기"
 }

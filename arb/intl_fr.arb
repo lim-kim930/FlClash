@@ -1253,5 +1253,6 @@
   "ruleLookupPayload": "Valeur correspondante",
   "sourcePort": "Port source",
   "destinationPort": "Port de destination",
-  "ruleLookupSourcePortHint": "Facultatif ; laissez vide si inconnu"
+  "ruleLookupSourcePortHint": "Facultatif ; laissez vide si inconnu",
+  "clearLogs": "Effacer les journaux"
 }

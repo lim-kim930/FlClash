@@ -1434,5 +1434,6 @@
   "ruleLookupPayload": "Matched value",
   "sourcePort": "Source port",
   "destinationPort": "Destination port",
-  "ruleLookupSourcePortHint": "Optional; leave blank if unknown"
+  "ruleLookupSourcePortHint": "Optional; leave blank if unknown",
+  "clearLogs": "Clear logs"
 }
