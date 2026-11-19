@@ -184,17 +184,19 @@ a bad recorded resolution.
 
 ### Known upstream breakage on Windows checkouts
 
-These fail on a pure `upstream/main` checkout on Windows and pass on the Linux
-CI runner, so do not treat them as fork regressions:
+At 0.9.4, these local checks fail on Windows because native paths use
+backslashes while their prefixes and allowlists use forward slashes:
 
 - `test/common/task_test.dart` asserts `startsWith('/profiles/providers/7/...')`
   and `join()` yields backslashes.
-- `test/lint/design_package_test.dart`, `disposable_field_test.dart`,
-  `dynamic_message_key_test.dart`, `icon_button_tooltip_test.dart` and
-  `platform_layering_test.dart` compare `File.path` against forward-slash
-  allowlists, so every exemption misses and the exempted files are reported.
+- `test/lint/disposable_field_test.dart`, `platform_layering_test.dart`,
+  `prism_list_test.dart`, `sheet_scroll_controller_test.dart` and
+  `typography_test.dart` miss their existing path exemptions.
 
-These host gaps were recorded at 0.8.97. Recheck them against the current baseline; do not broadly exempt other failures.
+The five lint failures reproduce against an unmodified `upstream/main` source
+snapshot with the same 13 reported locations. The provider-path test also
+remains identical to upstream. Temporary local copies with normalized paths
+pass these checks; preserve the CI tests and do not exempt unrelated failures.
 
 ### Consolidated fork history
 
