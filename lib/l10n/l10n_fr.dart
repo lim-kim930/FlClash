@@ -2759,6 +2759,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ipQualitySources => 'Sources';
 
   @override
+  String get ipInfoLookupSource => 'Source de l’adresse IP';
+
+  @override
+  String get ipQualityLookupSource => 'Source du FAI et des détails IP';
+
+  @override
+  String get ipLookupAuto => 'Auto (premier résultat valide)';
+
+  @override
   String get ipQualityFailed => 'Impossible de déterminer le type de l’IP';
 
   @override

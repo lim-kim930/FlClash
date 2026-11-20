@@ -2651,6 +2651,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get ipQualitySources => '출처';
 
   @override
+  String get ipInfoLookupSource => 'IP 조회 출처';
+
+  @override
+  String get ipQualityLookupSource => 'ISP 및 IP 정보 출처';
+
+  @override
+  String get ipLookupAuto => '자동 (첫 번째 유효한 결과)';
+
+  @override
   String get ipQualityFailed => 'IP 유형을 확인할 수 없습니다';
 
   @override

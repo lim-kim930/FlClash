@@ -498,6 +498,22 @@ enum IpType { residential, mobile, business, hosting }
 
 enum IpQualityLevel { good, normal, risky }
 
+enum IpInfoSource {
+  cloudflare('Cloudflare', 'https://www.cloudflare.com/cdn-cgi/trace'),
+  ipSb('IP.SB', 'https://api.ip.sb/geoip'),
+  ipInfo('ipinfo.io', 'https://ipinfo.io/json'),
+  ipWhoIs('ipwho.is', 'https://ipwho.is'),
+  geoJs('GeoJS', 'https://get.geojs.io/v1/ip/geo.json'),
+  countryIs('country.is', 'https://api.country.is'),
+  ipQuery('ipquery.io', 'https://api.ipquery.io/?format=json'),
+  identMe('ident.me', 'https://ident.me/json');
+
+  const IpInfoSource(this.label, this.url);
+
+  final String label;
+  final String url;
+}
+
 enum IpQualitySource {
   identMe('ident.me'),
   ipApiCom('ip-api.com'),

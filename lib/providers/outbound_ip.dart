@@ -1,7 +1,9 @@
 import 'package:fl_clash/common/service_probe.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'config.dart';
 import 'core.dart';
 import 'route_state.dart';
 import 'routed_probe.dart';
@@ -14,7 +16,13 @@ part 'generated/outbound_ip.g.dart';
 class OutboundIpProbe extends _$OutboundIpProbe
     with RoutedProbe<String, IpInfo> {
   @override
-  RoutedProbeState<String, IpInfo> build() => buildProbe();
+  RoutedProbeState<String, IpInfo> build() {
+    ref.listen(
+      appSettingProvider.select((state) => state.ipInfoSource),
+      (_, _) => resetProbe(),
+    );
+    return buildProbe();
+  }
 
   @override
   Future<Map<String, ProbeAnswer<IpInfo>>> probe(
@@ -27,6 +35,7 @@ class OutboundIpProbe extends _$OutboundIpProbe
     final result = await lookupOutboundIp(
       ref.read(coreHandlerProvider),
       proxyName,
+      source: ref.read(appSettingProvider).ipInfoSource,
     );
     final value = parseOutboundIp(result);
     final exit = result.chains.firstOrNull;

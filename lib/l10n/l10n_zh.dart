@@ -2581,6 +2581,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ipQualitySources => '各来源';
 
   @override
+  String get ipInfoLookupSource => 'IP 查询来源';
+
+  @override
+  String get ipQualityLookupSource => 'ISP 等资料来源';
+
+  @override
+  String get ipLookupAuto => '自动（首个有效结果）';
+
+  @override
   String get ipQualityFailed => '类型查询失败';
 
   @override

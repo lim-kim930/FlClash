@@ -110,7 +110,7 @@ final class IpQualityProvider
   /// Invalidating skips the stored record and asks the sources again.
   IpQualityProvider._({
     required IpQualityFamily super.from,
-    required String super.argument,
+    required (String, {IpQualitySource? source}) super.argument,
   }) : super(
          retry: _noRetry,
          name: r'ipQualityProvider',
@@ -126,7 +126,7 @@ final class IpQualityProvider
   String toString() {
     return r'ipQualityProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -136,8 +136,8 @@ final class IpQualityProvider
 
   @override
   FutureOr<IpQuality> create(Ref ref) {
-    final argument = this.argument as String;
-    return ipQuality(ref, argument);
+    final argument = this.argument as (String, {IpQualitySource? source});
+    return ipQuality(ref, argument.$1, source: argument.source);
   }
 
   @override
@@ -151,12 +151,16 @@ final class IpQualityProvider
   }
 }
 
-String _$ipQualityHash() => r'120254d66bea59cae892cd3dcc86ad651c22b3c2';
+String _$ipQualityHash() => r'ca6c4d54d5c12972040f050003bee7922eda7d31';
 
 /// Invalidating skips the stored record and asks the sources again.
 
 final class IpQualityFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<IpQuality>, String> {
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<IpQuality>,
+          (String, {IpQualitySource? source})
+        > {
   IpQualityFamily._()
     : super(
         retry: _noRetry,
@@ -168,8 +172,8 @@ final class IpQualityFamily extends $Family
 
   /// Invalidating skips the stored record and asks the sources again.
 
-  IpQualityProvider call(String ip) =>
-      IpQualityProvider._(argument: ip, from: this);
+  IpQualityProvider call(String ip, {IpQualitySource? source}) =>
+      IpQualityProvider._(argument: (ip, source: source), from: this);
 
   @override
   String toString() => r'ipQualityProvider';

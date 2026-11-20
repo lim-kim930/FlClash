@@ -57,8 +57,12 @@ class _CurrentOutboundCardState extends ConsumerState<CurrentOutboundCard> {
 
   void _refresh(String? ip) {
     _probe.refresh(const [routedOutbound]);
-    if (ip != null && ref.read(ipQualityProvider(ip)).hasError) {
-      ref.invalidate(ipQualityProvider(ip));
+    if (ip != null) {
+      final source = ref.read(appSettingProvider).ipQualitySource;
+      final provider = ipQualityProvider(ip, source: source);
+      if (ref.read(provider).hasError) {
+        ref.invalidate(provider);
+      }
     }
   }
 
@@ -78,9 +82,12 @@ class _CurrentOutboundCardState extends ConsumerState<CurrentOutboundCard> {
     final ipInfo = entry.value;
     final phase = entry.phase;
     final failed = phase == ProbePhase.failed && ipInfo == null;
+    final source = ref.watch(
+      appSettingProvider.select((state) => state.ipQualitySource),
+    );
     final qualityState = ipInfo == null
         ? null
-        : ref.watch(ipQualityProvider(ipInfo.ip));
+        : ref.watch(ipQualityProvider(ipInfo.ip, source: source));
     final quality = qualityState?.value;
     final qualityLoading =
         qualityState != null && quality == null && qualityState.isLoading;

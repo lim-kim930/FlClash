@@ -73,6 +73,7 @@ class _Adapter implements HttpClientAdapter {
 
 ({_Adapter adapter, Future<IpQuality> result}) _lookup(
   Map<String, _Reply> replies, {
+  IpQualitySource? source,
   Duration timeout = const Duration(seconds: 8),
   Duration hedge = const Duration(seconds: 1),
 }) {
@@ -85,6 +86,7 @@ class _Adapter implements HttpClientAdapter {
       dio,
       _ip,
       cancelToken: CancelToken(),
+      source: source,
       timeout: timeout,
       hedge: hedge,
     ),
@@ -228,7 +230,38 @@ void main() {
       final lookup = _lookup({_hosts[source]!: _ok(body)});
       expect(await lookup.result, expected);
     });
+
+    test('can query ${source.label} without asking any other source', () async {
+      final lookup = _lookup({_hosts[source]!: _ok(body)}, source: source);
+
+      expect(await lookup.result, expected);
+      expect(lookup.adapter.requested.map((uri) => uri.host), [_hosts[source]]);
+    });
   }
+
+  test(
+    'a selected source failure does not fall back to another source',
+    () async {
+      final lookup = _lookup({
+        'api.ipapi.is': _status(429),
+        'ident.me': _ok({'ip': _ip, 'type': 'isp'}),
+      }, source: IpQualitySource.ipApiIs);
+
+      await expectLater(
+        lookup.result,
+        throwsA(
+          isA<IpQualityLookupException>()
+              .having((error) => error.failures, 'failures', [
+                (
+                  source: IpQualitySource.ipApiIs,
+                  status: IpQualitySourceStatus.rateLimited,
+                ),
+              ]),
+        ),
+      );
+      expect(lookup.adapter.requested.map((uri) => uri.host), ['api.ipapi.is']);
+    },
+  );
 
   test('looks up the target address instead of the caller', () async {
     final lookup = _lookup({});

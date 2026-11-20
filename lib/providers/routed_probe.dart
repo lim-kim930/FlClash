@@ -92,6 +92,7 @@ mixin RoutedProbe<K, V>
   final Map<K, _Due> _due = {};
   final Map<K, int> _inFlight = {};
   int _runs = 0;
+  Object _cacheIdentity = Object();
   final Map<K, RouteState> _staleUnder = {};
   final Set<K> _unverified = {};
   final Map<K, _Landing<V>> _landed = {};
@@ -234,6 +235,31 @@ mixin RoutedProbe<K, V>
   void refresh(Iterable<K> targets) {
     for (final target in targets) {
       _mark(target, keepValue: true, forced: true);
+    }
+  }
+
+  @protected
+  void resetProbe() {
+    _cacheIdentity = Object();
+    _settle?.cancel();
+    _settle = null;
+    for (final timer in [..._cooling.values, ..._retries.values]) {
+      timer.cancel();
+    }
+    _cooling.clear();
+    _retries.clear();
+    _due.clear();
+    _inFlight.clear();
+    _staleUnder.clear();
+    _unverified.clear();
+    _landed.clear();
+    _failures.clear();
+    _launchPicks.clear();
+    _verifying = false;
+    _reverify = false;
+    state = RoutedProbeState<K, V>();
+    for (final target in _watchers.keys) {
+      _mark(target, forced: true);
     }
   }
 
@@ -588,6 +614,7 @@ mixin RoutedProbe<K, V>
     if (!ref.mounted || !_route.live || !ref.read(appVisibleProvider)) {
       return;
     }
+    final cacheIdentity = _cacheIdentity;
     final stamps = <K, RouteStamp>{};
     for (final target in {..._unverified}) {
       final landed = _landed.containsKey(target);
@@ -616,9 +643,11 @@ mixin RoutedProbe<K, V>
         logLevel: coreFailureLogLevel(error),
       );
     } finally {
-      _verifying = false;
+      if (identical(cacheIdentity, _cacheIdentity)) {
+        _verifying = false;
+      }
     }
-    if (!ref.mounted) {
+    if (!ref.mounted || !identical(cacheIdentity, _cacheIdentity)) {
       return;
     }
     final current = _route;

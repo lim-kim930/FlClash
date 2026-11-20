@@ -2736,6 +2736,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ipQualitySources => 'Источники';
 
   @override
+  String get ipInfoLookupSource => 'Источник IP';
+
+  @override
+  String get ipQualityLookupSource => 'Источник ISP и сведений об IP';
+
+  @override
+  String get ipLookupAuto => 'Авто (первый подходящий ответ)';
+
+  @override
   String get ipQualityFailed => 'Не удалось определить тип IP';
 
   @override

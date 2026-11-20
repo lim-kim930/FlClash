@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/ip_quality.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/ip_quality.dart';
@@ -26,9 +27,11 @@ class _IpQualitySheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localizations = context.appLocalizations;
-    final isLoading = ref.watch(
-      ipQualityProvider(ip).select((result) => result.isLoading),
+    final source = ref.watch(
+      appSettingProvider.select((state) => state.ipQualitySource),
     );
+    final provider = ipQualityProvider(ip, source: source);
+    final isLoading = ref.watch(provider.select((result) => result.isLoading));
     return Scaffold(
       title: localizations.outboundIp,
       actions: [
@@ -37,7 +40,7 @@ class _IpQualitySheet extends ConsumerWidget {
             glyph: AppGlyphs.refresh,
             tooltip: localizations.ipQualityRetry,
             isLoading: isLoading,
-            onPressed: () => ref.invalidate(ipQualityProvider(ip)),
+            onPressed: () => ref.invalidate(provider),
           ),
         ),
       ],
@@ -76,7 +79,10 @@ class _IpQualityDetail extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localizations = context.appLocalizations;
-    final result = ref.watch(ipQualityProvider(ip));
+    final source = ref.watch(
+      appSettingProvider.select((state) => state.ipQualitySource),
+    );
+    final result = ref.watch(ipQualityProvider(ip, source: source));
     final quality = result.value;
     final error = result.error;
     final failed = quality == null && !result.isLoading;
@@ -134,7 +140,33 @@ class _IpQualityDetail extends ConsumerWidget {
           ),
         generateSection(
           title: localizations.other,
-          items: const [_HideIpItem()],
+          items: [
+            ConfigOptionsItem<IpInfoSource?>(
+              selector: appSettingProvider.select(
+                (state) => state.ipInfoSource,
+              ),
+              title: (l10n) => l10n.ipInfoLookupSource,
+              options: const [null, ...IpInfoSource.values],
+              textBuilder: (source) =>
+                  source?.label ?? localizations.ipLookupAuto,
+              onChanged: (ref, source) => ref
+                  .read(appSettingProvider.notifier)
+                  .update((state) => state.copyWith(ipInfoSource: source)),
+            ),
+            ConfigOptionsItem<IpQualitySource?>(
+              selector: appSettingProvider.select(
+                (state) => state.ipQualitySource,
+              ),
+              title: (l10n) => l10n.ipQualityLookupSource,
+              options: const [null, ...IpQualitySource.values],
+              textBuilder: (source) =>
+                  source?.label ?? localizations.ipLookupAuto,
+              onChanged: (ref, source) => ref
+                  .read(appSettingProvider.notifier)
+                  .update((state) => state.copyWith(ipQualitySource: source)),
+            ),
+            const _HideIpItem(),
+          ],
         ),
       ],
     );

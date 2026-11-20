@@ -2724,6 +2724,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ipQualitySources => 'Sources';
 
   @override
+  String get ipInfoLookupSource => 'IP lookup source';
+
+  @override
+  String get ipQualityLookupSource => 'ISP and IP details source';
+
+  @override
+  String get ipLookupAuto => 'Automatic (first usable result)';
+
+  @override
   String get ipQualityFailed => 'Couldn\'t determine the IP type';
 
   @override

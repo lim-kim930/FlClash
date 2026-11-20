@@ -17,9 +17,11 @@ const _cooldown = Duration(milliseconds: 200);
 const _maxAge = Duration(milliseconds: 200);
 
 class _Adapter implements HttpClientAdapter {
-  _Adapter({required this.succeed});
+  _Adapter({required this.succeed, this.successHosts = const {'iplocate.io'}});
 
   final bool succeed;
+  final Set<String> successHosts;
+  final requested = <Uri>[];
   int requests = 0;
 
   @override
@@ -29,7 +31,8 @@ class _Adapter implements HttpClientAdapter {
     Future<void>? cancelFuture,
   ) async {
     requests++;
-    if (succeed && options.uri.host == 'iplocate.io') {
+    requested.add(options.uri);
+    if (succeed && successHosts.contains(options.uri.host)) {
       return ResponseBody.fromString(
         jsonEncode({
           'asn': {'asn': 'AS64500', 'type': 'isp'},
@@ -168,6 +171,59 @@ void main() {
     expect(await container.read(provider.future), _saved);
     expect(adapter.requests, 0);
   });
+
+  test('uses a saved record when it matches the selected source', () async {
+    await seed(const Duration(days: 1));
+    final adapter = _Adapter(succeed: false);
+    final container = build(adapter);
+    final selected = ipQualityProvider(_ip, source: IpQualitySource.proxyCheck);
+    container.listen(selected, (_, _) {});
+
+    expect(await container.read(selected.future), _saved);
+    expect(adapter.requests, 0);
+  });
+
+  test('skips another source stored for the same IP', () async {
+    await seed(const Duration(days: 1));
+    final adapter = _Adapter(succeed: true, successHosts: {'api.ipapi.is'});
+    final container = build(adapter);
+    final selected = ipQualityProvider(_ip, source: IpQualitySource.ipApiIs);
+    container.listen(selected, (_, _) {});
+
+    final quality = await container.read(selected.future);
+
+    expect(quality.source, IpQualitySource.ipApiIs);
+    expect(adapter.requested.map((uri) => uri.host), ['api.ipapi.is']);
+    expect(
+      (await testDatabase.ipQualitiesDao.fresh(
+        _ip,
+        const Duration(days: 3),
+      ))?.quality,
+      quality,
+    );
+  });
+
+  test(
+    'keeps automatic and selected source results separate in memory',
+    () async {
+      final adapter = _Adapter(
+        succeed: true,
+        successHosts: {'iplocate.io', 'api.ipapi.is'},
+      );
+      final container = build(adapter);
+      container.listen(provider, (_, _) {});
+      final automatic = await container.read(provider.future);
+      final selected = ipQualityProvider(_ip, source: IpQualitySource.ipApiIs);
+      container.listen(selected, (_, _) {});
+      final pinned = await container.read(selected.future);
+      final sent = adapter.requests;
+
+      expect(automatic.source, IpQualitySource.ipLocate);
+      expect(pinned.source, IpQualitySource.ipApiIs);
+      expect(await container.read(provider.future), automatic);
+      expect(adapter.requests, sent);
+    },
+  );
 
   test('saves a lookup for the next run', () async {
     final adapter = _Adapter(succeed: true);

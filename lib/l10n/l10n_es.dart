@@ -2760,6 +2760,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ipQualitySources => 'Fuentes';
 
   @override
+  String get ipInfoLookupSource => 'Fuente de la IP';
+
+  @override
+  String get ipQualityLookupSource => 'Fuente del ISP y los datos de IP';
+
+  @override
+  String get ipLookupAuto => 'Automático (primer resultado válido)';
+
+  @override
   String get ipQualityFailed => 'No se pudo determinar el tipo de IP';
 
   @override
