@@ -66,6 +66,14 @@ _AppSettingProps _$AppSettingPropsFromJson(
           .toList() ??
       defaultFilters,
   hideIp: json['hideIp'] as bool? ?? false,
+  ipInfoSource: $enumDecodeNullable(
+    _$IpInfoSourceEnumMap,
+    json['ipInfoSource'],
+  ),
+  ipQualitySource: $enumDecodeNullable(
+    _$IpQualitySourceEnumMap,
+    json['ipQualitySource'],
+  ),
   editorLineWrap: json['editorLineWrap'] as bool? ?? false,
   editorFontSize:
       $enumDecodeNullable(_$EditorFontSizeEnumMap, json['editorFontSize']) ??
@@ -127,6 +135,8 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'userAgents': instance.userAgents,
       'filters': instance.filters,
       'hideIp': instance.hideIp,
+      'ipInfoSource': _$IpInfoSourceEnumMap[instance.ipInfoSource],
+      'ipQualitySource': _$IpQualitySourceEnumMap[instance.ipQualitySource],
       'editorLineWrap': instance.editorLineWrap,
       'editorFontSize': _$EditorFontSizeEnumMap[instance.editorFontSize]!,
       'serviceOrder': instance.serviceOrder,
@@ -148,6 +158,26 @@ const _$TabAnimationEnumMap = {
 const _$RestoreStrategyEnumMap = {
   RestoreStrategy.compatible: 'compatible',
   RestoreStrategy.override: 'override',
+};
+
+const _$IpInfoSourceEnumMap = {
+  IpInfoSource.cloudflare: 'cloudflare',
+  IpInfoSource.ipSb: 'ipSb',
+  IpInfoSource.ipInfo: 'ipInfo',
+  IpInfoSource.ipWhoIs: 'ipWhoIs',
+  IpInfoSource.geoJs: 'geoJs',
+  IpInfoSource.countryIs: 'countryIs',
+  IpInfoSource.ipQuery: 'ipQuery',
+  IpInfoSource.identMe: 'identMe',
+};
+
+const _$IpQualitySourceEnumMap = {
+  IpQualitySource.identMe: 'identMe',
+  IpQualitySource.ipApiCom: 'ipApiCom',
+  IpQualitySource.ipQuery: 'ipQuery',
+  IpQualitySource.ipLocate: 'ipLocate',
+  IpQualitySource.proxyCheck: 'proxyCheck',
+  IpQualitySource.ipApiIs: 'ipApiIs',
 };
 
 const _$EditorFontSizeEnumMap = {

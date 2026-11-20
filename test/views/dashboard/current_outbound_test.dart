@@ -98,6 +98,7 @@ Widget _app(
   Future<IpQuality> Function(Ref ref, String ip) quality, {
   DashboardDensity density = DashboardDensity.standard,
   bool root = false,
+  List<IpQualitySource?>? sources,
 }) {
   return TestApp(
     locale: const Locale('en'),
@@ -113,7 +114,10 @@ Widget _app(
           ),
         }),
       ),
-      ipQualityProvider.overrideWith(quality),
+      ipQualityProvider.overrideWith((ref, argument) {
+        sources?.add(argument.source);
+        return quality(ref, argument.$1);
+      }),
     ],
     child: _card(density: density),
   );
@@ -138,7 +142,10 @@ Widget _probingApp(
         ),
       ),
       coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
-      ipQualityProvider.overrideWith(quality ?? (_, _) async => _residential),
+      ipQualityProvider.overrideWith(
+        (ref, argument) =>
+            quality?.call(ref, argument.$1) ?? Future.value(_residential),
+      ),
     ],
     child: _card(),
   );
@@ -398,6 +405,127 @@ void main() {
 
       expect(calls, 2);
     });
+
+    testWidgets('selects IP and network details sources independently', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      await tester.pumpWidget(_app((_, _) async => _residential));
+      await tester.pump();
+      await tester.tap(find.byTooltip('Outbound IP details'));
+      await tester.pumpAndSettle();
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(CurrentOutboundCard)),
+      );
+
+      Future<void> pick(
+        String title,
+        String label,
+        List<String> options,
+      ) async {
+        await tester.ensureVisible(find.text(title));
+        await tester.tap(find.text(title));
+        await tester.pumpAndSettle();
+        final popup = find.byType(PopupMenu);
+        for (final option in options) {
+          expect(
+            find.descendant(of: popup, matching: find.text(option)),
+            findsOneWidget,
+          );
+        }
+        final target = find.descendant(of: popup, matching: find.text(label));
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        expect(target.hitTestable(), findsOneWidget);
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      const automatic = 'Automatic (first usable result)';
+      expect(find.text(automatic), findsNWidgets(2));
+      await pick('IP lookup source', 'country.is', [
+        automatic,
+        ...IpInfoSource.values.map((source) => source.label),
+      ]);
+      expect(
+        container.read(appSettingProvider).ipInfoSource,
+        IpInfoSource.countryIs,
+      );
+      expect(container.read(appSettingProvider).ipQualitySource, isNull);
+      await pick('ISP and IP details source', 'ipapi.is', [
+        automatic,
+        ...IpQualitySource.values.map((source) => source.label),
+      ]);
+      expect(
+        container.read(appSettingProvider).ipInfoSource,
+        IpInfoSource.countryIs,
+      );
+      expect(
+        container.read(appSettingProvider).ipQualitySource,
+        IpQualitySource.ipApiIs,
+      );
+
+      Navigator.of(tester.element(find.text('IP lookup source'))).pop();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Outbound IP details'));
+      await tester.pumpAndSettle();
+      expect(find.text('country.is'), findsOneWidget);
+      expect(find.text('ipapi.is'), findsOneWidget);
+      await pick('IP lookup source', automatic, [automatic]);
+      await pick('ISP and IP details source', automatic, [automatic]);
+      expect(container.read(appSettingProvider).ipInfoSource, isNull);
+      expect(container.read(appSettingProvider).ipQualitySource, isNull);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets(
+      'a failed selected source shows its error and refreshes itself',
+      (tester) async {
+        _useTallView(tester);
+        final sources = <IpQualitySource?>[];
+        await tester.pumpWidget(
+          _app((_, _) async {
+            if (sources.last == IpQualitySource.ipApiIs) {
+              throw const IpQualityLookupException([
+                (
+                  source: IpQualitySource.ipApiIs,
+                  status: IpQualitySourceStatus.rateLimited,
+                ),
+              ]);
+            }
+            return _residential;
+          }, sources: sources),
+        );
+        await tester.pump();
+        await tester.tap(find.byTooltip('Outbound IP details'));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('ISP and IP details source'));
+        await tester.tap(find.text('ISP and IP details source'));
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.descendant(
+            of: find.byType(PopupMenu),
+            matching: find.text('ipapi.is'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text("Couldn't determine the IP type"), findsOneWidget);
+        expect(find.text('Rate limited'), findsOneWidget);
+        expect(find.text('Example Broadband'), findsNothing);
+        await tester.tap(find.byTooltip('Check again'));
+        await tester.pumpAndSettle();
+
+        expect(sources, [
+          null,
+          IpQualitySource.ipApiIs,
+          IpQualitySource.ipApiIs,
+        ]);
+        expect(find.text('Rate limited'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('is masked everywhere once hidden', (tester) async {
       _useTallView(tester);

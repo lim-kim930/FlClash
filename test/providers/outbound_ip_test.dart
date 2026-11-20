@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/service_probe.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/interface.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/core.dart';
 import 'package:fl_clash/providers/outbound_ip.dart';
 import 'package:fl_clash/providers/route_state.dart';
@@ -80,6 +84,103 @@ void main() {
     container.read(outboundIpProbeProvider.notifier).watch(routedOutbound);
 
     expect((await asked()).proxyName, directOutbound);
+  });
+
+  test('changing the IP source replaces watched and cached answers', () async {
+    when(() => core.outboundIp(any())).thenAnswer((invocation) async {
+      final params = invocation.positionalArguments.single as OutboundIpParams;
+      return params.urls.length > 1
+          ? _answer
+          : const OutboundIpResult(
+              url: 'https://api.country.is',
+              body: '{"ip":"203.0.113.9","country":"GB"}',
+              coreEpoch: 1,
+              routeVersion: 1,
+            );
+    });
+    final container = build();
+    final probe = container.read(outboundIpProbeProvider.notifier);
+    probe.watch(routedOutbound);
+    await asked();
+    expect(container.read(outboundIpProbeProvider).valueOf('HK-01'), isNotNull);
+
+    container
+        .read(appSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(ipInfoSource: IpInfoSource.countryIs),
+        );
+
+    expect((await asked()).urls, ['https://api.country.is']);
+    expect(
+      container.read(outboundIpProbeProvider).valueOf(routedOutbound)?.ip,
+      '203.0.113.9',
+    );
+    expect(container.read(outboundIpProbeProvider).valueOf('HK-01'), isNull);
+
+    container
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(ipInfoSource: null));
+
+    expect((await asked()).urls, ipInfoSources.keys.toList());
+    expect(
+      container.read(outboundIpProbeProvider).valueOf(routedOutbound)?.ip,
+      '2.2.2.2',
+    );
+  });
+
+  test('an old source cannot overwrite a new source while probing', () async {
+    final previous = Completer<OutboundIpResult>();
+    when(() => core.outboundIp(any())).thenAnswer((invocation) {
+      final params = invocation.positionalArguments.single as OutboundIpParams;
+      return params.urls.length > 1
+          ? previous.future
+          : Future.value(
+              const OutboundIpResult(
+                url: 'https://api.country.is',
+                body: '{"ip":"203.0.113.9","country":"GB"}',
+                coreEpoch: 1,
+                routeVersion: 1,
+              ),
+            );
+    });
+    final container = build();
+    container.read(outboundIpProbeProvider.notifier).watch(routedOutbound);
+    await asked();
+
+    container
+        .read(appSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(ipInfoSource: IpInfoSource.countryIs),
+        );
+    await asked();
+    previous.complete(_answer);
+    await pumpEventQueue();
+
+    expect(
+      container.read(outboundIpProbeProvider).valueOf(routedOutbound)?.ip,
+      '203.0.113.9',
+    );
+    expect(container.read(outboundIpProbeProvider).valueOf('HK-01'), isNull);
+  });
+
+  test('a network details source change keeps the cached IP', () async {
+    when(() => core.outboundIp(any())).thenAnswer((_) async => _answer);
+    final container = build();
+    container.read(outboundIpProbeProvider.notifier).watch(routedOutbound);
+    await asked();
+
+    container
+        .read(appSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(ipQualitySource: IpQualitySource.ipApiIs),
+        );
+    await pumpEventQueue();
+
+    verifyNever(() => core.outboundIp(any()));
+    expect(
+      container.read(outboundIpProbeProvider).valueOf(routedOutbound)?.ip,
+      '2.2.2.2',
+    );
   });
 
   test('looks a node up through itself', () async {

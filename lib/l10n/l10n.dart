@@ -4500,6 +4500,24 @@ abstract class AppLocalizations {
   /// **'Sources'**
   String get ipQualitySources;
 
+  /// No description provided for @ipInfoLookupSource.
+  ///
+  /// In en, this message translates to:
+  /// **'IP lookup source'**
+  String get ipInfoLookupSource;
+
+  /// No description provided for @ipQualityLookupSource.
+  ///
+  /// In en, this message translates to:
+  /// **'ISP and IP details source'**
+  String get ipQualityLookupSource;
+
+  /// No description provided for @ipLookupAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic (first usable result)'**
+  String get ipLookupAuto;
+
   /// No description provided for @ipQualityFailed.
   ///
   /// In en, this message translates to:

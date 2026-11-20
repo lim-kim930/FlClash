@@ -20,14 +20,18 @@ Duration ipQualityMaxAge(Ref ref) => const Duration(days: 3);
 
 /// Invalidating skips the stored record and asks the sources again.
 @Riverpod(retry: _noRetry)
-Future<IpQuality> ipQuality(Ref ref, String ip) async {
+Future<IpQuality> ipQuality(
+  Ref ref,
+  String ip, {
+  IpQualitySource? source,
+}) async {
   final maxAge = ref.read(ipQualityMaxAgeProvider);
   if (!ref.isRefresh) {
     final record = await _orNull(
       'read',
       database.ipQualitiesDao.fresh(ip, maxAge),
     );
-    if (record != null) {
+    if (record != null && (source == null || record.quality.source == source)) {
       _expireAt(ref, record.checkedAt.add(maxAge));
       return record.quality;
     }
@@ -39,6 +43,7 @@ Future<IpQuality> ipQuality(Ref ref, String ip) async {
       request.dio,
       ip,
       cancelToken: cancelToken,
+      source: source,
     );
     final checkedAt = DateTime.now();
     await _orNull(

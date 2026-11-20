@@ -2361,6 +2361,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get ipQualitySources => '各ソース';
 
   @override
+  String get ipInfoLookupSource => 'IP の取得元';
+
+  @override
+  String get ipQualityLookupSource => 'ISP などの情報取得元';
+
+  @override
+  String get ipLookupAuto => '自動（最初の有効な結果）';
+
+  @override
   String get ipQualityFailed => 'IP タイプを判定できませんでした';
 
   @override

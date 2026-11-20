@@ -81,6 +81,8 @@ class _Probe extends Notifier<RoutedProbeState<String, String>>
 
   void answer(Map<String, ProbeAnswer<String>> answers) =>
       pending.removeAt(0).complete(answers);
+
+  void reset() => resetProbe();
 }
 
 final _probeProvider =
@@ -155,6 +157,38 @@ void main() {
 
     expect(probe.calls, hasLength(1));
     expect(container.read(_probeProvider).entries, isEmpty);
+  });
+
+  test('a reset discards route checks made for the previous cache', () async {
+    final container = build();
+    final probe = container.read(_probeProvider.notifier);
+    probe.watch('a');
+    await pumpEventQueue();
+    probe.answer({'a': _ok('a.example:443')});
+    await pumpEventQueue();
+    final oldCheck = Completer<RouteCheck>();
+    probe.checkAnswer = () => oldCheck.future;
+    moveRoute(container, 2);
+    await pumpEventQueue();
+
+    probe.reset();
+    await pumpEventQueue();
+    probe.answer({
+      'a': const ProbeAnswer(
+        value: 'new',
+        coreEpoch: 1,
+        routeVersion: 2,
+        hits: [RouteHit(host: 'a.example:443', exit: 'a.example:443')],
+      ),
+    });
+    await pumpEventQueue();
+    oldCheck.complete(
+      const RouteCheck(coreEpoch: 1, routeVersion: 2, held: [false]),
+    );
+    await pumpEventQueue();
+
+    expect(container.read(_probeProvider).valueOf('a'), 'new');
+    expect(probe.calls, ['a', 'a']);
   });
 
   test(

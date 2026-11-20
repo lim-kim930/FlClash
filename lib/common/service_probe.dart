@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fl_clash/common/constant.dart';
 import 'package:fl_clash/core/controller.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter/foundation.dart';
 
@@ -165,26 +166,27 @@ IpInfo Function(String) _json(IpInfo Function(Map<String, dynamic>) parse) {
 }
 
 final Map<String, IpInfo Function(String)> ipInfoSources = {
-  'https://www.cloudflare.com/cdn-cgi/trace': IpInfo.fromCloudflareTrace,
-  'https://api.ip.sb/geoip': _json(IpInfo.fromIpSbJson),
-  'https://ipinfo.io/json': _json(IpInfo.fromIpInfoIoJson),
-  'https://ipwho.is': _json(IpInfo.fromIpWhoIsJson),
-  'https://get.geojs.io/v1/ip/geo.json': _json(IpInfo.fromGeoJsJson),
-  'https://api.country.is': _json(IpInfo.fromCountryIsJson),
-  'https://api.ipquery.io/?format=json': _json(IpInfo.fromIpQueryJson),
-  'https://ident.me/json': _json(IpInfo.fromIdentMeJson),
+  IpInfoSource.cloudflare.url: IpInfo.fromCloudflareTrace,
+  IpInfoSource.ipSb.url: _json(IpInfo.fromIpSbJson),
+  IpInfoSource.ipInfo.url: _json(IpInfo.fromIpInfoIoJson),
+  IpInfoSource.ipWhoIs.url: _json(IpInfo.fromIpWhoIsJson),
+  IpInfoSource.geoJs.url: _json(IpInfo.fromGeoJsJson),
+  IpInfoSource.countryIs.url: _json(IpInfo.fromCountryIsJson),
+  IpInfoSource.ipQuery.url: _json(IpInfo.fromIpQueryJson),
+  IpInfoSource.identMe.url: _json(IpInfo.fromIdentMeJson),
 };
 
 /// Raw so the route stamp survives; [parseOutboundIp] reads the address.
 Future<OutboundIpResult> lookupOutboundIp(
   CoreController core,
   String proxyName, {
+  IpInfoSource? source,
   Duration timeout = outboundIpTimeoutDuration,
 }) {
   return core.outboundIp(
     OutboundIpParams(
       proxyName: proxyName,
-      urls: ipInfoSources.keys.toList(),
+      urls: source == null ? ipInfoSources.keys.toList() : [source.url],
       timeout: timeout.inMilliseconds,
     ),
   );

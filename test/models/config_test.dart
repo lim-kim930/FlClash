@@ -150,6 +150,32 @@ void main() {
       expect(restored.restoreStrategy, RestoreStrategy.compatible);
       expect(restored.userAgents, defaultUserAgents);
       expect(restored.filters, defaultFilters);
+      expect(restored.ipInfoSource, isNull);
+      expect(restored.ipQualitySource, isNull);
+    });
+
+    test('keeps IP and network details sources independent when saved', () {
+      const props = AppSettingProps(
+        ipInfoSource: IpInfoSource.countryIs,
+        ipQualitySource: IpQualitySource.ipApiIs,
+      );
+
+      final restored = roundTrip(props.toJson, AppSettingProps.fromJson);
+
+      expect(restored.ipInfoSource, IpInfoSource.countryIs);
+      expect(restored.ipQualitySource, IpQualitySource.ipApiIs);
+      final automatic = restored.copyWith(
+        ipInfoSource: null,
+        ipQualitySource: null,
+      );
+      expect(
+        roundTrip(automatic.toJson, AppSettingProps.fromJson),
+        const AppSettingProps(),
+      );
+      final old = AppSettingProps.fromJson({'hideIp': true});
+      expect(old.ipInfoSource, isNull);
+      expect(old.ipQualitySource, isNull);
+      expect(old.hideIp, isTrue);
     });
 
     test('a saved outboundModeV2 card folds into outboundMode', () {

@@ -17,7 +17,10 @@ class IpQualityText extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final quality = ref.watch(ipQualityProvider(ip)).value;
+    final source = ref.watch(
+      appSettingProvider.select((state) => state.ipQualitySource),
+    );
+    final quality = ref.watch(ipQualityProvider(ip, source: source)).value;
     final hideIp = ref.watch(
       appSettingProvider.select((state) => state.hideIp),
     );

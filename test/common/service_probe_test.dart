@@ -4,6 +4,7 @@ import 'package:fl_clash/common/constant.dart';
 import 'package:fl_clash/common/service_probe.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/interface.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -176,6 +177,29 @@ void main() {
   });
 
   group('lookupOutboundIp', () {
+    test('asks only the selected IP source', () async {
+      late OutboundIpParams sent;
+      when(() => core.outboundIp(any())).thenAnswer((invocation) async {
+        sent = invocation.positionalArguments.single as OutboundIpParams;
+        return const OutboundIpResult(
+          url: 'https://api.country.is',
+          body: '{"ip":"203.0.113.7","country":"US"}',
+        );
+      });
+
+      final info = parseOutboundIp(
+        await lookupOutboundIp(
+          controller,
+          'HK-01',
+          source: IpInfoSource.countryIs,
+        ),
+      );
+
+      expect(sent.urls, ['https://api.country.is']);
+      expect(sent.proxyName, 'HK-01');
+      expect(info, const IpInfo(ip: '203.0.113.7', countryCode: 'US'));
+    });
+
     test('hands the Core every source and parses the one that won', () async {
       late OutboundIpParams sent;
       when(() => core.outboundIp(any())).thenAnswer((invocation) async {
