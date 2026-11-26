@@ -58,6 +58,7 @@ class ConnectionRows extends ChangeNotifier implements MinuteRows<String> {
 
   /// Oldest first.
   final _shown = <_Held>[];
+  List<String>? _shownIdsView;
   final _shownIds = HashSet<String>();
   final _minutes = <_Minute>[];
   Int32List? _minuteRows;
@@ -84,6 +85,9 @@ class ConnectionRows extends ChangeNotifier implements MinuteRows<String> {
   void later(VoidCallback callback) => _traffic.schedule(callback);
 
   int get shownCount => _shown.length;
+
+  List<String> get shownIds =>
+      _shownIdsView ??= List.unmodifiable(_shown.map((held) => held.info.id));
 
   int countOf(ConnectionStatus status) => switch (status) {
     ConnectionStatus.all => _held.length,
@@ -348,6 +352,7 @@ class ConnectionRows extends ChangeNotifier implements MinuteRows<String> {
   }
 
   void _reshow() {
+    _shownIdsView = null;
     _shown.clear();
     _shownIds.clear();
     _minutes.clear();
@@ -433,6 +438,7 @@ class ConnectionRows extends ChangeNotifier implements MinuteRows<String> {
   }
 
   void _place(_Held held) {
+    _shownIdsView = null;
     final at = _lowerBound(
       _shown.length,
       (index) => _compare(_shown[index], held),
@@ -450,6 +456,7 @@ class ConnectionRows extends ChangeNotifier implements MinuteRows<String> {
   }
 
   void _remove(_Held held) {
+    _shownIdsView = null;
     final at = _shownIndexOf(held.info.id)!;
     _shown.removeAt(at);
     _shownIds.remove(held.info.id);

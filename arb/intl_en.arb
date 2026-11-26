@@ -1438,5 +1438,13 @@
   "sourcePort": "Source port",
   "destinationPort": "Destination port",
   "ruleLookupSourcePortHint": "Optional; leave blank if unknown",
-  "clearLogs": "Clear logs"
+  "clearLogs": "Clear logs",
+  "clearRequests": "Clear request history",
+  "clearDnsQueries": "Clear DNS queries",
+  "uploadSpeed": "Upload speed",
+  "downloadSpeed": "Download speed",
+  "sortBy": "Sort by",
+  "sortDirection": "Sort direction",
+  "sortAsc": "Ascending",
+  "sortDesc": "Descending"
 }

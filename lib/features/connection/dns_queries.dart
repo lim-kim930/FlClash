@@ -38,6 +38,11 @@ class DnsQueryFeed extends RecordFeed<DnsQuery> {
 
   List<DnsQuery>? _waiting;
 
+  void clear() {
+    _waiting = null;
+    items = const [];
+  }
+
   void offer(List<DnsQuery> dnsQueries) {
     if (holdsNew) {
       _waiting = dnsQueries;

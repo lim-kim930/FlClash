@@ -23,6 +23,35 @@ void main() {
     container.dispose();
   });
 
+  test('a poll started before clearing history cannot restore old records', () {
+    container.listen(requestsProvider, (_, _) {});
+    final requests = container.read(requestsProvider.notifier);
+    final connection = TrackerInfo(
+      id: 'closed',
+      start: DateTime.utc(2026),
+      metadata: const Metadata(network: 'tcp'),
+      chains: const ['DIRECT'],
+      rule: 'MATCH',
+      rulePayload: '',
+    );
+    requests.addRequest(connection);
+    requests.close(['closed']);
+    final lineage = container.read(requestsProvider).lineage;
+    requests.clear();
+
+    expect(
+      requests.sync(
+        [connection],
+        requestedAt: DateTime.now(),
+        lineage: lineage,
+      ),
+      isFalse,
+    );
+    expect(container.read(requestsProvider).length, 0);
+    requests.addRequest(connection.copyWith(id: 'new'));
+    expect(container.read(requestsProvider)['new'], isNotNull);
+  });
+
   test('the rules in force are listed again each time the Core connects, '
       'and kept while it is away', () async {
     final core = _MockCore();

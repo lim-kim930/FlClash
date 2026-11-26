@@ -1238,7 +1238,7 @@
   "httpConditionValuesIn": "현재 요청의 {field}",
   "httpConditionTip": "같은 필드의 조건은 하나만 맞으면 되고, 다른 필드의 조건은 모두 맞아야 합니다.",
   "geoConfigSyncFailed": "Geo 설정을 동기화하지 못했습니다. 다시 시도하세요.",
-  "clearRequests": "요청 지우기",
+  "clearRequests": "요청 기록 지우기",
   "clearDnsQueries": "DNS 쿼리 지우기",
   "uploadSpeed": "업로드 속도",
   "downloadSpeed": "다운로드 속도",

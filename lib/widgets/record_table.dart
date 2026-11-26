@@ -23,6 +23,17 @@ class RecordColumn<T> {
 
 typedef RecordSort = ({String columnId, bool descending});
 
+typedef RecordSortInput = ({List<Comparable<Object>> keys, bool descending});
+
+List<int> recordSortIndexes(RecordSortInput input) {
+  final keys = input.keys;
+  final direction = input.descending ? -1 : 1;
+  return List.generate(keys.length, (index) => index)..sort((a, b) {
+    final compared = keys[a].compareTo(keys[b]);
+    return compared != 0 ? direction * compared : a - b;
+  });
+}
+
 /// The first tap sorts the way the column reads best, the second flips it and
 /// the third gives the list its own order back.
 RecordSort? nextRecordSort<T>(RecordSort? sort, RecordColumn<T> column) {
@@ -54,14 +65,7 @@ class RecordSorter<T> {
       return _sorted;
     }
     final keys = [for (final item in items) sortKey(item)];
-    final direction = sort.descending ? -1 : 1;
-    // Sorting indexes keeps ties in their shown order; collection's
-    // mergeSort is stable too but measured over ten times slower.
-    final order = List.generate(items.length, (index) => index)
-      ..sort((a, b) {
-        final compared = keys[a].compareTo(keys[b]);
-        return compared != 0 ? direction * compared : a - b;
-      });
+    final order = recordSortIndexes((keys: keys, descending: sort.descending));
     _source = items;
     _sortedBy = sort;
     return _sorted = [for (final index in order) items[index]];

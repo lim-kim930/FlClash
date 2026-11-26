@@ -1252,5 +1252,13 @@
   "sourcePort": "送信元ポート",
   "destinationPort": "宛先ポート",
   "ruleLookupSourcePortHint": "任意。不明な場合は空欄にしてください",
-  "clearLogs": "ログを消去"
+  "clearLogs": "ログを消去",
+  "clearRequests": "リクエスト履歴を消去",
+  "clearDnsQueries": "DNS クエリを消去",
+  "uploadSpeed": "アップロード速度",
+  "downloadSpeed": "ダウンロード速度",
+  "sortBy": "並べ替え基準",
+  "sortDirection": "並べ替え順序",
+  "sortAsc": "昇順",
+  "sortDesc": "降順"
 }

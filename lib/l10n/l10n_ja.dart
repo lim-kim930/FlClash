@@ -4086,4 +4086,78 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get httpConditionTip => '同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。';
+
+  @override
+  String get geoConfigSyncFailed => 'Geo 設定の同期に失敗しました。もう一度お試しください。';
+
+  @override
+  String get ruleLookup => 'ルーティング検索';
+
+  @override
+  String get ruleLookupTarget => 'ドメインまたは IP アドレス';
+
+  @override
+  String get ruleLookupDestination => '宛先';
+
+  @override
+  String get ruleLookupQuery => 'ルートを確認';
+
+  @override
+  String get ruleLookupInvalidTarget =>
+      'URL やポートを含まない有効なドメインまたは IP アドレスを入力してください';
+
+  @override
+  String get ruleLookupInvalidPort => '1〜65535 のポートを入力してください';
+
+  @override
+  String get ruleLookupCoreRequired => 'ルートを確認する前にコアに接続してください';
+
+  @override
+  String get ruleLookupFailed => 'ルートを確認できません。コアと DNS を確認して再試行してください';
+
+  @override
+  String get ruleLookupNoRule => '一致するルールなし。現在のモードまたは既定のポリシーを使用';
+
+  @override
+  String get ruleLookupNote =>
+      '現在読み込まれている設定で、ドメインまたは IP に適用されるルールとポリシーを検索し、対象には接続しません。IP ルールの照合時に DNS を問い合わせる場合があります。実際のアプリ接続は、プロセス、送信元、インバウンド、スニッフィングのルールで異なる経路になる場合があります。表示ノードはグループの現在の選択で、負荷分散では別のノードになる場合があります。設定やポリシー変更後は再検索してください。';
+
+  @override
+  String get ruleLookupPayload => '一致した内容';
+
+  @override
+  String get sourcePort => '送信元ポート';
+
+  @override
+  String get destinationPort => '宛先ポート';
+
+  @override
+  String get ruleLookupSourcePortHint => '任意。不明な場合は空欄にしてください';
+
+  @override
+  String get clearLogs => 'ログを消去';
+
+  @override
+  String get clearRequests => 'リクエスト履歴を消去';
+
+  @override
+  String get clearDnsQueries => 'DNS クエリを消去';
+
+  @override
+  String get uploadSpeed => 'アップロード速度';
+
+  @override
+  String get downloadSpeed => 'ダウンロード速度';
+
+  @override
+  String get sortBy => '並べ替え基準';
+
+  @override
+  String get sortDirection => '並べ替え順序';
+
+  @override
+  String get sortAsc => '昇順';
+
+  @override
+  String get sortDesc => '降順';
 }

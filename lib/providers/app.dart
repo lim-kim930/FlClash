@@ -102,6 +102,10 @@ class Requests extends _$Requests with AutoDisposeNotifierMixin {
     return ConnectionLog(maxRequestsLength);
   }
 
+  void clear() {
+    value = state.cleared();
+  }
+
   void _apply(ConnectionLog Function(ConnectionLog log) change) {
     if (!ref.mounted) {
       return;

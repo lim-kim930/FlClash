@@ -126,6 +126,9 @@ commit, so git would replay upstream's own abandoned WIP commits on top of a
 
 ### Branch roles: `dev` vs `release`
 
+An active `curate/v*` branch carries the development role below. At 0.9.5 this is
+`curate/v0.9.5`; keep historical `dev` and earlier `curate` branches available.
+
 - **`dev`**: Pure development branch for features, fixes, and docs. **Never commit `pubspec.yaml` version bumps to `dev`**. Keeping `dev` on upstream's base version ensures re-syncing with upstream never encounters repeated `pubspec.yaml` conflicts.
 - **`release`**: Dedicated branch for publishing releases (both stable and beta releases). All `chore(release)` version bump commits and release tags live on `release`. **Never merge `release` back into `dev`**.
 
@@ -134,8 +137,9 @@ commit, so git would replay upstream's own abandoned WIP commits on top of a
 To cut a new release (stable or beta):
 
 ```bash
+development_branch="$(git branch --show-current)"
 git checkout release
-git reset --hard dev
+git reset --hard "$development_branch"
 # Bump version in pubspec.yaml to 100.x.y+YYYYMMDDNN
 git commit -am "chore(release): 100.x.y"
 # Push only the release branch first; rebuilding it from dev may require a leased force push.
@@ -143,7 +147,7 @@ git push --force-with-lease origin release
 # Create and push the release tag immediately; the tag workflow runs checks and packaging.
 git tag v100.x.y
 git push origin v100.x.y
-git checkout dev
+git checkout "$development_branch"
 ```
 
 Push the `release` branch first, then create and push the release tag without waiting for branch CI. The tag workflow
@@ -185,17 +189,18 @@ a bad recorded resolution.
 
 ### Known upstream breakage on Windows checkouts
 
-At 0.9.4, these local checks fail on Windows because native paths use
+At 0.9.5, these local checks fail on Windows because native paths use
 backslashes while their prefixes and allowlists use forward slashes:
 
 - `test/common/task_test.dart` asserts `startsWith('/profiles/providers/7/...')`
   and `join()` yields backslashes.
 - `test/lint/disposable_field_test.dart`, `platform_layering_test.dart`,
-  `prism_list_test.dart`, `sheet_scroll_controller_test.dart` and
+  `prism_list_test.dart`, `reorder_proxy_decorator_test.dart`,
+  `sheet_scroll_controller_test.dart`, `text_field_suggestions_test.dart` and
   `typography_test.dart` miss their existing path exemptions.
 
-The five lint failures reproduce against an unmodified `upstream/main` source
-snapshot with the same 13 reported locations. The provider-path test also
+The seven lint failures reproduce against an unmodified `upstream/main` source
+snapshot with the same 16 reported locations. The provider-path test also
 remains identical to upstream. Temporary local copies with normalized paths
 pass these checks; preserve the CI tests and do not exempt unrelated failures.
 
@@ -204,3 +209,7 @@ pass these checks; preserve the CI tests and do not exempt unrelated failures.
 The v0.9.1 consolidation maps the previous 36 commits to nine feature commits.
 See [.agents/fork-commits-v0.9.1.md](.agents/fork-commits-v0.9.1.md) for the exact source commits, discarded paths,
 repairs, and verification limits. The original `dev` history and release tags remain available.
+
+The 0.9.5 sync records each old commit kept, adapted or omitted in
+[.agents/fork-commits-v0.9.5.md](.agents/fork-commits-v0.9.5.md), including the
+upstream connection-detail replacement and the controls rebuilt for its new UI.

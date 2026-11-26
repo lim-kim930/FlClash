@@ -45,6 +45,27 @@ class _ReadQueries extends ListBase<int> {
 }
 
 void main() {
+  test(
+    'clearing history retains live traffic and replaces the poll lineage',
+    () {
+      var log = ConnectionLog(
+        10,
+      ).open([_connection('active'), _connection('closed', second: 1)]);
+      log = log.updateTraffic({'active': (upload: 2, download: 42)}).close([
+        'closed',
+      ], _t0.add(const Duration(seconds: 2)));
+      final cleared = log.cleared();
+
+      expect(_ids(cleared), ['active']);
+      expect(cleared.activeCount, 1);
+      expect(cleared['active']?.download, 42);
+      expect(cleared.lineage, isNot(same(log.lineage)));
+      expect(cleared.revision, greaterThan(log.revision));
+      expect(_ids(log), ['active', 'closed']);
+      expect(_ids(cleared.open([_connection('new')])), ['active', 'new']);
+    },
+  );
+
   test('a connection keeps its place when it closes', () {
     var log = ConnectionLog(10).open([
       _connection('a'),

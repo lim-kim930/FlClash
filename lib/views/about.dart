@@ -116,7 +116,7 @@ class AboutView extends ConsumerWidget {
                 glyph: AppGlyphs.cpu,
                 title: appLocalizations.core,
                 url:
-                    'https://github.com/lim-kim930/Clash.Meta/tree/curate/v0.9.4-routing',
+                    'https://github.com/lim-kim930/Clash.Meta/tree/curate/v0.9.5-routing',
                 label: 'github.com/lim-kim930/Clash.Meta',
               ),
             ],

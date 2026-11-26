@@ -107,6 +107,7 @@ void main() {
     WidgetTester tester, {
     Size size = _tableSize,
     Future<List<TrackerInfo>> Function()? connectionsReader,
+    Future<List<int>> Function(RecordSortInput)? sortIndexes,
     bool hotKeys = false,
   }) async {
     container.read(viewSizeProvider.notifier).update((_) => size);
@@ -116,7 +117,10 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final app = TestApp(
-      child: RequestsView(connectionsReader: connectionsReader),
+      child: RequestsView(
+        connectionsReader: connectionsReader,
+        sortIndexes: sortIndexes,
+      ),
     );
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -1014,6 +1018,78 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  for (final size in [_tableSize, _listSize]) {
+    testWidgets('the request menu sorts the new rows and restores minute '
+        'grouping at width ${size.width}', (tester) async {
+      final alpha = _tracker(id: 'a', host: 'alpha.test', download: 10);
+      final beta = _tracker(id: 'b', host: 'beta.test', download: 30);
+      seedRequests([alpha, beta]);
+      await pumpRequests(
+        tester,
+        size: size,
+        connectionsReader: () async => [alpha, beta],
+        sortIndexes: (input) async => recordSortIndexes(input),
+      );
+
+      await openSubMenu(tester, 'Sort by');
+      await tester.tap(inMenu(find.text('Download')));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getTopLeft(find.text('beta.test')).dy,
+        lessThan(tester.getTopLeft(find.text('alpha.test')).dy),
+      );
+
+      await openSubMenu(tester, 'Sort direction');
+      await tester.tap(inMenu(find.text('Ascending')));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getTopLeft(find.text('alpha.test')).dy,
+        lessThan(tester.getTopLeft(find.text('beta.test')).dy),
+      );
+      final sorted = tester.widget<RecordFeedView<String>>(
+        find.byType(RecordFeedView<String>),
+      );
+      expect(sorted.rows.length, 2);
+
+      await openSubMenu(tester, 'Sort by');
+      await tester.tap(inMenu(find.text('Default')));
+      await tester.pumpAndSettle();
+      final grouped = tester.widget<RecordFeedView<String>>(
+        find.byType(RecordFeedView<String>),
+      );
+      expect(grouped.rows.length, 3);
+      await teardownView(tester);
+    });
+
+    testWidgets('clearing request history keeps active connections and '
+        'accepts new records at width ${size.width}', (tester) async {
+      final alpha = _tracker(id: 'a', host: 'alpha.test');
+      seedRequests([alpha, _tracker(id: 'b', host: 'beta.test')]);
+      container.read(requestsProvider.notifier).close(['b']);
+      await pumpRequests(
+        tester,
+        size: size,
+        connectionsReader: () async => [alpha],
+      );
+      final revision = container.read(requestsProvider).revision;
+
+      await tester.tap(more);
+      await tester.pumpAndSettle();
+      await tester.tap(inMenu(find.text('Clear request history')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('beta.test'), findsNothing);
+      expect(find.text('alpha.test'), findsOneWidget);
+      expect(container.read(requestsProvider).activeCount, 1);
+      expect(container.read(requestsProvider).revision, greaterThan(revision));
+      addRequest(_failed(id: 'new', host: 'new.test'));
+      await tester.pump(const Duration(milliseconds: 301));
+      await tester.pumpAndSettle();
+      expect(find.text('new.test'), findsOneWidget);
+      await teardownView(tester);
+    });
+  }
+
   List<String> mockClipboard(WidgetTester tester) {
     final copied = <String>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -1866,7 +1942,11 @@ void main() {
         for (final item in tester.widgetList<PopupMenu>(find.byType(PopupMenu)))
           for (final entry in item.items) (entry.label, entry.danger),
       ],
-      [('Close all active connections', true)],
+      [
+        ('Close all active connections', true),
+        ('Clear request history', false),
+        ('Sort by', false),
+      ],
     );
 
     await tester.tap(inMenu(find.text('Close all active connections')));
@@ -1898,7 +1978,7 @@ void main() {
     final close = tester
         .widgetList<PopupMenu>(find.byType(PopupMenu))
         .expand((menu) => menu.items)
-        .single;
+        .firstWhere((item) => item.label == 'Close all active connections');
     expect(close.label, 'Close all active connections');
     expect(close.onPressed, isNull);
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
@@ -1913,7 +1993,7 @@ void main() {
         for (final item in tester.widgetList<PopupMenu>(find.byType(PopupMenu)))
           for (final entry in item.items) entry.label,
       ],
-      ['Clear DNS cache'],
+      ['Clear DNS cache', 'Clear DNS queries'],
     );
 
     await teardownView(tester);

@@ -51,7 +51,6 @@ void main() {
       ],
     );
     globalState.container = result;
-    globalState.needInitStatus = true;
     globalState.lastConfigMd5 = null;
     result.listen(patchClashConfigProvider, (_, _) {});
     result.listen(currentProfileIdProvider, (_, _) {});
@@ -114,7 +113,6 @@ void main() {
   tearDown(() {
     container.dispose();
     globalState.lastConfigMd5 = null;
-    globalState.needInitStatus = true;
   });
 
   tearDownAll(() async {

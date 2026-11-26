@@ -4338,4 +4338,83 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Las condiciones de un mismo campo se cumplen con una de ellas; las de campos distintos, todas.';
+
+  @override
+  String get geoConfigSyncFailed =>
+      'No se pudieron sincronizar los ajustes Geo. Inténtalo de nuevo.';
+
+  @override
+  String get ruleLookup => 'Consulta de enrutamiento';
+
+  @override
+  String get ruleLookupTarget => 'Dominio o dirección IP';
+
+  @override
+  String get ruleLookupDestination => 'Destino';
+
+  @override
+  String get ruleLookupQuery => 'Comprobar ruta';
+
+  @override
+  String get ruleLookupInvalidTarget =>
+      'Introduce un dominio o una dirección IP válidos, sin URL ni puerto';
+
+  @override
+  String get ruleLookupInvalidPort => 'Introduce un puerto entre 1 y 65535';
+
+  @override
+  String get ruleLookupCoreRequired =>
+      'Conecta el núcleo antes de comprobar una ruta';
+
+  @override
+  String get ruleLookupFailed =>
+      'No se pudo comprobar la ruta. Revisa el núcleo y el DNS e inténtalo de nuevo';
+
+  @override
+  String get ruleLookupNoRule =>
+      'Ninguna regla coincide; se aplica el modo actual o la política predeterminada';
+
+  @override
+  String get ruleLookupNote =>
+      'Usa la configuración cargada para comprobar qué regla y política usaría un dominio o una dirección IP, sin conectarse al destino. Las reglas IP pueden generar consultas DNS. Las reglas de proceso, origen, entrada y detección pueden dar una ruta distinta a las conexiones reales. El nodo mostrado es la selección actual del grupo; el balanceo de carga puede elegir otro. Comprueba de nuevo tras cambiar la configuración o la política.';
+
+  @override
+  String get ruleLookupPayload => 'Valor coincidente';
+
+  @override
+  String get sourcePort => 'Puerto de origen';
+
+  @override
+  String get destinationPort => 'Puerto de destino';
+
+  @override
+  String get ruleLookupSourcePortHint =>
+      'Opcional; déjalo vacío si lo desconoces';
+
+  @override
+  String get clearLogs => 'Borrar registros';
+
+  @override
+  String get clearRequests => 'Borrar historial de solicitudes';
+
+  @override
+  String get clearDnsQueries => 'Borrar consultas DNS';
+
+  @override
+  String get uploadSpeed => 'Velocidad de subida';
+
+  @override
+  String get downloadSpeed => 'Velocidad de descarga';
+
+  @override
+  String get sortBy => 'Ordenar por';
+
+  @override
+  String get sortDirection => 'Dirección de ordenación';
+
+  @override
+  String get sortAsc => 'Ascendente';
+
+  @override
+  String get sortDesc => 'Descendente';
 }

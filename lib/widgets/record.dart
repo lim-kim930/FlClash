@@ -566,7 +566,8 @@ class ProxyChainsRow extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               spacing: 6,
               children: [
-                if (index > 0) const RecordArrow(),
+                if (index > 0)
+                  const GlyphIcon(AppGlyphs.chevronForward, size: 12),
                 Flexible(child: MetaChip(label: chain)),
               ],
             ),

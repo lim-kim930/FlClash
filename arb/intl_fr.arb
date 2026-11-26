@@ -1238,7 +1238,7 @@
   "httpConditionValuesIn": "{field} dans la liste",
   "httpConditionTip": "Les conditions d’un même champ en demandent une seule, celles de champs différents toutes.",
   "geoConfigSyncFailed": "Échec de la synchronisation des paramètres Geo. Réessayez.",
-  "clearRequests": "Effacer les requêtes",
+  "clearRequests": "Effacer l’historique des requêtes",
   "clearDnsQueries": "Effacer les requêtes DNS",
   "uploadSpeed": "Débit montant",
   "downloadSpeed": "Débit descendant",
@@ -1257,5 +1257,8 @@
   "sourcePort": "Port source",
   "destinationPort": "Port de destination",
   "ruleLookupSourcePortHint": "Facultatif ; laissez vide si inconnu",
-  "clearLogs": "Effacer les journaux"
+  "clearLogs": "Effacer les journaux",
+  "sortBy": "Trier par",
+  "sortDirection": "Ordre de tri",
+  "sortAsc": "Croissant"
 }

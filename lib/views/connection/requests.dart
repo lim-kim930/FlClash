@@ -5,9 +5,11 @@ import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/method.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/features.dart';
+import 'package:fl_clash/features/connection/connection_sort.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +29,7 @@ class RequestsView extends ConsumerStatefulWidget {
   final RequestsSegment segment;
   final ConnectionStatus status;
   final Future<List<TrackerInfo>> Function()? connectionsReader;
+  final Future<List<int>> Function(RecordSortInput)? sortIndexes;
   final MitmQuery? httpQuery;
 
   const RequestsView({
@@ -35,6 +38,7 @@ class RequestsView extends ConsumerStatefulWidget {
     this.segment = RequestsSegment.connections,
     this.status = ConnectionStatus.all,
     @visibleForTesting this.connectionsReader,
+    @visibleForTesting this.sortIndexes,
     @visibleForTesting this.httpQuery,
   });
 
@@ -48,6 +52,11 @@ class _RequestsViewState extends ConsumerState<RequestsView>
         ActivePollingMixin<RequestsView>,
         RouteMotionHoldMixin<RequestsView> {
   final _rows = ConnectionRows();
+  late final _sorter = ConnectionSorter(
+    source: _rows,
+    sortIndexes: widget.sortIndexes,
+  );
+  var _sortQueued = false;
   var _query = '';
   var _rowsQuery = '';
   final _filters = connectionFilters();
@@ -93,7 +102,9 @@ class _RequestsViewState extends ConsumerState<RequestsView>
     super.initState();
     _rows
       ..addListener(_offerCounts)
-      ..addListener(_dropGone);
+      ..addListener(_dropGone)
+      ..addListener(_refreshSort);
+    _rows.traffic.addListener(_refreshSort);
     _dnsFeed.addListener(_offerDns);
     _httpFeed.addListener(_offerHttp);
     _follow();
@@ -191,6 +202,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
         controller.dispose();
       }
     }
+    _sorter.dispose();
     _rows.dispose();
     _filters.dispose();
     _selected.dispose();
@@ -265,6 +277,30 @@ class _RequestsViewState extends ConsumerState<RequestsView>
   }
 
   void _follow() => _rows.follow(ref.read(requestsProvider));
+
+  void _refreshSort() {
+    if (_sortQueued || _sorter.choice.value == null) return;
+    _sortQueued = true;
+    scheduleMicrotask(() {
+      _sortQueued = false;
+      if (!mounted) return;
+      unawaited(
+        globalState.safeRun(
+          _sorter.refresh,
+          title: currentAppLocalizations.sort,
+        ),
+      );
+    });
+  }
+
+  void _setSort(RecordSort? sort) {
+    unawaited(
+      globalState.safeRun(
+        () => _sorter.setSort(sort),
+        title: currentAppLocalizations.sort,
+      ),
+    );
+  }
 
   void _offerCounts() => _filters.offerCounts(_rows.counts, () => _rows.held);
 
@@ -518,6 +554,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
 
   List<PopupMenuItem> _buildMenuItems({
     required bool hasActive,
+    required bool hasHistory,
     required bool offersCapture,
   }) {
     final appLocalizations = context.appLocalizations;
@@ -540,6 +577,17 @@ class _RequestsViewState extends ConsumerState<RequestsView>
             section: section,
             onPressed: hasActive ? _closeActiveConnections : null,
           ),
+          PopupMenuItem(
+            glyph: AppGlyphs.clearAll,
+            label: appLocalizations.clearRequests,
+            onPressed: hasHistory
+                ? () {
+                    ref.read(requestsProvider.notifier).clear();
+                    _follow();
+                  }
+                : null,
+          ),
+          ..._sortMenuItems(),
         ],
         RequestsSegment.http => const <PopupMenuItem>[],
         RequestsSegment.dns => [
@@ -548,8 +596,77 @@ class _RequestsViewState extends ConsumerState<RequestsView>
             section: section,
             onPressed: _clearDnsCache,
           ),
+          PopupMenuItem(
+            glyph: AppGlyphs.clearAll,
+            label: appLocalizations.clearDnsQueries,
+            onPressed: () {
+              final notifier = ref.read(dnsQueriesProvider.notifier);
+              notifier.value = notifier.value.cleared();
+              _dnsFeed.clear();
+            },
+          ),
         ],
       },
+    ];
+  }
+
+  List<PopupMenuItem> _sortMenuItems() {
+    final l = context.appLocalizations;
+    final sort = _sorter.choice.value;
+    final columns = [
+      ('start', l.creationTime, true),
+      ('downloadSpeed', l.downloadSpeed, true),
+      ('uploadSpeed', l.uploadSpeed, true),
+      ('download', l.download, true),
+      ('upload', l.upload, true),
+      ('traffic', l.traffic, true),
+      ('host', l.host, false),
+      ('process', l.process, false),
+      ('network', l.networkType, false),
+      ('rule', l.rule, false),
+      ('exit', l.outboundExit, false),
+      ('duration', l.duration, true),
+    ];
+    return [
+      PopupMenuItem(
+        glyph: AppGlyphs.sort,
+        label: l.sortBy,
+        section: const PopupMenuSection(),
+        subtitle: sort == null
+            ? l.defaultText
+            : columns.firstWhere((column) => column.$1 == sort.columnId).$2,
+        subItems: [
+          PopupMenuItem(
+            label: l.defaultText,
+            checked: sort == null,
+            onPressed: () => _setSort(null),
+          ),
+          for (final (id, label, descendingFirst) in columns)
+            PopupMenuItem(
+              label: label,
+              checked: sort?.columnId == id,
+              onPressed: () => _setSort((
+                columnId: id,
+                descending: sort?.descending ?? descendingFirst,
+              )),
+            ),
+        ],
+      ),
+      if (sort != null)
+        PopupMenuItem(
+          glyph: sort.descending ? AppGlyphs.arrowDown : AppGlyphs.arrowUp,
+          label: l.sortDirection,
+          subtitle: sort.descending ? l.sortDesc : l.sortAsc,
+          subItems: [
+            for (final descending in [false, true])
+              PopupMenuItem(
+                label: descending ? l.sortDesc : l.sortAsc,
+                checked: sort.descending == descending,
+                onPressed: () =>
+                    _setSort((columnId: sort.columnId, descending: descending)),
+              ),
+          ],
+        ),
     ];
   }
 
@@ -557,6 +674,9 @@ class _RequestsViewState extends ConsumerState<RequestsView>
   Widget build(BuildContext context) {
     final hasActive = ref.watch(
       requestsProvider.select((log) => log.activeCount > 0),
+    );
+    final hasHistory = ref.watch(
+      requestsProvider.select((log) => log.length > log.activeCount),
     );
     final showsHttp = ref.watch(patchClashConfigProvider.select(_showsHttp));
     final offersCapture = ref.watch(
@@ -587,6 +707,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
               body,
               split: split,
               hasActive: hasActive,
+              hasHistory: hasHistory,
               showsHttp: showsHttp,
               offersCapture: offersCapture,
             );
@@ -626,7 +747,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
         child: RecordFilterScope(
           onFilter: _filters.add,
           child: ListenableBuilder(
-            listenable: _rows,
+            listenable: Listenable.merge([_rows, _sorter]),
             builder: (context, _) => _buildBody(context, scrollController),
           ),
         ),
@@ -663,6 +784,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
     Widget body, {
     required bool split,
     required bool hasActive,
+    required bool hasHistory,
     required bool showsHttp,
     required bool offersCapture,
   }) {
@@ -671,15 +793,20 @@ class _RequestsViewState extends ConsumerState<RequestsView>
         ? body
         : TrackerSelection(selected: _selected, onSelect: _select, child: body);
     final header = _buildHeader(showsHttp: showsHttp);
-    return Scaffold(
-      title: PageLabel.requests.label,
-      searchState: AppBarSearchState(onSearch: _search),
-      header: split ? null : header,
-      menuItems: _buildMenuItems(
-        hasActive: hasActive,
-        offersCapture: offersCapture,
+    return ListenableBuilder(
+      listenable: Listenable.merge([_sorter.choice, _sorter.changing]),
+      builder: (context, _) => Scaffold(
+        isLoading: _sorter.changing.value,
+        title: PageLabel.requests.label,
+        searchState: AppBarSearchState(onSearch: _search),
+        header: split ? null : header,
+        menuItems: _buildMenuItems(
+          hasActive: hasActive,
+          hasHistory: hasHistory,
+          offersCapture: offersCapture,
+        ),
+        body: split ? _buildSplit(header, list) : list,
       ),
-      body: split ? _buildSplit(header, list) : list,
     );
   }
 
@@ -801,7 +928,7 @@ class _RequestsViewState extends ConsumerState<RequestsView>
     return TrackerRepeats(
       counts: _rows.repeats,
       child: RecordFeedView<String>(
-        rows: _rows,
+        rows: _sorter.rows,
         isEmpty: _rows.shownCount == 0,
         isSearching:
             SearchQuery(_query).isNotEmpty || _filters.narrowsPastStatus,
@@ -810,11 +937,14 @@ class _RequestsViewState extends ConsumerState<RequestsView>
           illustration: NullStatusIllustration.connections,
         ),
         controller: scrollController,
-        timeAt: (fraction) => _rows.atFraction(fraction)?.start,
+        timeAt: (fraction) => _sorter.atFraction(fraction)?.start,
         following: _rows.following,
         onStopFollowing: () => _rows.following = false,
         onFollow: _follow,
-        onHover: (hovered) => _rows.hovered = hovered,
+        onHover: (hovered) {
+          _rows.hovered = hovered;
+          if (!hovered) _refreshSort();
+        },
         itemBuilder: trackerInfoRows(
           _rows,
           detailTitle: _detailTitleOf(context),

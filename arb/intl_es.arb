@@ -1253,5 +1253,12 @@
   "sourcePort": "Puerto de origen",
   "destinationPort": "Puerto de destino",
   "ruleLookupSourcePortHint": "Opcional; déjalo vacío si lo desconoces",
-  "clearLogs": "Borrar registros"
+  "clearLogs": "Borrar registros",
+  "clearRequests": "Borrar historial de solicitudes",
+  "clearDnsQueries": "Borrar consultas DNS",
+  "uploadSpeed": "Velocidad de subida",
+  "downloadSpeed": "Velocidad de descarga",
+  "sortBy": "Ordenar por",
+  "sortAsc": "Ascendente",
+  "sortDesc": "Descendente"
 }

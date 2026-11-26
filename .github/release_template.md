@@ -1,6 +1,6 @@
 <div align=center>
 
-[![Release Downloads](https://img.shields.io/github/downloads/chen08209/FlClash/TAG/total?style=flat-square&logo=github)](https://img.shields.io/github/downloads/chen08209/FlClash/TAG/)
+[![Release Downloads](https://img.shields.io/github/downloads/lim-kim930/FlClash/TAG_VERSION/total?style=flat-square&logo=github)](https://img.shields.io/github/downloads/lim-kim930/FlClash/TAG_VERSION/)
 
 </div>
 
@@ -58,6 +58,6 @@
 
 <div dir="ltr">
 
-**List of all changes:** [ChangeLog](https://github.com/lim-kim930/FlClash/blob/main/CHANGELOG.md)
+**List of all changes:** [ChangeLog](https://github.com/lim-kim930/FlClash/releases)
 
 </div>

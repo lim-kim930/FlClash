@@ -812,6 +812,40 @@ void main() {
     await teardownView(tester);
   });
 
+  testWidgets(
+    'clearing queries drops held records and accepts the next query',
+    (tester) async {
+      seedDnsQueries([_dnsQuery('old.test')]);
+      await pumpDnsQueries(tester);
+      final feed = tester.widget<DnsQueryList>(find.byType(DnsQueryList)).feed;
+      feed.hovered = true;
+      final notifier = container.read(dnsQueriesProvider.notifier);
+      notifier.addQuery(_dnsQuery('waiting.test'));
+      await tester.pump(const Duration(milliseconds: 301));
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byGlyph(AppGlyphs.more),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(inMenu(find.text('Clear DNS queries')));
+      await tester.pumpAndSettle();
+      feed.hovered = false;
+      await tester.pumpAndSettle();
+      expect(find.text('old.test'), findsNothing);
+      expect(find.text('waiting.test'), findsNothing);
+      expect(container.read(dnsQueriesProvider).list, isEmpty);
+
+      notifier.addQuery(_dnsQuery('new.test'));
+      await tester.pump(const Duration(milliseconds: 301));
+      await tester.pumpAndSettle();
+      expect(find.text('new.test'), findsOneWidget);
+      await teardownView(tester);
+    },
+  );
+
   testWidgets('a Core that cannot clear the DNS cache reports it', (
     tester,
   ) async {

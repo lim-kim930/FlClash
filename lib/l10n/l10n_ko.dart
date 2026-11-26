@@ -4164,4 +4164,78 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get httpConditionTip =>
       '같은 필드의 조건은 하나만 맞으면 되고, 다른 필드의 조건은 모두 맞아야 합니다.';
+
+  @override
+  String get geoConfigSyncFailed => 'Geo 설정을 동기화하지 못했습니다. 다시 시도하세요.';
+
+  @override
+  String get ruleLookup => '라우팅 조회';
+
+  @override
+  String get ruleLookupTarget => '도메인 또는 IP 주소';
+
+  @override
+  String get ruleLookupDestination => '대상';
+
+  @override
+  String get ruleLookupQuery => '경로 확인';
+
+  @override
+  String get ruleLookupInvalidTarget =>
+      'URL이나 포트를 포함하지 않는 올바른 도메인 또는 IP 주소를 입력하세요';
+
+  @override
+  String get ruleLookupInvalidPort => '1~65535 사이의 포트를 입력하세요';
+
+  @override
+  String get ruleLookupCoreRequired => '경로를 확인하려면 먼저 코어를 연결하세요';
+
+  @override
+  String get ruleLookupFailed => '라우팅을 조회하지 못했습니다. 코어와 DNS를 확인한 후 다시 시도하세요';
+
+  @override
+  String get ruleLookupNoRule => '일치하는 규칙이 없어 현재 모드 또는 기본 정책을 사용합니다';
+
+  @override
+  String get ruleLookupNote =>
+      '현재 로드된 설정을 기준으로 도메인 또는 IP 주소에 적용되는 규칙과 정책을 조회하며, 대상에 연결하지 않습니다. IP 규칙을 확인할 때 DNS를 조회할 수 있습니다. 실제 앱 연결의 경로는 프로세스, 출발지, 인바운드 및 스니핑 규칙에 따라 달라질 수 있습니다. 표시된 노드는 정책 그룹의 현재 선택이며, 부하 분산 시 다른 노드가 선택될 수 있습니다. 설정이나 정책을 변경한 후에는 다시 조회하세요.';
+
+  @override
+  String get ruleLookupPayload => '일치한 내용';
+
+  @override
+  String get sourcePort => '출발지 포트';
+
+  @override
+  String get destinationPort => '대상 포트';
+
+  @override
+  String get ruleLookupSourcePortHint => '선택 사항이며, 모르면 비워 두세요';
+
+  @override
+  String get clearLogs => '로그 지우기';
+
+  @override
+  String get clearRequests => '요청 기록 지우기';
+
+  @override
+  String get clearDnsQueries => 'DNS 쿼리 지우기';
+
+  @override
+  String get uploadSpeed => '업로드 속도';
+
+  @override
+  String get downloadSpeed => '다운로드 속도';
+
+  @override
+  String get sortBy => '정렬 기준';
+
+  @override
+  String get sortDirection => '정렬 방향';
+
+  @override
+  String get sortAsc => '오름차순';
+
+  @override
+  String get sortDesc => '내림차순';
 }

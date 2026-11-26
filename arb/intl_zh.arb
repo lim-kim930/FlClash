@@ -1252,5 +1252,13 @@
   "sourcePort": "源端口",
   "destinationPort": "目标端口",
   "ruleLookupSourcePortHint": "可选，不确定时可留空",
-  "clearLogs": "清空日志"
+  "clearLogs": "清空日志",
+  "clearRequests": "清空请求历史",
+  "clearDnsQueries": "清空 DNS 查询",
+  "uploadSpeed": "上传速度",
+  "downloadSpeed": "下载速度",
+  "sortBy": "排序依据",
+  "sortDirection": "排序方向",
+  "sortAsc": "升序",
+  "sortDesc": "降序"
 }

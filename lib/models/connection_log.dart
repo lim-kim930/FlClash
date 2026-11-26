@@ -94,6 +94,14 @@ class ConnectionLog {
 
   int get failedCount => _entries.failed;
 
+  ConnectionLog cleared() {
+    final remaining = ConnectionLog(closedCapacity).open([
+      for (final entry in _entries.byId.values)
+        if (entry.info.isActive) _infoOf(entry),
+    ]);
+    return ConnectionLog._(closedCapacity, remaining._entries, revision + 1);
+  }
+
   TrackerInfo? operator [](String id) {
     final entry = _entries.byId[id];
     return entry == null ? null : _infoOf(entry);

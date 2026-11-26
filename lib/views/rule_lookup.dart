@@ -309,8 +309,8 @@ class _RuleLookupViewState extends ConsumerState<RuleLookupView> {
       title: l.ruleLookup,
       body: Builder(
         builder: (context) => ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
-            top: context.contentTopPadding + 16,
+          padding: context.listInsets.page(
+            top: context.contentTopPadding,
             bottom: 20 + context.bottomInset,
           ),
           children: [

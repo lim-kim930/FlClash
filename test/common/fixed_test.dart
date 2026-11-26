@@ -29,6 +29,18 @@ void main() {
       expect(list.list, isEmpty);
     });
 
+    test('cleared keeps prior snapshots and advances subsequent revisions', () {
+      final previous = FixedList<int>(3).append(1).append(2);
+      final snapshot = previous.list;
+      final cleared = previous.cleared();
+      expect(cleared.list, isEmpty);
+      expect(cleared.revision, previous.revision + 1);
+      expect(previous.list, snapshot);
+      expect(cleared.append(3).revision, greaterThan(cleared.revision));
+      expect(cleared.list, [3]);
+      expect(snapshot, [1, 2]);
+    });
+
     test('copyWith creates independent copy', () {
       final original = FixedList(3, list: [1, 2, 3]);
       final copy = original.copyWith();

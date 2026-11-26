@@ -227,6 +227,30 @@ void main() {
     expect(container.read(patchClashConfigProvider).logLevel, LogLevel.debug);
   });
 
+  testWidgets('clearing logs empties a paused view and preserves new events', (
+    tester,
+  ) async {
+    await pumpLogsView(tester);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 300));
+    await tester.pumpAndSettle();
+    final revision = container.read(logsProvider).revision;
+
+    await tester.tap(find.byTooltip('More'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Clear logs'));
+    await tester.pumpAndSettle();
+
+    expect(container.read(logsProvider).list, isEmpty);
+    expect(container.read(logsProvider).revision, greaterThan(revision));
+    expect(find.textContaining('log 19'), findsNothing);
+    container
+        .read(logsProvider.notifier)
+        .add(const Log(payload: 'new event', dateTime: '2026-11-26 00:00:00'));
+    await tester.pump(const Duration(milliseconds: 301));
+    await tester.pumpAndSettle();
+    expect(find.text('new event'), findsOneWidget);
+  });
+
   testWidgets('tapping the level reports it for filtering', (tester) async {
     RecordFilter? clicked;
     await tester.pumpWidget(
