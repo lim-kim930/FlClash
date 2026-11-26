@@ -76,3 +76,12 @@ DNS and log clearing empty held page records and preserve later arrivals.
 Remote branch and tagged workflows are authoritative for native compatibility,
 complete suites, coverage and release packaging. Their run links are reported
 with the published release; no local application build or launch was performed.
+
+## CI follow-up
+
+The first branch run passed all three desktop builds, Go, Rust, Android and
+plugin checks. The full Dart suite found two new upstream workflow assertions
+requiring Telegram, Homebrew, F-Droid publishing and prerelease pruning, which
+the fork deliberately omits. Adapt those assertions to require all build/check
+dependencies, validated release assets and GitHub-only publication. The shared
+publishing-library unit tests remain intact.

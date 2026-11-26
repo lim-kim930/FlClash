@@ -213,35 +213,73 @@ void main() {
     });
   });
 
-  YamlList releaseSteps() {
+  YamlMap releaseJob() {
     final workflow =
         loadYaml(File('.github/workflows/build.yaml').readAsStringSync())
             as YamlMap;
-    return workflow['jobs']['upload']['steps'] as YamlList;
+    return workflow['jobs']['upload'] as YamlMap;
   }
 
-  test('a release is announced once its packages are out, and pruned last', () {
-    final steps = [
-      for (final step in releaseSteps()) (step as YamlMap)['name'] as String?,
-    ];
-    int at(String name) {
-      expect(steps, contains(name));
-      return steps.indexOf(name);
-    }
+  test(
+    'a fork release waits for packages and validation before publishing',
+    () {
+      final job = releaseJob();
+      expect(
+        job['needs'],
+        containsAll([
+          'version',
+          'build',
+          'dart',
+          'plugins',
+          'go',
+          'android',
+          'rust',
+          'windows-helper-test',
+        ]),
+      );
+      final steps = [
+        for (final step in job['steps'] as YamlList)
+          (step as YamlMap)['name'] as String?,
+      ];
+      int at(String name) {
+        expect(steps, contains(name));
+        return steps.indexOf(name);
+      }
 
-    final announced = at('Post to Telegram');
-    expect(announced, greaterThan(at('Release')));
-    expect(announced, greaterThan(at('Push to Homebrew tap')));
-    expect(announced, greaterThan(at('Push to fdroid repo')));
-    expect(at('Delete superseded prereleases'), steps.length - 1);
-  });
+      final published = at('Release');
+      for (final prerequisite in [
+        'Merge the build manifests',
+        'Generate release notes',
+        'Append download links',
+        'Check every file the release is looked up by',
+        'Keep APK names used by earlier fork releases',
+        'Generate sha256',
+      ]) {
+        expect(published, greaterThan(at(prerequisite)));
+      }
+    },
+  );
 
-  test('the prune fails when a page of the release list does', () {
-    final prune = releaseSteps().cast<YamlMap>().singleWhere(
-      (step) => step['name'] == 'Delete superseded prereleases',
+  test('the fork publishes to GitHub alone', () {
+    final steps = (releaseJob()['steps'] as YamlList).cast<YamlMap>();
+    final names = steps.map((step) => step['name']).toSet();
+    expect(
+      names.intersection({
+        'Post to Telegram',
+        'Push to Homebrew tap',
+        'Push to fdroid repo',
+        'Delete superseded prereleases',
+      }),
+      isEmpty,
+    );
+    expect(
+      steps.map((step) => step['run']).whereType<String>(),
+      everyElement(isNot(contains('tool/publish.dart'))),
     );
 
-    expect(prune['run'], contains('gh api --paginate'));
-    expect(prune['shell'], 'bash', reason: 'GitHub adds pipefail to bash');
+    final publish = steps.singleWhere((step) => step['name'] == 'Release');
+    expect(publish['uses'], 'softprops/action-gh-release@v2');
+    expect(publish['with']['files'], './dist/*');
+    expect(publish['with']['body_path'], './release.md');
   });
 }
