@@ -252,7 +252,7 @@ void main() {
         'Generate release notes',
         'Append download links',
         'Check every file the release is looked up by',
-        'Keep APK names used by earlier fork releases',
+        'Keep files used by earlier fork releases',
         'Generate sha256',
       ]) {
         expect(published, greaterThan(at(prerequisite)));

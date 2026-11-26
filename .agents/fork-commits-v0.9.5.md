@@ -85,3 +85,10 @@ requiring Telegram, Homebrew, F-Droid publishing and prerelease pruning, which
 the fork deliberately omits. Adapt those assertions to require all build/check
 dependencies, validated release assets and GitHub-only publication. The shared
 publishing-library unit tests remain intact.
+
+The shipped v100.0.18 updater downloads Android APKs and installed Windows
+setups under the FlClash-dev-VERSION-* names, verified by the matching prefixed
+SHA256SUMS file. Preserve those five byte-identical aliases and their checksum
+list when publishing the new unprefixed packages, alongside the three older
+Android ABI-name aliases. Script fixtures verify copied bytes and checksums,
+reject missing artifacts and empty manifests, and exclude non-updater packages.

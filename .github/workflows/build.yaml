@@ -39,6 +39,7 @@ jobs:
         run: |
           bash .github/scripts/generate_release_notes_test.sh
           bash .github/scripts/render_release_template_test.sh
+          bash .github/scripts/add_legacy_update_assets_test.sh
 
       - name: Setup Rust cache
         uses: Swatinem/rust-cache@v2
@@ -582,16 +583,8 @@ jobs:
       - name: Check every file the release is looked up by
         run: dart run tool/package.dart check dist
 
-      - name: Keep APK names used by earlier fork releases
-        run: |
-          jq -r '.artifacts[]
-            | select(.os == "android")
-            | [.name, "FlClash-\(.version)-android-" +
-                {arm64: "arm64-v8a", armv7: "armeabi-v7a", amd64: "x86_64"}[.arch] + ".apk"]
-            | @tsv' dist/manifest.json |
-            while IFS=$'\t' read -r name legacy; do
-              cp "dist/$name" "dist/$legacy"
-            done
+      - name: Keep files used by earlier fork releases
+        run: bash .github/scripts/add_legacy_update_assets.sh dist
 
       - name: Generate sha256
         run: |
